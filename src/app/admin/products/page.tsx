@@ -7,14 +7,25 @@ import ProductsTableClient from './ProductsTableClient';
 export const dynamic = 'force-dynamic';
 
 export default async function AdminProductsPage() {
-  const [products, categories, brands] = await Promise.all([
-    prisma.product.findMany({
-      include: { category: true, brand: true },
-      orderBy: [{ displayOrder: 'asc' }, { createdAt: 'desc' }],
-    }),
-    prisma.productCategory.findMany({ orderBy: { displayOrder: 'asc' } }),
-    prisma.brand.findMany({ orderBy: { displayOrder: 'asc' } }),
-  ]);
+  let products: any[] = [];
+  let categories: any[] = [];
+  let brands: any[] = [];
+
+  try {
+    const [pList, cList, bList] = await Promise.all([
+      prisma.product.findMany({
+        include: { category: true, brand: true },
+        orderBy: [{ displayOrder: 'asc' }, { createdAt: 'desc' }],
+      }).catch(() => []),
+      prisma.productCategory.findMany({ orderBy: { displayOrder: 'asc' } }).catch(() => []),
+      prisma.brand.findMany({ orderBy: { displayOrder: 'asc' } }).catch(() => []),
+    ]);
+    products = pList || [];
+    categories = cList || [];
+    brands = bList || [];
+  } catch (err) {
+    console.warn('Admin products load warning:', err);
+  }
 
   return (
     <div className="space-y-6">

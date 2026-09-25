@@ -5,9 +5,14 @@ import ServicesManagerClient from './ServicesManagerClient';
 export const dynamic = 'force-dynamic';
 
 export default async function AdminServicesPage() {
-  const services = await prisma.service.findMany({
-    orderBy: { displayOrder: 'asc' },
-  });
+  let services: any[] = [];
+  try {
+    services = await prisma.service.findMany({
+      orderBy: { displayOrder: 'asc' },
+    });
+  } catch (err) {
+    console.warn('Services query warning:', err);
+  }
 
   return <ServicesManagerClient initialServices={services} />;
 }

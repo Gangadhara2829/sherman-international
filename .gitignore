@@ -36,3 +36,5 @@ services_raw.html
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.vercel
