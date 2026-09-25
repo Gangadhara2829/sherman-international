@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Oil &amp; Gas Industry",
+    "slug": "oil-amp-gas-industry",
+    "originalImageUrl": "https://images.unsplash.com/photo-1578356058390-f58c575337a2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1NTEzfDB8MXxzZWFyY2h8MTV8fG9mZnNob3JlJTIwZ2FzfGVufDB8fHx8MTcwOTAyNjk1N3ww&ixlib=rb-4.0.3&q=80&w=1080&utm_source=endurance-innovation&utm_medium=referral",
+    "localImageUrl": "/images/industries/oil-amp-gas-industry.jpg",
+    "description": "Specialized engineering and instrumentation solutions for the Oil &amp; Gas Industry."
+  },
+  {
+    "name": "Chemical &amp; Petrochemical",
+    "slug": "chemical-amp-petrochemical",
+    "originalImageUrl": "https://storage.googleapis.com/production-bigrock-v1-0-4/884/1564884/uegNzVVS/ae5d2d7363514639946232a30237faf3",
+    "localImageUrl": "/images/industries/chemical-amp-petrochemical.jpg",
+    "description": "Pressure Switch, Level Switch, Temperature Switch, Flow Switch, Vibration Switch"
+  },
+  {
+    "name": "Process Industry",
+    "slug": "process-industry",
+    "originalImageUrl": "https://storage.googleapis.com/production-bigrock-v1-0-4/884/1564884/uegNzVVS/00256d7b4ffa4abc95892d428c61f073",
+    "localImageUrl": "/images/industries/process-industry.jpg",
+    "description": "Horizontal Axis Balancer, Vertical Axis Balancer, Wheel Balancers"
+  },
+  {
+    "name": "Cement Industry",
+    "slug": "cement-industry",
+    "originalImageUrl": "https://images.unsplash.com/photo-1621121013599-c94f85975cfd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1NTEzfDB8MXxzZWFyY2h8MXx8Y2VtZW50JTIwcGxhbnR8ZW58MHx8fHwxNzA5MDI3Nzg3fDA&ixlib=rb-4.0.3&q=80&w=1080&utm_source=endurance-innovation&utm_medium=referral",
+    "localImageUrl": "/images/industries/cement-industry.jpg",
+    "description": "Fused Sight Glasses, Vessel Lightning System, Pan Microscopic Camera, Turbidity Analyzers, Process Camera"
+  },
+  {
+    "name": "Power Generation",
+    "slug": "power-generation",
+    "originalImageUrl": "https://images.unsplash.com/photo-1587127831640-7423ae037873?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1NTEzfDB8MXxzZWFyY2h8NHx8cG93ZXIlMjBwbGFudHxlbnwwfHx8fDE3MDkwMjc4MDl8MA&ixlib=rb-4.0.3&q=80&w=1080&utm_source=endurance-innovation&utm_medium=referral",
+    "localImageUrl": "/images/industries/power-generation.jpg",
+    "description": "Accelerometers,&nbsp; Vibration Monitoring System,&nbsp;Condition Monitoring System,&nbsp;Portable Vibro Meters ,&nbsp;&nbsp;Vibration Transmitters"
+  },
+  {
+    "name": "Refinery",
+    "slug": "refinery",
+    "originalImageUrl": "https://images.unsplash.com/photo-1694523882625-590d2a86f0d9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1NTEzfDB8MXxzZWFyY2h8N3x8cGV0cm9sZXVtJTIwcmVmaW5lcnl8ZW58MHx8fHwxNzA5MDI3ODY5fDA&ixlib=rb-4.0.3&q=80&w=1080&utm_source=endurance-innovation&utm_medium=referral",
+    "localImageUrl": "/images/industries/refinery.jpg",
+    "description": "Flame Scanners, High Energy Ignitors"
+  },
+  {
+    "name": "Sugar Industry",
+    "slug": "sugar-industry",
+    "originalImageUrl": "https://images.unsplash.com/photo-1585155113372-6c1808141bf3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1NTEzfDB8MXxzZWFyY2h8MjV8fHN1Z2FyY2FuZXxlbnwwfHx8fDE3MDkxNzM2NjN8MA&ixlib=rb-4.0.3&q=80&w=1080",
+    "localImageUrl": "/images/industries/sugar-industry.jpg",
+    "description": "Self Actuated Valves, Solenoid Valves, Electro-Pneumatic Valves, Fuel Control Valves, Pressure Reducing Valves"
+  },
+  {
+    "name": "Aerospace",
+    "slug": "aerospace",
+    "originalImageUrl": "https://storage.googleapis.com/production-bigrock-v1-0-4/884/1564884/uegNzVVS/748bba68b5344b4690bfc5f471122434",
+    "localImageUrl": "/images/industries/aerospace.jpg",
+    "description": "Gear Pumps\nScrew, Pumps\nFlow Dividers, Turbine Pumps"
+  },
+  {
+    "name": "Railway",
+    "slug": "railway",
+    "originalImageUrl": "https://images.unsplash.com/photo-1580442374555-3def8fb41738?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1NTEzfDB8MXxzZWFyY2h8NXx8UmFpbHxlbnwwfHx8fDE3MDkxNzM3MjZ8MA&ixlib=rb-4.0.3&q=80&w=1080",
+    "localImageUrl": "/images/industries/railway.jpg",
+    "description": "Tension and Suspension Strings, Damping Systems, Accessories, Wire Laying Tools"
+  },
+  {
+    "name": "Pharmaceutical",
+    "slug": "pharmaceutical",
+    "originalImageUrl": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1NTEzfDB8MXxzZWFyY2h8MXx8UGhhcm1hfGVufDB8fHx8MTcwOTE3Mzc4M3ww&ixlib=rb-4.0.3&q=80&w=1080",
+    "localImageUrl": "/images/industries/pharmaceutical.jpg",
+    "description": "Specialized engineering and instrumentation solutions for the Pharmaceutical."
+  },
+  {
+    "name": "Fertilizer Industry",
+    "slug": "fertilizer-industry",
+    "originalImageUrl": "https://images.unsplash.com/photo-1558906307-1a1c52b5ac8a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1NTEzfDB8MXxzZWFyY2h8MXx8ZmVydGlsaXplcnxlbnwwfHx8fDE3MDkyNzI0NTF8MA&ixlib=rb-4.0.3&q=80&w=1080&utm_source=endurance-innovation&utm_medium=referral",
+    "localImageUrl": "/images/industries/fertilizer-industry.jpg",
+    "description": "Specialized engineering and instrumentation solutions for the Fertilizer Industry."
+  },
+  {
+    "name": "Marine Industry",
+    "slug": "marine-industry",
+    "originalImageUrl": "https://images.unsplash.com/photo-1598408745613-178751e2ccde?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1NTEzfDB8MXxzZWFyY2h8MXx8bWFyaW5lfGVufDB8fHx8MTcwOTI3MjUzMXww&ixlib=rb-4.0.3&q=80&w=1080&utm_source=endurance-innovation&utm_medium=referral",
+    "localImageUrl": "/images/industries/marine-industry.jpg",
+    "description": "Specialized engineering and instrumentation solutions for the Marine Industry."
+  }
+]
