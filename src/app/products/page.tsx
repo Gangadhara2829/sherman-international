@@ -41,14 +41,11 @@ export default async function ProductsPage() {
 
         {/* Page Header */}
         <div className="mb-10 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-slate-300 bg-white text-slate-700 text-xs font-bold uppercase tracking-wider">
-            <span>Portfolio</span>
-          </div>
           <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-slate-900">
             Engineered Products & Instrumentation
           </h1>
           <p className="text-sm sm:text-base text-slate-600 max-w-3xl leading-relaxed">
-            Direct channel partner for leading global manufacturers. Sizing, technical consulting, system integration, and on-site after-sales support across India.
+            Direct channel partner for leading global manufacturers. Technical consulting, system integration, and on-site after-sales support across India.
           </p>
         </div>
 

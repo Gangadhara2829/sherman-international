@@ -167,7 +167,7 @@ export default function ProductsMegaMenu({ categories, onClose }: ProductsMegaMe
                   </div>
 
                   <div className="space-y-1">
-                    <h5 className="font-bold text-xs text-slate-900">Technical Sizing &amp; Consulting</h5>
+                    <h5 className="font-bold text-xs text-slate-900">Technical Engineering &amp; Consulting</h5>
                     <p className="text-[11px] text-slate-600 leading-relaxed">
                       Our application engineers assist with process parameters, documentation compliance, and EPC skid integration.
                     </p>
@@ -180,7 +180,7 @@ export default function ProductsMegaMenu({ categories, onClose }: ProductsMegaMe
                     onClick={onClose}
                     className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded text-xs font-semibold text-white bg-navy hover:bg-sherman-800 transition-colors"
                   >
-                    <span>Request Technical Sizing</span>
+                    <span>Request Technical Consultation</span>
                     <ArrowRight className="w-3 h-3" />
                   </Link>
                 </div>

@@ -46,12 +46,6 @@ export default function HeroSection({
       {/* 2. MAIN HERO CONTENT CONTAINER (Left-Aligned, Max-Width 850px) */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-28 min-h-[700px] lg:min-h-[760px] flex items-center z-10">
         <div className="w-full max-w-[850px] space-y-6 sm:space-y-7">
-          {/* Top Eyebrow */}
-          <div className="flex items-center gap-2 text-[11px] sm:text-xs font-bold tracking-widest text-[#D9A82E] uppercase">
-            <span className="w-2 h-2 rounded-full bg-[#D9A82E] inline-block" />
-            <span>SHERMAN INTERNATIONAL (P) LIMITED</span>
-          </div>
-
           {/* Main Heading */}
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] xl:text-[62px] font-extrabold tracking-tight text-white leading-[1.08] font-display">
             {title}
@@ -84,7 +78,7 @@ export default function HeroSection({
               onClick={() => openEnquiry()}
               className="inline-flex items-center gap-2 px-7 py-3.5 rounded-[6px] text-xs sm:text-sm font-bold text-white bg-white/[0.08] hover:bg-white/[0.14] border border-white/30 hover:border-white/50 backdrop-blur-sm transition-all duration-200 cursor-pointer"
             >
-              <span>Request Technical Sizing</span>
+              <span>Request Technical Consultation</span>
             </button>
           </div>
         </div>

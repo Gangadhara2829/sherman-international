@@ -211,7 +211,7 @@ export default function ProductEditorForm({
               {isEditing ? `Edit Product: ${initialProduct.name}` : 'Add New Product'}
             </h1>
             <p className="text-xs text-slate-500">
-              Fill in product information, technical specifications, and principal OEM details.
+              Fill in product information, features, applications, and media details.
             </p>
           </div>
         </div>
@@ -300,7 +300,7 @@ export default function ProductEditorForm({
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Brand / Principal OEM
+                  Brand / Manufacturer
                 </label>
                 <select
                   value={brandId}
@@ -342,54 +342,6 @@ export default function ProductEditorForm({
                 placeholder="Comprehensive description of engineering capabilities, design, and performance..."
                 className="w-full px-3.5 py-2.5 text-xs sm:text-sm border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none font-sans"
               />
-            </div>
-          </div>
-
-          {/* Specifications Builder */}
-          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div>
-                <h3 className="font-bold text-sm text-slate-900">Technical Specifications</h3>
-                <p className="text-[11px] text-slate-500">
-                  Key-value pairs displayed in technical datasheet table
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={addSpec}
-                className="inline-flex items-center gap-1 text-xs font-bold text-sherman-700 hover:text-sherman-900 px-2.5 py-1.5 rounded-lg bg-sherman-50"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Add Row</span>
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              {specs.map((spec, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <input
-                    type="text"
-                    value={spec.label}
-                    onChange={(e) => updateSpec(index, 'label', e.target.value)}
-                    placeholder="e.g. Operating Pressure"
-                    className="flex-1 px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-sherman-600"
-                  />
-                  <input
-                    type="text"
-                    value={spec.value}
-                    onChange={(e) => updateSpec(index, 'value', e.target.value)}
-                    placeholder="e.g. Up to 250 bar"
-                    className="flex-1 px-3 py-2 text-xs border border-slate-300 rounded-lg outline-none focus:border-sherman-600"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeSpec(index)}
-                    className="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
             </div>
           </div>
 

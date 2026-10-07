@@ -71,14 +71,14 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           <div className="max-w-3xl space-y-3">
             <span className="text-xs font-bold uppercase tracking-wider text-amber-300 px-2.5 py-1 rounded bg-white/10 border border-white/15 inline-flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5" />
-              Category Portfolio
+              Product Category
             </span>
             <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-white">
               {category.name}
             </h1>
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
               {category.description ||
-                'High-reliability engineering equipment, sizing support, and direct principal distribution from Sherman International.'}
+                'High-reliability engineering equipment, technical support, and direct principal distribution from Sherman International.'}
             </p>
           </div>
         </div>

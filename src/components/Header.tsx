@@ -70,11 +70,11 @@ export default function Header({ categories = [] }: HeaderProps) {
       {/* Top Corporate Information Bar */}
       <div className="bg-navy text-slate-300 text-xs border-b border-navy-light/40 hidden md:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex justify-between items-center font-normal">
-          <div className="text-slate-300">
-            Strategic Channel Partner & Engineering Solutions Provider in India
+          <div className="text-slate-300 font-medium tracking-wide">
+            Strategic Channel Partner &amp; Engineering Solutions Provider
           </div>
 
-          <div className="flex items-center gap-6 text-[11.5px]">
+          <div className="flex items-center gap-5 text-[11.5px]">
             <a
               href="mailto:admin@sherman-india.com"
               className="flex items-center gap-1.5 text-slate-300 hover:text-white transition-colors"
@@ -84,19 +84,12 @@ export default function Header({ categories = [] }: HeaderProps) {
             </a>
             <span className="text-slate-600">|</span>
             <a
-              href="tel:+911143501200"
+              href="tel:+919015122200"
               className="flex items-center gap-1.5 text-slate-300 hover:text-white transition-colors"
             >
               <Phone className="w-3.5 h-3.5 text-slate-400" />
-              <span>+91 11 4350 1200</span>
+              <span>+91 90151 22200</span>
             </a>
-            <span className="text-slate-600">|</span>
-            <Link
-              href="/admin/login"
-              className="text-slate-400 hover:text-white transition-colors font-medium"
-            >
-              Portal Login
-            </Link>
           </div>
         </div>
       </div>
@@ -250,7 +243,7 @@ export default function Header({ categories = [] }: HeaderProps) {
               onClick={() => setIsMobileMenuOpen(false)}
               className="block px-3 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 rounded-md"
             >
-              Services & Integration
+              Services &amp; Integration
             </Link>
 
             <Link
@@ -288,8 +281,8 @@ export default function Header({ categories = [] }: HeaderProps) {
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
 
-            <div className="text-center text-xs text-slate-500">
-              E-105, Himalaya House, 23, K.G. Marg, New Delhi 110001
+            <div className="text-center text-xs text-slate-500 leading-relaxed">
+              D-94, 9th Floor, Himalaya House, 23 K.G. Marg, New Delhi – 110001
             </div>
           </div>
         </div>
@@ -300,3 +293,4 @@ export default function Header({ categories = [] }: HeaderProps) {
     </>
   );
 }
+

@@ -107,7 +107,7 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
                   service.shortDescription
                 ) : (
                   <p>
-                    Sherman International (P) Limited provides comprehensive technical services for industrial clients across India. Our technocrat engineering team delivers hands-on support from preliminary sizing and documentation up to on-site testing and lifelong maintenance.
+                    Sherman International (P) Limited provides comprehensive technical services for industrial clients across India. Our technocrat engineering team delivers hands-on support from preliminary engineering and documentation up to on-site testing and lifelong maintenance.
                   </p>
                 )}
               </div>

@@ -21,7 +21,7 @@ export default function ProductDetailActions({
     const text = encodeURIComponent(
       `Hello Sherman International, I am interested in technical details and commercial pricing for: ${productName} (${categoryName}).`
     );
-    window.open(`https://wa.me/919810024890?text=${text}`, '_blank');
+    window.open(`https://wa.me/919015122200?text=${text}`, '_blank');
   };
 
   return (
@@ -54,7 +54,7 @@ export default function ProductDetailActions({
         <span>•</span>
         <span>Standard OEM Warranty</span>
         <span>•</span>
-        <span>Custom Application Sizing</span>
+        <span>Custom Application Engineering</span>
       </div>
     </div>
   );

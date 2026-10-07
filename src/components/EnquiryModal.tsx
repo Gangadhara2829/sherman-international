@@ -153,7 +153,7 @@ export function EnquiryProvider({ children }: { children: React.ReactNode }) {
                       Close
                     </button>
                     <a
-                      href={`https://wa.me/919810024890?text=${whatsappMessage}`}
+                      href={`https://wa.me/919015122200?text=${whatsappMessage}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition-colors shadow-xs"
@@ -273,7 +273,7 @@ export function EnquiryProvider({ children }: { children: React.ReactNode }) {
 
                   <div className="pt-2 flex items-center justify-between gap-3">
                     <a
-                      href={`https://wa.me/919810024890?text=${whatsappMessage}`}
+                      href={`https://wa.me/919015122200?text=${whatsappMessage}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs text-emerald-700 hover:text-emerald-800 font-semibold flex items-center gap-1.5"

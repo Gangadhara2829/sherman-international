@@ -68,43 +68,29 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
 
         {/* Brand Banner */}
         <div className="bg-navy text-white rounded-lg p-8 sm:p-12 mb-10 border border-slate-800">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-6">
-              {brand.logo && (
-                <div className="w-28 h-16 bg-white rounded-xl p-2 flex items-center justify-center shadow-md flex-shrink-0">
-                  <img
-                    src={brand.logo}
-                    alt={`${brand.name} logo`}
-                    className="max-h-12 max-w-[96px] object-contain"
-                  />
-                </div>
-              )}
-              <div className="space-y-2 max-w-2xl">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-300 px-2.5 py-1 rounded bg-white/10 border border-white/15 inline-flex items-center gap-1.5">
-                  Brand & Manufacturer Profile
-                </span>
-                <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-white">
-                  {brand.name}
-                </h1>
-                {brand.description && (
-                  <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-                    {brand.description}
-                  </p>
-                )}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+            {brand.logo && (
+              <div className="w-28 h-16 bg-white rounded-xl p-2 flex items-center justify-center shadow-md flex-shrink-0">
+                <img
+                  src={brand.logo}
+                  alt={`${brand.name} logo`}
+                  className="max-h-12 max-w-[96px] object-contain"
+                />
               </div>
-            </div>
-
-            {brand.websiteUrl && (
-              <a
-                href={brand.websiteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="self-start md:self-auto inline-flex items-center gap-2 px-5 py-2.5 rounded bg-white text-slate-900 text-xs font-bold hover:bg-slate-100 transition-colors shadow-xs flex-shrink-0"
-              >
-                <span>Visit Global OEM Site</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
             )}
+            <div className="space-y-2 max-w-3xl">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-300 px-2.5 py-1 rounded bg-white/10 border border-white/15 inline-flex items-center gap-1.5">
+                Brand &amp; Manufacturer Profile
+              </span>
+              <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-white">
+                {brand.name}
+              </h1>
+              {brand.description && (
+                <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+                  {brand.description}
+                </p>
+              )}
+            </div>
           </div>
         </div>
 

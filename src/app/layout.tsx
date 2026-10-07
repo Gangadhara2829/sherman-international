@@ -15,7 +15,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'Sherman International (P) Limited | Engineering Solutions & Channel Partner',
   description:
-    'Sherman International is an established strategic channel partner and engineering solutions provider in India, specializing in flow measurement, combustion control, dynamic balancing machines, and railway electrification.',
+    'Sherman International is an established strategic channel partner and engineering solutions provider, specializing in flow measurement, combustion control, dynamic balancing machines, and railway electrification.',
   keywords: [
     'Sherman International',
     'Sherman India',

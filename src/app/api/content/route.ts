@@ -66,11 +66,11 @@ export async function POST(request: Request) {
       const phone =
         body.phone !== undefined
           ? body.phone
-          : existingContentParsed?.phone || '011 23320623';
+          : existingContentParsed?.phone || '+91 90151 22200';
       const phoneSecondary =
         body.phoneSecondary !== undefined
           ? body.phoneSecondary
-          : existingContentParsed?.phoneSecondary || '+91 98100 24890';
+          : existingContentParsed?.phoneSecondary || '+91 90151 22200';
       const email =
         body.email !== undefined
           ? body.email
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
       const whatsapp =
         body.whatsapp !== undefined
           ? body.whatsapp
-          : existingContentParsed?.whatsapp || '+919810024890';
+          : existingContentParsed?.whatsapp || '+919015122200';
       const googleMapsUrl =
         body.googleMapsUrl !== undefined
           ? body.googleMapsUrl

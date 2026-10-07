@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import { DEFAULT_CLIENT_PLACEHOLDER, getImageUrl } from '@/lib/image';
 
 export interface ProudlyServedClientItem {
@@ -22,7 +22,7 @@ interface WeProudlyServeCarouselProps {
 export default function WeProudlyServeCarousel({
   clients,
   title = 'WE PROUDLY SERVE',
-  subtitle = "Trusted by leading organizations across India's industrial and energy sectors",
+  subtitle = "Trusted by leading public sector undertakings, energy corporations, and industrial leaders across India",
 }: WeProudlyServeCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -38,7 +38,7 @@ export default function WeProudlyServeCarousel({
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
-      const scrollAmount = 300;
+      const scrollAmount = 340;
       scrollContainerRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth',
@@ -47,62 +47,62 @@ export default function WeProudlyServeCarousel({
   };
 
   return (
-    <section className="py-10 sm:py-12 bg-white border-y border-slate-200/90 overflow-hidden relative">
+    <section className="py-12 sm:py-16 bg-slate-50/60 border-y border-slate-200/90 overflow-hidden relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10">
           <div>
             <div className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-sherman-700 mb-1.5 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-sherman-600 inline-block" />
+              <span className="w-2 h-2 rounded-full bg-sherman-600 inline-block animate-pulse" />
               <span>Representative Client Partnerships</span>
             </div>
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-slate-900 uppercase">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 uppercase">
               {title}
             </h2>
             {subtitle && (
-              <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl font-normal leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-600 mt-1.5 max-w-2xl font-normal leading-relaxed">
                 {subtitle}
               </p>
             )}
           </div>
 
           {/* Navigation Controls */}
-          <div className="flex items-center gap-2 self-end sm:self-auto">
+          <div className="flex items-center gap-2.5 self-end sm:self-auto">
             <button
               onClick={() => scroll('left')}
-              className="p-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-colors shadow-2xs focus:outline-none focus:ring-2 focus:ring-sherman-600 cursor-pointer"
+              className="p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-all shadow-xs hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-sherman-600 cursor-pointer"
               aria-label="Previous client logos"
               title="Previous logos"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={() => scroll('right')}
-              className="p-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-colors shadow-2xs focus:outline-none focus:ring-2 focus:ring-sherman-600 cursor-pointer"
+              className="p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-all shadow-xs hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-sherman-600 cursor-pointer"
               aria-label="Next client logos"
               title="Next logos"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         </div>
 
         {/* Carousel Container */}
         <div
-          className="relative group"
+          className="relative group py-2"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           onTouchStart={() => setIsPaused(true)}
           onTouchEnd={() => setIsPaused(false)}
         >
           {/* Subtle edge fade overlays for infinite scroll effect */}
-          <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-10 sm:w-20 bg-gradient-to-r from-slate-50/90 to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-10 sm:w-20 bg-gradient-to-l from-slate-50/90 to-transparent z-10 pointer-events-none" />
 
           {/* Continuous Horizontal Scrolling Track */}
           <div
             ref={scrollContainerRef}
-            className="flex items-center gap-6 sm:gap-10 md:gap-12 overflow-x-auto py-2 scrollbar-none select-none"
+            className="flex items-center gap-4 sm:gap-6 md:gap-8 overflow-x-auto py-3 scrollbar-none select-none"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
@@ -110,20 +110,20 @@ export default function WeProudlyServeCarousel({
           >
             {/* Animated Marquee Flex Strip */}
             <div
-              className={`flex items-center gap-6 sm:gap-10 md:gap-12 flex-shrink-0 animate-marquee ${
+              className={`flex items-center gap-4 sm:gap-6 md:gap-8 flex-shrink-0 animate-marquee ${
                 isHovered || isPaused ? 'pause-animation' : ''
               }`}
             >
               {duplicatedClients.map((client, idx) => {
                 const logoSrc = getImageUrl(client.logo, DEFAULT_CLIENT_PLACEHOLDER);
 
-                const logoElement = (
-                  <div className="brand-logo-container flex items-center justify-center min-h-[80px] sm:min-h-[90px] px-4 sm:px-6 py-3 sm:py-4 bg-white rounded-lg transition-transform duration-200 hover:scale-105">
+                const cardInner = (
+                  <div className="w-full h-full flex items-center justify-center p-3.5 sm:p-4 md:p-5">
                     <img
                       src={logoSrc}
-                      alt={client.name || 'Client Logo'}
+                      alt={client.name ? `${client.name} Logo` : 'Client Logo'}
                       loading="lazy"
-                      className="brand-logo w-auto max-w-[130px] sm:max-w-[150px] md:max-w-[165px] h-[48px] sm:h-[58px] md:h-[65px] object-contain object-center"
+                      className="w-auto h-auto max-w-[145px] sm:max-w-[175px] md:max-w-[200px] lg:max-w-[220px] max-h-[58px] sm:max-h-[72px] md:max-h-[82px] lg:max-h-[90px] object-contain object-center transition-transform duration-300 group-hover/card:scale-105"
                       style={{
                         opacity: 1,
                         filter: 'none',
@@ -142,23 +142,28 @@ export default function WeProudlyServeCarousel({
                   </div>
                 );
 
+                const cardClasses =
+                  'group/card relative flex items-center justify-center w-[170px] sm:w-[205px] md:w-[235px] lg:w-[255px] h-[95px] sm:h-[110px] md:h-[122px] lg:h-[130px] bg-white rounded-xl border border-slate-200/90 shadow-2xs hover:shadow-md hover:border-sherman-400/80 transition-all duration-300';
+
                 return (
                   <div
                     key={`${client.id}-${idx}`}
-                    className="flex-shrink-0 flex items-center justify-center min-w-[130px] sm:min-w-[160px] md:min-w-[180px]"
+                    className="flex-shrink-0 flex items-center justify-center"
+                    title={client.name}
                   >
                     {client.websiteUrl ? (
                       <a
                         href={client.websiteUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="cursor-pointer focus:outline-none focus:ring-2 focus:ring-sherman-500 rounded-lg inline-block"
-                        title={client.name}
+                        className={`${cardClasses} cursor-pointer`}
+                        aria-label={`Visit ${client.name} website`}
                       >
-                        {logoElement}
+                        {cardInner}
+                        <span className="sr-only">{client.name}</span>
                       </a>
                     ) : (
-                      <div title={client.name}>{logoElement}</div>
+                      <div className={cardClasses}>{cardInner}</div>
                     )}
                   </div>
                 );
@@ -178,17 +183,18 @@ export default function WeProudlyServeCarousel({
           }
         }
         .animate-marquee {
-          animation: marquee 35s linear infinite;
+          animation: marquee 38s linear infinite;
         }
         .pause-animation {
           animation-play-state: paused;
         }
         @media (max-width: 640px) {
           .animate-marquee {
-            animation-duration: 25s;
+            animation-duration: 28s;
           }
         }
       `}</style>
     </section>
   );
 }
+

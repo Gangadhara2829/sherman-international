@@ -47,7 +47,7 @@ export interface NormalizedWebsiteContent {
 // 1. DEFAULT AUTHENTIC CONTENT FROM ORIGINAL SHERMAN INDIA WEBSITE
 export const DEFAULT_HERO_CONTENT: NormalizedHeroContent = {
   title: 'Engineering Solutions for Process & Industrial Applications',
-  subtitle: 'Strategic Channel Partner for Global Industrial Instrumentation & Equipment in India',
+  subtitle: 'Strategic Channel Partner & Engineering Solutions Provider',
   content:
     'Sherman International (P) Limited provides specialized technical representation, system integration, customization, and turnkey project execution across flow measurement, combustion control, dynamic balancing machines, and railway electrification.',
   image: '/images/original/home_1c3412a0fec94c2197c237bebf94896a.jpg',
@@ -55,7 +55,7 @@ export const DEFAULT_HERO_CONTENT: NormalizedHeroContent = {
 
 export const DEFAULT_ABOUT_CONTENT: NormalizedAboutContent = {
   title: 'About Sherman',
-  subtitle: 'Trusted Engineering Solutions Provider in India',
+  subtitle: 'Trusted Engineering Solutions Provider',
   content: `Sherman International Pvt. Ltd. is a trusted and forward-looking engineering solutions provider, acting as a strategic bridge between leading global manufacturers and the Indian industry. We specialize in representation, distribution, system integration, customization, and turnkey project execution across a wide range of industrial applications.
 
 Backed by a team of experienced and innovative technocrats, we work in close collaboration with our principals to deliver high-performance solutions that enhance operational efficiency, reduce costs, and ensure the highest standards of safety and reliability. Our expertise extends beyond product supply to include technical consulting, system optimization, auditing, and after-sales support—enabling our customers to achieve sustainable and long-term success.
@@ -76,12 +76,12 @@ export const DEFAULT_VISION_MISSION: NormalizedVisionMission = {
 export const DEFAULT_CONTACT_INFO: NormalizedContactInfo = {
   company: 'Sherman International (P) Limited',
   title: 'Corporate Headquarters & Registered Office',
-  address: 'E-105, (10th Floor) Himalaya House, 23, Kasturba Gandhi Marg, New Delhi 110001, India',
-  phone: '011 23320623',
-  phoneSecondary: '+91 98100 24890',
+  address: 'D-94, 9th Floor, Himalaya House, 23 K.G. Marg, New Delhi – 110001',
+  phone: '+91 90151 22200',
+  phoneSecondary: '+91 90151 22200',
   email: 'admin@sherman-india.com',
   workingHours: 'Monday to Friday: 9:30 AM – 6:00 PM IST',
-  whatsapp: '+919810024890',
+  whatsapp: '+919015122200',
   googleMapsUrl:
     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.2694119939527!2d77.2215682!3d28.6217148!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd369a48be43%3A0x6b4beec892e85093!2sHimalaya%20House%2C%2023%2C%20Kasturba%20Gandhi%20Marg%2C%20Connaught%20Lane%2C%20Barakhamba%2C%20New%20Delhi%2C%20Delhi%20110001!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin',
 };

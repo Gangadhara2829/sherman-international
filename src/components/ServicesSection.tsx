@@ -48,39 +48,27 @@ export default function ServicesSection({ services }: ServicesSectionProps) {
           {services.map((service) => (
             <div
               key={service.id}
-              className="group rounded-lg border border-slate-200 bg-white overflow-hidden hover:border-slate-300 hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+              className="group rounded-lg border border-slate-200 bg-white overflow-hidden hover:border-slate-300 hover:shadow-md transition-all duration-300 flex flex-col"
             >
-              <div>
-                <div className="relative w-full aspect-[16/10] bg-slate-100 overflow-hidden border-b border-slate-100">
-                  <SafeImage
-                    src={service.image || '/images/services/installation-and-commissioning.jpg'}
-                    fallbackSrc={DEFAULT_SERVICE_PLACEHOLDER}
-                    alt={service.name}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-103"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                </div>
-
-                <div className="p-6 space-y-2.5">
-                  <h3 className="font-bold text-base text-navy group-hover:text-sherman-800 transition-colors">
-                    {service.name}
-                  </h3>
-
-                  <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
-                    {service.shortDescription}
-                  </p>
-                </div>
+              <div className="relative w-full aspect-[16/10] bg-slate-100 overflow-hidden border-b border-slate-100">
+                <SafeImage
+                  src={service.image || '/images/services/installation-and-commissioning.jpg'}
+                  fallbackSrc={DEFAULT_SERVICE_PLACEHOLDER}
+                  alt={service.name}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-103"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
               </div>
 
-              <div className="px-6 pb-6 pt-2">
-                <Link
-                  href={`/services/${service.slug}`}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-navy hover:text-sherman-700 transition-colors"
-                >
-                  <span>View Details</span>
-                  <ArrowRight className="w-3 h-3 transition-transform duration-200 group-hover:translate-x-1" />
-                </Link>
+              <div className="p-6 space-y-2.5 flex-1 flex flex-col justify-start">
+                <h3 className="font-bold text-base text-navy transition-colors">
+                  {service.name}
+                </h3>
+
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  {service.shortDescription}
+                </p>
               </div>
             </div>
           ))}
@@ -89,3 +77,4 @@ export default function ServicesSection({ services }: ServicesSectionProps) {
     </section>
   );
 }
+

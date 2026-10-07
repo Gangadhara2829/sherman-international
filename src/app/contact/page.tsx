@@ -8,7 +8,7 @@ import { normalizeContactInfo, DEFAULT_CONTACT_INFO } from '@/lib/content';
 export const metadata = {
   title: 'Contact Us | Sherman International (P) Limited',
   description:
-    'Contact Sherman International in New Delhi for technical queries, product sizing, datasheets, and techno-commercial proposals.',
+    'Contact Sherman International in New Delhi for technical queries, product specifications, datasheets, and techno-commercial proposals.',
 };
 
 export const revalidate = 60;
@@ -45,7 +45,7 @@ export default async function ContactPage() {
               Get in Touch with Sherman International
             </h1>
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-              Our application technocrats and commercial team are ready to assist with sizing calculations, product datasheets, and EPC documentation.
+              Our application technocrats and commercial team are ready to assist with technical calculations, product datasheets, and EPC documentation.
             </p>
           </div>
         </div>
@@ -137,7 +137,7 @@ export default async function ContactPage() {
               {/* WhatsApp Fast Button */}
               <div className="pt-4 border-t border-slate-100">
                 <a
-                  href={`https://wa.me/${cleanWhatsApp || '919810024890'}?text=Hello%20Sherman%20International,%20I%20have%20an%20engineering%20enquiry.`}
+                  href={`https://wa.me/${cleanWhatsApp || '919015122200'}?text=Hello%20Sherman%20International,%20I%20have%20an%20engineering%20enquiry.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"

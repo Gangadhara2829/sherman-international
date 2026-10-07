@@ -1,12 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
-import { ChevronRight, ExternalLink, ArrowRight } from 'lucide-react';
+import { ChevronRight, ArrowRight } from 'lucide-react';
 import prisma from '@/lib/prisma';
 
 export const metadata = {
   title: 'Represented Global Principals & Brands | Sherman International',
   description:
-    'Sherman International is the trusted strategic channel partner in India for world-class OEMs including ZEECO, Scherzinger, CEMB, Metrix, and Mid-West Instrument.',
+    'Sherman International is the trusted strategic channel partner for world-class OEMs including ZEECO, Scherzinger, CEMB, Metrix, and Mid-West Instrument.',
 };
 
 export default async function BrandsPage() {
@@ -36,13 +36,13 @@ export default async function BrandsPage() {
         {/* Page Header */}
         <div className="mb-10 space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-slate-300 bg-white text-slate-700 text-xs font-bold uppercase tracking-wider">
-            <span>Principals & Partners</span>
+            <span>Principals &amp; Partners</span>
           </div>
           <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-slate-900">
             Global Engineering Brands Represented by Sherman
           </h1>
           <p className="text-sm sm:text-base text-slate-600 max-w-3xl leading-relaxed">
-            We act as a strategic bridge in India, representing world-class manufacturers in flow measurement, process switches, combustion technology, fluid control, vibration analysis, and high-precision balancing machinery.
+            We act as a strategic bridge, representing world-class manufacturers in flow measurement, process switches, combustion technology, fluid control, vibration analysis, and high-precision balancing machinery.
           </p>
         </div>
 
@@ -58,22 +58,11 @@ export default async function BrandsPage() {
                   <h3 className="font-display font-bold text-xl text-slate-900 group-hover:text-navy transition-colors">
                     {brand.name}
                   </h3>
-                  {brand.websiteUrl && (
-                    <a
-                      href={brand.websiteUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-1.5 rounded bg-slate-50 text-slate-400 hover:text-navy hover:bg-slate-100 transition-colors"
-                      title="Visit OEM Website"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                  )}
                 </div>
 
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                   {brand.description ||
-                    'Internationally certified OEM engineering solutions distributed across the Indian industrial market.'}
+                    'Internationally certified OEM engineering solutions distributed across the industrial market.'}
                 </p>
 
                 {brand.products.length > 0 && (
@@ -115,4 +104,5 @@ export default async function BrandsPage() {
     </div>
   );
 }
+
 

@@ -90,7 +90,7 @@ export default async function IndustryDetailPage({ params }: IndustryDetailPageP
                 </li>
                 <li className="flex items-start gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-1 flex-shrink-0" />
-                  <span>Experienced technocrats ready for technical consultation, sizing, and integration.</span>
+                  <span>Experienced technocrats ready for technical consultation, engineering, and integration.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-1 flex-shrink-0" />

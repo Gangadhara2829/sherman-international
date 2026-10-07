@@ -204,7 +204,7 @@ export default async function AdminDashboardPage() {
               Recent Customer Enquiries
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Quotations and sizing requests received directly from the website
+              Quotations and technical enquiries received directly from the website
             </p>
           </div>
 

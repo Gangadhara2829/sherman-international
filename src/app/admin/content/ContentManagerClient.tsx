@@ -342,7 +342,7 @@ export default function ContentManagerClient({
               value={heroSubtitle}
               onChange={(e) => setHeroSubtitle(e.target.value)}
               className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600"
-              placeholder="e.g., Strategic Channel Partner for Global Industrial Instrumentation & Equipment in India"
+              placeholder="e.g., Strategic Channel Partner & Engineering Solutions Provider"
             />
           </div>
 
@@ -633,7 +633,7 @@ export default function ContentManagerClient({
               value={contactAddress}
               onChange={(e) => setContactAddress(e.target.value)}
               className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600 leading-relaxed"
-              placeholder="e.g., E-105, (10th Floor) Himalaya House, 23, Kasturba Gandhi Marg, New Delhi 110001, India"
+              placeholder="e.g., D-94, 9th Floor, Himalaya House, 23 K.G. Marg, New Delhi – 110001"
             />
           </div>
 
@@ -649,7 +649,7 @@ export default function ContentManagerClient({
                 value={contactPhone}
                 onChange={(e) => setContactPhone(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600"
-                placeholder="011 23320623 or +91 11 4350 1200"
+                placeholder="+91 90151 22200"
               />
             </div>
 
@@ -663,7 +663,7 @@ export default function ContentManagerClient({
                 value={contactPhoneSec}
                 onChange={(e) => setContactPhoneSec(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600"
-                placeholder="+91 98100 24890"
+                placeholder="+91 90151 22200"
               />
             </div>
           </div>
@@ -694,7 +694,7 @@ export default function ContentManagerClient({
                 value={contactWhatsApp}
                 onChange={(e) => setContactWhatsApp(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600"
-                placeholder="+919810024890"
+                placeholder="+919015122200"
               />
             </div>
           </div>

@@ -32,7 +32,6 @@ export default function Footer() {
     { label: 'Industries Served', href: '/industries' },
     { label: 'Engineering Services', href: '/services' },
     { label: 'Contact Us', href: '/contact' },
-    { label: 'Admin Login', href: '/admin/login' },
   ];
 
   return (
@@ -52,7 +51,7 @@ export default function Footer() {
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-sherman-400 mt-0.5 flex-shrink-0" />
                 <span>
-                  E-105, (10th Floor) Himalaya House, 23, K.G. Marg, New Delhi 110001, India
+                  D-94, 9th Floor, Himalaya House, 23 K.G. Marg, New Delhi – 110001
                 </span>
               </div>
               <div className="flex items-center gap-2.5">
@@ -66,8 +65,8 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-sherman-400 flex-shrink-0" />
-                <a href="tel:+911143501200" className="hover:text-white transition-colors">
-                  +91 11 4350 1200 / +91 98100 24890
+                <a href="tel:+919015122200" className="hover:text-white transition-colors">
+                  +91 90151 22200
                 </a>
               </div>
             </div>
@@ -143,10 +142,6 @@ export default function Footer() {
             <span>ISO Compliant Solutions</span>
             <span>•</span>
             <span>New Delhi, India</span>
-            <span>•</span>
-            <Link href="/admin/login" className="hover:text-slate-300 transition-colors">
-              Admin Portal
-            </Link>
           </div>
         </div>
       </div>

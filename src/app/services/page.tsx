@@ -59,10 +59,7 @@ export default async function ServicesPage() {
                     isEven ? 'lg:order-2' : 'lg:order-1'
                   }`}
                 >
-                  <Link
-                    href={`/services/${service.slug}`}
-                    className="group block relative w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shadow-xs"
-                  >
+                  <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shadow-xs">
                     <SafeImage
                       src={
                         service.image ||
@@ -72,10 +69,10 @@ export default async function ServicesPage() {
                       alt={service.name}
                       fill
                       priority={index < 2}
-                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-103"
+                      className="object-cover"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                     />
-                  </Link>
+                  </div>
                 </div>
 
                 {/* CONTENT COLUMN */}
@@ -91,16 +88,6 @@ export default async function ServicesPage() {
                   <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
                     {service.fullDescription || service.shortDescription}
                   </p>
-
-                  <div className="pt-2">
-                    <Link
-                      href={`/services/${service.slug}`}
-                      className="group inline-flex items-center gap-2 text-sm font-bold text-navy hover:text-sherman-700 transition-colors"
-                    >
-                      <span>View Details</span>
-                      <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
-                    </Link>
-                  </div>
                 </div>
               </section>
             );

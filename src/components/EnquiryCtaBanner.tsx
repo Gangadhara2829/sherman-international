@@ -17,7 +17,7 @@ export default function EnquiryCtaBanner() {
               Direct Technical Desk
             </span>
             <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-white">
-              Have an Engineering Requirement or Sizing Consultation?
+              Have an Engineering Requirement?
             </h2>
             <p className="text-sm text-slate-300 leading-relaxed">
               Connect directly with Sherman International's application technocrats for technical datasheets, techno-commercial proposals, and EPC project documentation.

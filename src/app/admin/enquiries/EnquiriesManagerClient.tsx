@@ -102,7 +102,7 @@ export default function EnquiriesManagerClient({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-bold text-slate-900">
-            Customer Quotation & Sizing Enquiries
+            Customer Quotation & Technical Enquiries
           </h1>
           <p className="text-xs text-slate-500 mt-1">
             All leads submitted across product pages, category catalogs, and the contact desk.
@@ -291,7 +291,7 @@ export default function EnquiriesManagerClient({
               {/* Message */}
               <div className="space-y-2">
                 <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
-                  Customer Message / Sizing Scope:
+                  Customer Message / Enquiry Scope:
                 </span>
                 <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-line">
                   {selectedEnquiry.message}

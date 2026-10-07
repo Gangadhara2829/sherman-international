@@ -209,7 +209,7 @@ export default function ContactForm() {
             rows={4}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Describe your technical requirements, sizing specifications, timeline, or requested documents..."
+            placeholder="Describe your technical requirements, specifications, timeline, or requested documents..."
             className="w-full pl-9 pr-3 py-2.5 text-xs sm:text-sm border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none"
           />
         </div>

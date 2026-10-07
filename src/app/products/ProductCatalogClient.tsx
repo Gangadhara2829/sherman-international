@@ -141,7 +141,7 @@ export default function ProductCatalogClient({
             No products match your filter
           </h3>
           <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
-            Try adjusting your search criteria or contact our engineering desk for specific unlisted models or custom sizing requirements.
+            Try adjusting your search criteria or contact our engineering desk for specific unlisted models or custom technical requirements.
           </p>
           <button
             onClick={() => openEnquiry()}
@@ -204,7 +204,7 @@ export default function ProductCatalogClient({
                   href={`/products/${prod.category?.slug || 'all'}/${prod.slug}`}
                   className="flex-1 text-center py-2 px-3 rounded bg-slate-50 hover:bg-slate-100 text-slate-800 text-xs font-semibold border border-slate-200 transition-colors flex items-center justify-center gap-1.5"
                 >
-                  <span>Technical Specs</span>
+                  <span>View Details</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
 

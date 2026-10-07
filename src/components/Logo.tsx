@@ -12,48 +12,52 @@ export default function Logo({ variant = 'dark', className = '', showText = true
   const isLight = variant === 'light';
 
   return (
-    <Link href="/" className={`inline-flex items-center gap-3 group select-none ${className}`}>
-      {/* Official Sherman Emblem Logo */}
-      <div className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center p-1 rounded-xl bg-white shadow-xs border border-slate-200/80 group-hover:scale-105 transition-transform duration-300">
+    <Link href="/" className={`inline-flex items-center gap-3.5 group select-none ${className}`}>
+      {/* Official Sherman Emblem Logo - Clean Integration without box container */}
+      <div className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
         <Image
           src="/images/sherman-logo.png"
-          alt="Sherman International (P) Limited Logo"
-          width={36}
-          height={36}
-          className="object-contain w-auto h-auto max-h-8 max-w-8"
+          alt="Sherman International (P) Limited"
+          width={40}
+          height={40}
+          className="object-contain w-auto h-10 max-h-10 max-w-10"
           priority
         />
       </div>
 
       {showText && (
-        <div className="flex flex-col">
-          <div className="flex items-center gap-1.5">
+        <div className="flex flex-col justify-center leading-none">
+          <div className="flex items-start">
             <span
-              className={`font-display font-extrabold text-xl tracking-tight leading-none ${
-                isLight ? 'text-white' : 'text-slate-900'
+              className={`font-black text-[22px] tracking-tight leading-none uppercase ${
+                isLight ? 'text-white' : 'text-[#061d43]'
               }`}
+              style={{
+                fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                fontWeight: 900,
+                letterSpacing: '-0.015em',
+              }}
             >
               SHERMAN
             </span>
             <span
-              className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ${
-                isLight
-                  ? 'bg-white/15 text-amber-300 border border-white/20'
-                  : 'bg-sherman-50 text-sherman-800 border border-sherman-200'
+              className={`text-[8px] font-black leading-none ml-0.5 mt-[-1px] ${
+                isLight ? 'text-slate-300' : 'text-[#061d43]'
               }`}
             >
-              India
+              TM
             </span>
           </div>
           <span
-            className={`text-[9.5px] font-semibold tracking-wider uppercase ${
-              isLight ? 'text-slate-300' : 'text-slate-500'
+            className={`text-[9px] font-extrabold tracking-[0.16em] uppercase mt-1 ${
+              isLight ? 'text-slate-300' : 'text-slate-600'
             }`}
           >
-            International (P) Limited
+            INTERNATIONAL (P) LIMITED
           </span>
         </div>
       )}
     </Link>
   );
 }
+

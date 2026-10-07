@@ -36,7 +36,7 @@ export default async function AdminProductsPage() {
             Products & Instrumentation
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Add, update, reorder, and configure technical specifications for products.
+            Add, update, reorder, and manage industrial product listings.
           </p>
         </div>
 
