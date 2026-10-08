@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { getAdminSession } from '@/lib/auth';
 import { slugify } from '@/lib/utils';
@@ -28,6 +29,12 @@ export async function PATCH(
       data: updateData,
     });
 
+    try {
+      revalidatePath('/');
+      revalidatePath('/products');
+      revalidatePath('/admin/categories');
+    } catch (e) {}
+
     return NextResponse.json({ success: true, category });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update category' }, { status: 500 });
@@ -47,6 +54,13 @@ export async function DELETE(
 
   try {
     await prisma.productCategory.delete({ where: { id: params.id } });
+
+    try {
+      revalidatePath('/');
+      revalidatePath('/products');
+      revalidatePath('/admin/categories');
+    } catch (e) {}
+
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete category' }, { status: 500 });

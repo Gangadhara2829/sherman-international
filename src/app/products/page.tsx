@@ -9,6 +9,8 @@ export const metadata = {
   description:
     'Explore our comprehensive catalog of flow measurement devices, process switches, dynamic balancing machines, vibration monitors, and combustion control equipment.',
 };
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function ProductsPage() {
   const [categories, brands, products] = await Promise.all([

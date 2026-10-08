@@ -35,6 +35,8 @@ export async function generateMetadata({ params }: ProductDetailPageProps) {
       `Product details and engineering information for ${product.name} supplied by Sherman International.`,
   };
 }
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const product = await prisma.product.findUnique({

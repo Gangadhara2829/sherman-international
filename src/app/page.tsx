@@ -8,9 +8,8 @@ import WeProudlyServeCarousel from '@/components/WeProudlyServeCarousel';
 import WhyShermanSection from '@/components/WhyShermanSection';
 import EnquiryCtaBanner from '@/components/EnquiryCtaBanner';
 import { normalizeHeroContent, normalizeAboutContent } from '@/lib/content';
-
-export const revalidate = 60; // Revalidate dynamic content every minute
-
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 export default async function HomePage() {
   // Fetch dynamic content and entities from database
   const [heroRecord, aboutRecord, services, industries, proudlyServedClients] =

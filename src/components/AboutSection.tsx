@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
+import FormattedContent from '@/components/FormattedContent';
 
 interface AboutSectionProps {
   title?: string;
@@ -20,7 +21,6 @@ Backed by a team of experienced and innovative technocrats, we work in close col
 With a proven track record, Sherman has built strong partnerships with some of India's most prominent industrial organizations. Our commitment to quality, precision, and customer satisfaction makes us a preferred partner for advanced engineering solutions.`;
 
   const displayContent = content || defaultContent;
-  const paragraphs = displayContent.split('\n\n').filter((p) => p.trim().length > 0);
 
   return (
     <section className="py-16 sm:py-20 bg-white border-b border-slate-200">
@@ -43,12 +43,8 @@ With a proven track record, Sherman has built strong partnerships with some of I
           </div>
 
           {/* Narrative Content with Strong Corporate Readability */}
-          <div className="space-y-5 text-sm sm:text-base text-slate-600 leading-relaxed text-left">
-            {paragraphs.map((para, i) => (
-              <p key={i} className="text-slate-700 font-normal">
-                {para}
-              </p>
-            ))}
+          <div className="text-sm sm:text-base leading-relaxed text-left">
+            <FormattedContent content={displayContent} variant="light" />
           </div>
 
           {/* Corporate Action Link */}

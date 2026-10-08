@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { getAdminSession } from '@/lib/auth';
 import { slugify } from '@/lib/utils';
@@ -32,6 +33,12 @@ export async function PATCH(
       data: updateData,
     });
 
+    try {
+      revalidatePath('/');
+      revalidatePath('/services');
+      revalidatePath('/admin/services');
+    } catch (e) {}
+
     return NextResponse.json({ success: true, service });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update service' }, { status: 500 });
@@ -51,6 +58,13 @@ export async function DELETE(
 
   try {
     await prisma.service.delete({ where: { id: params.id } });
+
+    try {
+      revalidatePath('/');
+      revalidatePath('/services');
+      revalidatePath('/admin/services');
+    } catch (e) {}
+
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete service' }, { status: 500 });

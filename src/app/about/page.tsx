@@ -19,6 +19,7 @@ import {
 import prisma from '@/lib/prisma';
 import SafeImage from '@/components/SafeImage';
 import EnquiryCtaBanner from '@/components/EnquiryCtaBanner';
+import FormattedContent, { isRichHtml } from '@/components/FormattedContent';
 import {
   normalizeAboutContent,
   normalizeVisionMission,
@@ -30,6 +31,8 @@ export const metadata = {
   description:
     'Learn about Sherman International, our history as a strategic bridge for global OEMs, our Vision & Mission, and our technocrat engineering team.',
 };
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function AboutPage() {
   const [aboutRecord, visionRecord, historyRecord] = await Promise.all([
@@ -141,24 +144,32 @@ export default async function AboutPage() {
               </div>
             </div>
 
-            {/* Approved Narrative Paragraphs */}
-            <div className="space-y-5 text-slate-200 text-sm sm:text-base leading-relaxed font-normal">
-              <p>{para1}</p>
-              <p>{para2}</p>
-            </div>
-
-            {/* Trusted Track Record Section */}
-            <div className="p-6 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs space-y-2.5">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-amber-400 flex-shrink-0" />
-                <h2 className="font-bold text-base sm:text-lg text-white">
-                  Trusted Track Record &amp; Industrial Partnerships
-                </h2>
+            {/* Narrative Content: Render rich HTML formatting if present, or legacy 3-paragraph split */}
+            {isRichHtml(about.content) ? (
+              <div className="text-slate-200 text-sm sm:text-base leading-relaxed">
+                <FormattedContent content={about.content} variant="dark" />
               </div>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-                {para3}
-              </p>
-            </div>
+            ) : (
+              <>
+                <div className="space-y-5 text-slate-200 text-sm sm:text-base leading-relaxed font-normal">
+                  <p>{para1}</p>
+                  <p>{para2}</p>
+                </div>
+
+                {/* Trusted Track Record Section */}
+                <div className="p-6 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs space-y-2.5">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                    <h2 className="font-bold text-base sm:text-lg text-white">
+                      Trusted Track Record &amp; Industrial Partnerships
+                    </h2>
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                    {para3}
+                  </p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>

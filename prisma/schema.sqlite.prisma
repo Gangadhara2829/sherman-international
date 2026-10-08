@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ProductCategory {
+  id           String    @id @default(uuid())
+  name         String
+  slug         String    @unique
+  description  String?
+  image        String?
+  icon         String?
+  displayOrder Int       @default(0)
+  isActive     Boolean   @default(true)
+  products     Product[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Brand {
+  id           String    @id @default(uuid())
+  name         String
+  slug         String    @unique
+  logo         String?
+  websiteUrl   String?
+  description  String?
+  displayOrder Int       @default(0)
+  isActive     Boolean   @default(true)
+  products     Product[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Product {
+  id               String          @id @default(uuid())
+  name             String
+  slug             String          @unique
+  categoryId       String
+  category         ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  brandId          String?
+  brand            Brand?          @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  shortDescription String?
+  description      String
+  specifications   String?         // JSON string or structured key-values
+  features         String?         // JSON array of strings
+  applications     String?         // JSON array of strings
+  image            String?
+  additionalImages String?         // JSON array of URLs
+  isPublished      Boolean         @default(true)
+  isFeatured       Boolean         @default(false)
+  displayOrder     Int             @default(0)
+  enquiries        Enquiry[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+model Industry {
+  id              String   @id @default(uuid())
+  name            String
+  slug            String   @unique
+  description     String
+  fullDescription String?
+  image           String?
+  icon            String?
+  isPublished     Boolean  @default(true)
+  displayOrder    Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Service {
+  id               String   @id @default(uuid())
+  name             String
+  slug             String   @unique
+  shortDescription String
+  fullDescription  String?
+  capabilities     String?  // JSON array of bullet points
+  image            String?
+  icon             String?
+  isPublished      Boolean  @default(true)
+  displayOrder     Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model SiteContent {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  section   String
+  title     String?
+  subtitle  String?
+  content   String?
+  metadata  String?  // JSON
+  image     String?
+  updatedAt DateTime @updatedAt
+}
+
+model Enquiry {
+  id           String   @id @default(uuid())
+  name         String
+  company      String?
+  email        String
+  phone        String?
+  productId    String?
+  product      Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productName  String?
+  categoryName String?
+  message      String
+  status       String   @default("NEW") // NEW, IN_PROGRESS, CONTACTED, CLOSED
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model MediaAsset {
+  id        String   @id @default(uuid())
+  fileName  String
+  fileUrl   String
+  fileType  String
+  fileSize  Int?
+  altText   String?
+  createdAt DateTime @default(now())
+}
+
+model ProudlyServedClient {
+  id           String   @id @default(uuid())
+  name         String
+  logo         String
+  websiteUrl   String?
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { getAdminSession } from '@/lib/auth';
 
@@ -46,6 +47,11 @@ export async function PUT(
       },
     });
 
+    try {
+      revalidatePath('/');
+      revalidatePath('/admin/clients');
+    } catch (e) {}
+
     return NextResponse.json(updated);
   } catch (error: any) {
     console.error('Error updating client:', error);
@@ -68,6 +74,11 @@ export async function DELETE(
     await prisma.proudlyServedClient.delete({
       where: { id: params.id },
     });
+
+    try {
+      revalidatePath('/');
+      revalidatePath('/admin/clients');
+    } catch (e) {}
 
     return NextResponse.json({ success: true, message: 'Client deleted successfully' });
   } catch (error: any) {

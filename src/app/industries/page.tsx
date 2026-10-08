@@ -11,6 +11,8 @@ export const metadata = {
   description:
     'Sherman International provides certified instrumentation, flame detection, dynamic balancing, and fluid control solutions across Oil & Gas, Power, Petrochemicals, Steel, and Railways in India.',
 };
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function IndustriesPage() {
   const industries = await prisma.industry.findMany({

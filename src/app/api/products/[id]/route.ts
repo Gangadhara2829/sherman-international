@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { getAdminSession } from '@/lib/auth';
 import { slugify } from '@/lib/utils';
@@ -76,6 +77,12 @@ export async function PATCH(
       data: updateData,
     });
 
+    try {
+      revalidatePath('/');
+      revalidatePath('/products');
+      revalidatePath('/admin/products');
+    } catch (e) {}
+
     return NextResponse.json({ success: true, product });
   } catch (error: any) {
     console.error('Error updating product:', error);
@@ -98,6 +105,13 @@ export async function DELETE(
     await prisma.product.delete({
       where: { id: params.id },
     });
+
+    try {
+      revalidatePath('/');
+      revalidatePath('/products');
+      revalidatePath('/admin/products');
+    } catch (e) {}
+
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });

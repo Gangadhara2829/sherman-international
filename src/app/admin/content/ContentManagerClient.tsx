@@ -18,6 +18,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import ImageUpload from '@/components/admin/ImageUpload';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 import {
   normalizeWebsiteContent,
   NormalizedWebsiteContent,
@@ -436,19 +437,13 @@ export default function ContentManagerClient({
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
-              Full Narrative Text (Paragraphs separated by blank lines)
-            </label>
-            <textarea
-              rows={8}
-              required
-              value={aboutContent}
-              onChange={(e) => setAboutContent(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600 leading-relaxed font-sans"
-              placeholder="Detailed company background and capabilities..."
-            />
-          </div>
+          <RichTextEditor
+            label="Full Narrative Text"
+            helperText="Format your company background, headings, bold statements, bullet lists, alignments, and font sizes. Changes save directly to the database."
+            value={aboutContent}
+            onChange={(val) => setAboutContent(val)}
+            minHeight="320px"
+          />
 
           <div>
             <ImageUpload

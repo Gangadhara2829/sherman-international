@@ -11,6 +11,8 @@ export const metadata = {
   description:
     'Comprehensive engineering services including sales & marketing representation, installation & commissioning, system integration, after-sales support, project management, and turnkey EPC contracting.',
 };
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function ServicesPage() {
   const services = await prisma.service.findMany({

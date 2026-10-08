@@ -9,7 +9,10 @@
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
-    "db:seed": "node prisma/seed.js"
+    "db:seed": "node prisma/seed.js",
+    "db:switch:postgres": "node scripts/switch_db.js postgresql",
+    "db:switch:sqlite": "node scripts/switch_db.js sqlite",
+    "db:migrate:postgres": "node scripts/migrate_to_postgres.js"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

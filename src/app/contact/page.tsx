@@ -10,8 +10,8 @@ export const metadata = {
   description:
     'Contact Sherman International in New Delhi for technical queries, product specifications, datasheets, and techno-commercial proposals.',
 };
-
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function ContactPage() {
   const contactRecord = await prisma.siteContent.findUnique({

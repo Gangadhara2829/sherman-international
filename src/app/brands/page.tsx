@@ -8,6 +8,8 @@ export const metadata = {
   description:
     'Sherman International is the trusted strategic channel partner for world-class OEMs including ZEECO, Scherzinger, CEMB, Metrix, and Mid-West Instrument.',
 };
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function BrandsPage() {
   const brands = await prisma.brand.findMany({

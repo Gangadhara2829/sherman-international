@@ -4,32 +4,15 @@ import { PrismaClient } from '@prisma/client';
 
 function getDatabaseUrl(): string {
   const envUrl = process.env.DATABASE_URL;
-  if (envUrl && !envUrl.startsWith('file:')) {
+
+  // 1. Direct connection to Persistent Cloud PostgreSQL (Neon, Vercel Postgres, Supabase)
+  if (envUrl && (envUrl.startsWith('postgresql://') || envUrl.startsWith('postgres://'))) {
     return envUrl;
   }
 
-  // Potential database source locations in Next.js / Vercel bundle
+  // 2. Local SQLite database file path resolution
   const prismaDbPath = path.join(process.cwd(), 'prisma', 'dev.db');
   const rootDbPath = path.join(process.cwd(), 'dev.db');
-
-  // In Vercel serverless environment, filesystem is read-only except /tmp
-  const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
-  
-  if (isServerless) {
-    const tmpDbPath = path.join('/tmp', 'dev.db');
-    try {
-      if (!fs.existsSync(tmpDbPath)) {
-        if (fs.existsSync(prismaDbPath)) {
-          fs.copyFileSync(prismaDbPath, tmpDbPath);
-        } else if (fs.existsSync(rootDbPath)) {
-          fs.copyFileSync(rootDbPath, tmpDbPath);
-        }
-      }
-      return `file:${tmpDbPath}`;
-    } catch (e) {
-      console.warn('Could not copy db to /tmp:', e);
-    }
-  }
 
   if (fs.existsSync(prismaDbPath)) {
     return `file:${prismaDbPath}`;

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { getAdminSession } from '@/lib/auth';
 import { normalizeWebsiteContent, parseContentValue } from '@/lib/content';
@@ -134,6 +135,16 @@ export async function POST(request: Request) {
           ...payload,
         },
       }).catch((e) => console.warn('Mirror content sync warning:', e));
+    }
+
+    // Invalidate stale caches immediately across public and admin pages
+    try {
+      revalidatePath('/');
+      revalidatePath('/about');
+      revalidatePath('/contact');
+      revalidatePath('/admin/content');
+    } catch (e) {
+      console.warn('Revalidation notice:', e);
     }
 
     return NextResponse.json({ success: true, siteContent });

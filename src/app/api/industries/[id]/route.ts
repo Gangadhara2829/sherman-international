@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { getAdminSession } from '@/lib/auth';
 import { slugify } from '@/lib/utils';
@@ -29,6 +30,12 @@ export async function PATCH(
       data: updateData,
     });
 
+    try {
+      revalidatePath('/');
+      revalidatePath('/industries');
+      revalidatePath('/admin/industries');
+    } catch (e) {}
+
     return NextResponse.json({ success: true, industry });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update industry' }, { status: 500 });
@@ -48,6 +55,13 @@ export async function DELETE(
 
   try {
     await prisma.industry.delete({ where: { id: params.id } });
+
+    try {
+      revalidatePath('/');
+      revalidatePath('/industries');
+      revalidatePath('/admin/industries');
+    } catch (e) {}
+
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete industry' }, { status: 500 });
