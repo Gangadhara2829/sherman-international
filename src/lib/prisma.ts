@@ -3,14 +3,24 @@ import fs from 'fs';
 import { PrismaClient } from '@prisma/client';
 
 function getDatabaseUrl(): string {
-  const envUrl = process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL;
-
   // 1. Direct connection to Persistent Cloud PostgreSQL (Neon, Vercel Postgres, Supabase)
-  if (envUrl && (envUrl.startsWith('postgresql://') || envUrl.startsWith('postgres://'))) {
-    return envUrl;
+  const candidateUrls = [
+    process.env.POSTGRES_PRISMA_URL,
+    process.env.POSTGRES_URL,
+    process.env.POSTGRES_DATABASE_URL,
+    process.env.DATABASE_URL,
+  ];
+
+  for (const url of candidateUrls) {
+    if (url && typeof url === 'string' && url.trim().length > 0) {
+      const trimmed = url.trim();
+      if (trimmed.startsWith('postgresql://') || trimmed.startsWith('postgres://')) {
+        return trimmed;
+      }
+    }
   }
 
-  // 2. Local SQLite database file path resolution
+  // 2. Local SQLite database file path resolution (Local Development only)
   const prismaDbPath = path.join(process.cwd(), 'prisma', 'dev.db');
   const rootDbPath = path.join(process.cwd(), 'dev.db');
 
@@ -21,7 +31,7 @@ function getDatabaseUrl(): string {
     return `file:${rootDbPath}`;
   }
 
-  return envUrl || `file:${prismaDbPath}`;
+  return process.env.DATABASE_URL || `file:${prismaDbPath}`;
 }
 
 const resolvedDbUrl = getDatabaseUrl();

@@ -10,27 +10,48 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const dbUrl = process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL || '';
-const isPostgres = dbUrl.startsWith('postgresql://') || dbUrl.startsWith('postgres://');
+const candidateUrls = [
+  process.env.POSTGRES_PRISMA_URL,
+  process.env.POSTGRES_URL,
+  process.env.POSTGRES_DATABASE_URL,
+  process.env.DATABASE_URL,
+];
+
+let activePostgresUrl = null;
+for (const url of candidateUrls) {
+  if (url && typeof url === 'string' && url.trim().length > 0) {
+    const trimmed = url.trim();
+    if (trimmed.startsWith('postgresql://') || trimmed.startsWith('postgres://')) {
+      activePostgresUrl = trimmed;
+      break;
+    }
+  }
+}
+
+const isPostgres = Boolean(activePostgresUrl);
 const isVercel = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+
+if (isPostgres) {
+  // Set process.env.DATABASE_URL for Prisma CLI operations
+  process.env.DATABASE_URL = activePostgresUrl;
+}
 
 console.log('--- Preparing Sherman Prisma Build ---');
 console.log(`Environment: ${isVercel ? 'Vercel Serverless Production' : 'Local / Custom Server'}`);
-console.log(`Database Protocol: ${isPostgres ? 'PostgreSQL (Persistent Cloud)' : 'SQLite (Local File)'}`);
+console.log(`Database Protocol: ${isPostgres ? 'PostgreSQL (Persistent Cloud Neon)' : 'SQLite (Local Development File)'}`);
 
 if (isVercel && !isPostgres) {
-  console.warn('\n========================================================================');
-  console.warn('⚠️  CRITICAL NOTICE: VERCEL PRODUCTION DATABASE PERSISTENCE');
-  console.warn('========================================================================');
-  console.warn('Your Vercel deployment is currently configured with:');
-  console.warn(`DATABASE_URL="${dbUrl}"`);
-  console.warn('\nLocal SQLite files ("file:./dev.db") CANNOT persist in Vercel serverless.');
-  console.warn('Changes made in the Admin panel will be lost on container restart or redeploy.');
-  console.warn('\nTO ENSURE PERSISTENCE ON VERCEL:');
-  console.warn('1. Create a persistent PostgreSQL database (e.g. Neon Serverless Postgres or Vercel Postgres).');
-  console.warn('2. In Vercel Project Settings → Environment Variables, add:');
-  console.warn('   DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require"');
-  console.warn('========================================================================\n');
+  console.error('\n========================================================================');
+  console.error('❌ FATAL BUILD ERROR: VERCEL PRODUCTION DATABASE NOT CONFIGURED');
+  console.error('========================================================================');
+  console.error('Vercel production build cannot use local SQLite ("file:./dev.db").');
+  console.error('SQLite databases are ephemeral in serverless functions and will cause data loss.');
+  console.error('\nREQUIRED ACTION:');
+  console.error('Ensure POSTGRES_PRISMA_URL or DATABASE_URL in Vercel Project Settings →');
+  console.error('Environment Variables is populated with your Neon PostgreSQL connection string:');
+  console.error('postgresql://[user]:[password]@[host]/[dbname]?sslmode=require');
+  console.error('========================================================================\n');
+  process.exit(1);
 }
 
 const targetProvider = isPostgres ? 'postgresql' : 'sqlite';

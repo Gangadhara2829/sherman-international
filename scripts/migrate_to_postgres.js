@@ -17,13 +17,42 @@ async function migrateData() {
     process.exit(1);
   }
 
-  const raw = fs.readFileSync(backupFile, 'utf8');
-  const data = JSON.parse(raw);
+  const candidateUrls = [
+    process.env.POSTGRES_PRISMA_URL,
+    process.env.POSTGRES_URL,
+    process.env.POSTGRES_DATABASE_URL,
+    process.env.DATABASE_URL,
+  ];
 
-  const prisma = new PrismaClient();
+  let targetUrl = null;
+  for (const url of candidateUrls) {
+    if (url && typeof url === 'string' && url.trim().length > 0) {
+      const trimmed = url.trim();
+      if (trimmed.startsWith('postgresql://') || trimmed.startsWith('postgres://')) {
+        targetUrl = trimmed;
+        break;
+      }
+    }
+  }
+
+  if (!targetUrl) {
+    console.error('Error: No PostgreSQL connection string found in POSTGRES_PRISMA_URL or DATABASE_URL!');
+    console.error('Please provide a valid PostgreSQL connection string:');
+    console.error('DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require" node scripts/migrate_to_postgres.js');
+    process.exit(1);
+  }
+
+  process.env.DATABASE_URL = targetUrl;
+  const prisma = new PrismaClient({
+    datasources: {
+      db: {
+        url: targetUrl,
+      },
+    },
+  });
 
   console.log('--- Starting Migration to Persistent Production Database ---');
-  console.log(`Target DATABASE_URL: ${process.env.DATABASE_URL ? (process.env.DATABASE_URL.startsWith('postgres') ? 'PostgreSQL (Persistent Cloud)' : process.env.DATABASE_URL) : 'Not defined'}`);
+  console.log('Target Protocol: PostgreSQL (Persistent Neon Cloud)');
 
   try {
     // 1. Admin Users
