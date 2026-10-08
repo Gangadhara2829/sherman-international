@@ -2,7 +2,6 @@ import React from 'react';
 import prisma from '@/lib/prisma';
 import HeroSection from '@/components/HeroSection';
 import AboutSection from '@/components/AboutSection';
-import CategoryGrid from '@/components/CategoryGrid';
 import ServicesSection from '@/components/ServicesSection';
 import IndustriesSection from '@/components/IndustriesSection';
 import WeProudlyServeCarousel from '@/components/WeProudlyServeCarousel';
@@ -14,16 +13,11 @@ export const revalidate = 60; // Revalidate dynamic content every minute
 
 export default async function HomePage() {
   // Fetch dynamic content and entities from database
-  const [heroRecord, aboutRecord, categories, services, industries, proudlyServedClients] =
+  const [heroRecord, aboutRecord, services, industries, proudlyServedClients] =
     await Promise.all([
       prisma.siteContent.findUnique({ where: { key: 'hero_section' } }),
       prisma.siteContent.findFirst({
         where: { key: { in: ['about_company', 'about_overview'] } },
-      }),
-      prisma.productCategory.findMany({
-        where: { isActive: true },
-        include: { _count: { select: { products: true } } },
-        orderBy: { displayOrder: 'asc' },
       }),
       prisma.service.findMany({
         where: { isPublished: true },
@@ -59,22 +53,19 @@ export default async function HomePage() {
         content={aboutContent.content}
       />
 
-      {/* 3. PRODUCT CATEGORIES */}
-      <CategoryGrid categories={categories} />
-
-      {/* 4. SERVICES */}
+      {/* 3. SERVICES */}
       <ServicesSection services={services} />
 
-      {/* 5. INDUSTRIES */}
+      {/* 4. INDUSTRIES */}
       <IndustriesSection industries={industries} />
 
-      {/* 6. WE PROUDLY SERVE - CLIENT LOGOS CAROUSEL */}
+      {/* 5. WE PROUDLY SERVE - CLIENT LOGOS CAROUSEL */}
       <WeProudlyServeCarousel clients={proudlyServedClients} />
 
-      {/* 7. WHY SHERMAN / TRUST SECTION */}
+      {/* 6. WHY SHERMAN / TRUST SECTION */}
       <WhyShermanSection />
 
-      {/* 8. ENQUIRY CTA BANNER */}
+      {/* 7. ENQUIRY CTA BANNER */}
       <EnquiryCtaBanner />
     </div>
   );
