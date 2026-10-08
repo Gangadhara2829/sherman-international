@@ -194,70 +194,70 @@ export default async function AboutPage() {
         {/* SECTION 4: Our Vision & Our Mission (Distinct Relevant Industrial Backgrounds) */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
           {/* OUR VISION */}
-          <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-md p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-4 group min-h-[320px]">
+          <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-lg p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-4 group min-h-[340px] bg-[#031127]">
             {/* Background Image */}
             <SafeImage
               src="/images/about/vision-bg.jpg"
               fallbackSrc="/images/why-sherman/system-integration.jpg"
               alt="Sherman Industrial Vision - Future & Engineering Growth"
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-            {/* Dark Navy Overlay for Readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#061d43]/92 via-[#061d43]/88 to-[#061d43]/95 pointer-events-none" />
+            {/* Enhanced High-Contrast Dark Navy Overlay for Maximum Text Readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#031229]/95 via-[#041836]/90 to-[#020b19]/98 pointer-events-none" />
 
             {/* Content Container */}
-            <div className="relative z-10 space-y-3.5">
+            <div className="relative z-10 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-white/10 text-amber-400 rounded-lg border border-white/15 backdrop-blur-xs">
+                <div className="p-2.5 bg-amber-500/15 text-amber-400 rounded-xl border border-amber-400/30 backdrop-blur-md shadow-xs">
                   <Eye className="w-5 h-5 text-amber-400" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-amber-400">
+                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-amber-400 drop-shadow-xs">
                     Guiding Principle
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight drop-shadow-sm">
                     Our Vision
                   </h3>
                 </div>
               </div>
-              <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-normal">
+              <p className="text-sm sm:text-base text-slate-100 font-medium leading-relaxed drop-shadow-xs">
                 {visionMission.vision}
               </p>
             </div>
           </div>
 
           {/* OUR MISSION */}
-          <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-md p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-4 group min-h-[320px]">
+          <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-lg p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-4 group min-h-[340px] bg-[#031127]">
             {/* Background Image */}
             <SafeImage
               src="/images/about/mission-bg.jpg"
               fallbackSrc="/images/why-sherman/technocrat-depth.jpg"
               alt="Sherman Industrial Mission - Engineering Solutions & Customer Execution"
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-            {/* Dark Navy Overlay for Readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#061d43]/92 via-[#061d43]/88 to-[#061d43]/95 pointer-events-none" />
+            {/* Enhanced High-Contrast Dark Navy Overlay for Maximum Text Readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#031229]/95 via-[#041836]/90 to-[#020b19]/98 pointer-events-none" />
 
             {/* Content Container */}
-            <div className="relative z-10 space-y-3.5">
+            <div className="relative z-10 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-white/10 text-amber-400 rounded-lg border border-white/15 backdrop-blur-xs">
+                <div className="p-2.5 bg-amber-500/15 text-amber-400 rounded-xl border border-amber-400/30 backdrop-blur-md shadow-xs">
                   <Target className="w-5 h-5 text-amber-400" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-amber-400">
+                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-amber-400 drop-shadow-xs">
                     Core Commitment
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight drop-shadow-sm">
                     Our Mission
                   </h3>
                 </div>
               </div>
-              <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-normal">
+              <p className="text-sm sm:text-base text-slate-100 font-medium leading-relaxed drop-shadow-xs">
                 {visionMission.mission}
               </p>
             </div>
