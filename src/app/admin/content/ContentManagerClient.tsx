@@ -372,7 +372,8 @@ export default function ContentManagerClient({
             />
           </div>
 
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-end">
+          <div className="sticky bottom-0 bg-white/95 backdrop-blur-md pt-3 pb-1 border-t border-slate-100 flex items-center justify-between z-10">
+            <span className="text-[11px] text-slate-400">Hero section saves directly to database</span>
             <button
               type="submit"
               disabled={savingKey === 'hero_section'}
@@ -461,7 +462,8 @@ export default function ContentManagerClient({
             />
           </div>
 
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-end">
+          <div className="sticky bottom-0 bg-white/95 backdrop-blur-md pt-3 pb-1 border-t border-slate-100 flex items-center justify-between z-10">
+            <span className="text-[11px] text-slate-400">About section saves directly to database</span>
             <button
               type="submit"
               disabled={savingKey === 'about_company'}
@@ -557,7 +559,8 @@ export default function ContentManagerClient({
             />
           </div>
 
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-end">
+          <div className="sticky bottom-0 bg-white/95 backdrop-blur-md pt-3 pb-1 border-t border-slate-100 flex items-center justify-between z-10">
+            <span className="text-[11px] text-slate-400">Vision &amp; Mission statements save directly to database</span>
             <button
               type="submit"
               disabled={savingKey === 'vision_mission'}
@@ -728,7 +731,8 @@ export default function ContentManagerClient({
             </div>
           </div>
 
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-end">
+          <div className="sticky bottom-0 bg-white/95 backdrop-blur-md pt-3 pb-1 border-t border-slate-100 flex items-center justify-between z-10">
+            <span className="text-[11px] text-slate-400">Contact information saves directly to database</span>
             <button
               type="submit"
               disabled={savingKey === 'contact_info'}

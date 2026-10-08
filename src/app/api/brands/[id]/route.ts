@@ -34,6 +34,8 @@ export async function PATCH(
   }
 }
 
+export const PUT = PATCH;
+
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }

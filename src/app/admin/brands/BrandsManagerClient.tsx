@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Plus, Edit, Trash2, ExternalLink, Building2, X, Loader2 } from 'lucide-react';
+import { Plus, Edit, Trash2, ExternalLink, Building2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { slugify } from '@/lib/utils';
 import ImageUpload from '@/components/admin/ImageUpload';
+import AdminModal from '@/components/admin/AdminModal';
 import { DEFAULT_BRAND_PLACEHOLDER, getImageUrl } from '@/lib/image';
 
 interface BrandItem {
@@ -39,6 +40,13 @@ export default function BrandsManagerClient({
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successToast, setSuccessToast] = useState<string | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
+
+  const showToast = (msg: string) => {
+    setSuccessToast(msg);
+    setTimeout(() => setSuccessToast(null), 4000);
+  };
 
   const openAdd = () => {
     setEditingId(null);
@@ -50,6 +58,7 @@ export default function BrandsManagerClient({
     setDisplayOrder(brands.length + 1);
     setIsActive(true);
     setError(null);
+    setIsDirty(false);
     setShowModal(true);
   };
 
@@ -63,6 +72,7 @@ export default function BrandsManagerClient({
     setDisplayOrder(brand.displayOrder);
     setIsActive(brand.isActive);
     setError(null);
+    setIsDirty(false);
     setShowModal(true);
   };
 
@@ -77,11 +87,11 @@ export default function BrandsManagerClient({
     setError(null);
 
     const payload = {
-      name,
-      slug: slug || slugify(name),
-      logo,
-      websiteUrl,
-      description,
+      name: name.trim(),
+      slug: slug ? slugify(slug) : slugify(name),
+      logo: logo.trim(),
+      websiteUrl: websiteUrl ? websiteUrl.trim() : null,
+      description: description.trim(),
       displayOrder: Number(displayOrder),
       isActive,
     };
@@ -99,14 +109,20 @@ export default function BrandsManagerClient({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to save brand');
 
+      // Correctly extract brand entity from response
+      const savedBrand = data.brand || data;
+
       if (editingId) {
         setBrands((prev) =>
-          prev.map((b) => (b.id === editingId ? { ...b, ...data } : b))
+          prev.map((b) => (b.id === editingId ? { ...b, ...savedBrand } : b))
         );
+        showToast(`Brand "${savedBrand.name}" updated successfully!`);
       } else {
-        setBrands((prev) => [...prev, data]);
+        setBrands((prev) => [...prev, savedBrand]);
+        showToast(`Brand "${savedBrand.name}" created successfully!`);
       }
 
+      setIsDirty(false);
       setShowModal(false);
     } catch (err: any) {
       setError(err.message || 'An error occurred while saving.');
@@ -126,18 +142,47 @@ export default function BrandsManagerClient({
 
     try {
       const res = await fetch(`/api/brands/${id}`, { method: 'DELETE' });
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.error || 'Failed to delete brand');
       }
       setBrands((prev) => prev.filter((b) => b.id !== id));
+      showToast(`Brand "${brandName}" deleted successfully.`);
     } catch (err: any) {
       alert(err.message || 'Error deleting brand');
     }
   };
 
+  const handleToggleStatus = async (brand: BrandItem) => {
+    const updatedStatus = !brand.isActive;
+    try {
+      const res = await fetch(`/api/brands/${brand.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: updatedStatus }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to update brand status');
+
+      setBrands((prev) =>
+        prev.map((b) => (b.id === brand.id ? { ...b, isActive: updatedStatus } : b))
+      );
+      showToast(`Brand "${brand.name}" is now ${updatedStatus ? 'Active' : 'Hidden'}.`);
+    } catch (err: any) {
+      alert(err.message || 'Failed to update status');
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {/* Toast Notification */}
+      {successToast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-emerald-700 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+          <span>{successToast}</span>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs">
         <div>
@@ -146,7 +191,7 @@ export default function BrandsManagerClient({
             <span>OEM Partnerships</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
-            Global Brands & Principals
+            Global Brands &amp; Principals
           </h1>
           <p className="text-xs text-slate-500 mt-1">
             Manage represented global OEM brands, manufacturers, logos, and partner catalogs.
@@ -219,15 +264,17 @@ export default function BrandsManagerClient({
                 </td>
 
                 <td className="py-3 px-4 text-center whitespace-nowrap">
-                  <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                  <button
+                    onClick={() => handleToggleStatus(brand)}
+                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors ${
                       brand.isActive
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        : 'bg-slate-100 text-slate-500 border border-slate-200'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
+                        : 'bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200'
                     }`}
+                    title="Click to toggle visibility"
                   >
                     {brand.isActive ? 'Active' : 'Hidden'}
-                  </span>
+                  </button>
                 </td>
 
                 <td className="py-3 px-4 text-center font-mono font-bold text-slate-600">
@@ -256,6 +303,7 @@ export default function BrandsManagerClient({
                     <button
                       onClick={() => handleDelete(brand.id, brand.name)}
                       className="p-1.5 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-50"
+                      title="Delete Brand"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -268,142 +316,136 @@ export default function BrandsManagerClient({
       </div>
 
       {/* Brand Add/Edit Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-slate-900 text-base">
-                {editingId ? 'Edit Brand Details' : 'Add New OEM Brand'}
-              </h3>
-              <button
-                onClick={() => setShowModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+      <AdminModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title={editingId ? 'Edit Brand Details' : 'Add New OEM Brand'}
+        subtitle="Manage brand identity, official manufacturer logo, website, and portfolio summary."
+        isEditing={Boolean(editingId)}
+        loading={loading}
+        error={error}
+        isDirty={isDirty}
+        onSubmit={handleSave}
+        saveLabel={editingId ? 'Save Changes' : 'Create Brand'}
+        savingLabel={editingId ? 'Saving Changes...' : 'Creating Brand...'}
+      >
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            Brand / OEM Name <span className="text-rose-500">*</span>
+          </label>
+          <input
+            type="text"
+            required
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setIsDirty(true);
+              if (!editingId) setSlug(slugify(e.target.value));
+            }}
+            placeholder="e.g. ZEECO"
+            className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none"
+          />
+        </div>
 
-            {error && (
-              <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl">
-                {error}
-              </div>
-            )}
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            URL Slug
+          </label>
+          <input
+            type="text"
+            value={slug}
+            onChange={(e) => {
+              setSlug(e.target.value);
+              setIsDirty(true);
+            }}
+            placeholder="zeeco"
+            className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none"
+          />
+        </div>
 
-            <form onSubmit={handleSave} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Brand / OEM Name <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    if (!editingId) setSlug(slugify(e.target.value));
-                  }}
-                  placeholder="e.g. ZEECO"
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 outline-none"
-                />
-              </div>
+        {/* Brand Logo Upload */}
+        <ImageUpload
+          value={logo}
+          onChange={(url) => {
+            setLogo(url);
+            setIsDirty(true);
+          }}
+          folder="brands"
+          label="Brand Logo"
+          helperText="Upload official partner logo (SVG, PNG, WEBP, JPG)"
+          fallback={DEFAULT_BRAND_PLACEHOLDER}
+        />
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  URL Slug
-                </label>
-                <input
-                  type="text"
-                  value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
-                  placeholder="zeeco"
-                  className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:border-sherman-600 outline-none"
-                />
-              </div>
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            Brand Website URL (Optional)
+          </label>
+          <input
+            type="url"
+            value={websiteUrl}
+            onChange={(e) => {
+              setWebsiteUrl(e.target.value);
+              setIsDirty(true);
+            }}
+            placeholder="https://www.zeeco.com"
+            className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none"
+          />
+        </div>
 
-              {/* Brand Logo Upload */}
-              <ImageUpload
-                value={logo}
-                onChange={(url) => setLogo(url)}
-                folder="brands"
-                label="Brand Logo"
-                helperText="Upload official partner logo (SVG, PNG, WEBP, JPG)"
-                fallback={DEFAULT_BRAND_PLACEHOLDER}
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            Description
+          </label>
+          <textarea
+            rows={3}
+            value={description}
+            onChange={(e) => {
+              setDescription(e.target.value);
+              setIsDirty(true);
+            }}
+            placeholder="Overview of partner capabilities and technical domains..."
+            className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 pt-1">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Display Order
+            </label>
+            <input
+              type="number"
+              value={displayOrder}
+              onChange={(e) => {
+                setDisplayOrder(Number(e.target.value));
+                setIsDirty(true);
+              }}
+              className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none font-mono"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Visibility Status
+            </label>
+            <div className="flex items-center gap-2 pt-2">
+              <input
+                type="checkbox"
+                id="brandActive"
+                checked={isActive}
+                onChange={(e) => {
+                  setIsActive(e.target.checked);
+                  setIsDirty(true);
+                }}
+                className="w-4 h-4 rounded text-sherman-600 focus:ring-sherman-500 cursor-pointer"
               />
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Brand Website URL (Optional)
-                </label>
-                <input
-                  type="url"
-                  value={websiteUrl}
-                  onChange={(e) => setWebsiteUrl(e.target.value)}
-                  placeholder="https://www.zeeco.com"
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Description
-                </label>
-                <textarea
-                  rows={3}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Overview of partner capabilities and technical domains..."
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 outline-none"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Display Order
-                  </label>
-                  <input
-                    type="number"
-                    value={displayOrder}
-                    onChange={(e) => setDisplayOrder(Number(e.target.value))}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 outline-none"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2 pt-6">
-                  <input
-                    type="checkbox"
-                    id="brandActive"
-                    checked={isActive}
-                    onChange={(e) => setIsActive(e.target.checked)}
-                    className="w-4 h-4 rounded text-sherman-600"
-                  />
-                  <label htmlFor="brandActive" className="text-xs font-bold text-slate-800">
-                    Active on Website
-                  </label>
-                </div>
-              </div>
-
-              <div className="pt-4 flex justify-end gap-2 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-5 py-2 rounded-xl bg-sherman-700 hover:bg-sherman-800 text-white font-bold text-xs transition-all flex items-center gap-1.5"
-                >
-                  {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  <span>{editingId ? 'Save Changes' : 'Create Brand'}</span>
-                </button>
-              </div>
-            </form>
+              <label htmlFor="brandActive" className="text-xs font-bold text-slate-800 cursor-pointer">
+                Active on Website
+              </label>
+            </div>
           </div>
         </div>
-      )}
+      </AdminModal>
     </div>
   );
 }

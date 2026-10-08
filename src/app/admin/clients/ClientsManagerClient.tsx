@@ -16,6 +16,7 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import ImageUpload from '@/components/admin/ImageUpload';
+import AdminModal from '@/components/admin/AdminModal';
 import { DEFAULT_CLIENT_PLACEHOLDER, getImageUrl } from '@/lib/image';
 
 interface ClientItem {
@@ -49,6 +50,7 @@ export default function ClientsManagerClient({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
 
   const openAdd = () => {
     setEditingId(null);
@@ -58,6 +60,7 @@ export default function ClientsManagerClient({
     setDisplayOrder(clients.length + 1);
     setIsActive(true);
     setError(null);
+    setIsDirty(false);
     setShowModal(true);
   };
 
@@ -69,6 +72,7 @@ export default function ClientsManagerClient({
     setDisplayOrder(client.displayOrder);
     setIsActive(client.isActive);
     setError(null);
+    setIsDirty(false);
     setShowModal(true);
   };
 
@@ -425,131 +429,110 @@ export default function ClientsManagerClient({
       </div>
 
       {/* Add / Edit Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-              <div className="flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-sherman-700" />
-                <h3 className="font-bold text-slate-900 text-base">
-                  {editingId ? 'Edit Client Logo' : 'Add Client Brand / Logo'}
-                </h3>
-              </div>
-              <button
-                onClick={() => setShowModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+      <AdminModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title={editingId ? 'Edit Client Logo' : 'Add Client Brand / Logo'}
+        subtitle="Manage organization branding displayed in the continuous scrolling 'We Proudly Serve' carousel."
+        isEditing={Boolean(editingId)}
+        loading={loading}
+        error={error}
+        isDirty={isDirty}
+        onSubmit={handleSave}
+        saveLabel={editingId ? 'Save Changes' : 'Add to Carousel'}
+        savingLabel={editingId ? 'Saving Changes...' : 'Adding to Carousel...'}
+      >
+        {/* Company Name */}
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            Brand / Organization Name <span className="text-rose-600">*</span>
+          </label>
+          <input
+            type="text"
+            required
+            placeholder="e.g., IndianOil, ONGC, NTPC Limited"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setIsDirty(true);
+            }}
+            className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600"
+          />
+        </div>
+
+        {/* Logo Upload */}
+        <ImageUpload
+          value={logo}
+          onChange={(url) => {
+            setLogo(url);
+            setIsDirty(true);
+          }}
+          folder="clients"
+          label="Client / Organization Logo"
+          helperText="Upload official client logo (PNG, SVG, WEBP, JPG)"
+          required={true}
+          fallback={DEFAULT_CLIENT_PLACEHOLDER}
+        />
+
+        {/* Website URL */}
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            Website URL (Optional)
+          </label>
+          <input
+            type="url"
+            placeholder="https://iocl.com"
+            value={websiteUrl}
+            onChange={(e) => {
+              setWebsiteUrl(e.target.value);
+              setIsDirty(true);
+            }}
+            className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600"
+          />
+        </div>
+
+        {/* Display Order & Active status */}
+        <div className="grid grid-cols-2 gap-4 pt-1">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Display Order
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={displayOrder}
+              onChange={(e) => {
+                setDisplayOrder(Number(e.target.value));
+                setIsDirty(true);
+              }}
+              className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600 font-mono"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Visibility Status
+            </label>
+            <div className="mt-1 flex items-center gap-2 pt-1">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isActive}
+                  onChange={(e) => {
+                    setIsActive(e.target.checked);
+                    setIsDirty(true);
+                  }}
+                  className="sr-only peer"
+                />
+                <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                <span className="ml-2 text-xs font-bold text-slate-700">
+                  {isActive ? 'Active' : 'Disabled'}
+                </span>
+              </label>
             </div>
-
-            {/* Modal Body */}
-            <form onSubmit={handleSave} className="p-6 space-y-4">
-              {error && (
-                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 font-medium">
-                  {error}
-                </div>
-              )}
-
-              {/* Company Name */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Brand / Organization Name <span className="text-rose-600">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g., IndianOil, ONGC, NTPC Limited"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600"
-                />
-              </div>
-
-              {/* Logo Upload */}
-              <ImageUpload
-                value={logo}
-                onChange={(url) => setLogo(url)}
-                folder="clients"
-                label="Client / Organization Logo"
-                helperText="Upload official client logo (PNG, SVG, WEBP, JPG)"
-                required={true}
-                fallback={DEFAULT_CLIENT_PLACEHOLDER}
-              />
-
-              {/* Website URL */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Website URL (Optional)
-                </label>
-                <input
-                  type="url"
-                  placeholder="https://iocl.com"
-                  value={websiteUrl}
-                  onChange={(e) => setWebsiteUrl(e.target.value)}
-                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600"
-                />
-              </div>
-
-              {/* Display Order & Active status */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Display Order
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={displayOrder}
-                    onChange={(e) => setDisplayOrder(Number(e.target.value))}
-                    className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600 font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Visibility Status
-                  </label>
-                  <div className="mt-1 flex items-center gap-2">
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={isActive}
-                        onChange={(e) => setIsActive(e.target.checked)}
-                        className="sr-only peer"
-                      />
-                      <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
-                      <span className="ml-2 text-xs font-bold text-slate-700">
-                        {isActive ? 'Active' : 'Disabled'}
-                      </span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Modal Footer */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-sherman-700 hover:bg-sherman-800 text-white text-xs font-bold transition-colors disabled:opacity-50"
-                >
-                  {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  <span>{editingId ? 'Save Changes' : 'Add to Carousel'}</span>
-                </button>
-              </div>
-            </form>
           </div>
         </div>
-      )}
+      </AdminModal>
     </div>
   );
 }

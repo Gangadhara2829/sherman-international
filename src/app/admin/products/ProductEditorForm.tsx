@@ -504,6 +504,34 @@ export default function ProductEditorForm({
           </div>
         </div>
       </div>
+
+      {/* Sticky Bottom Action Bar */}
+      <div className="sticky bottom-0 z-30 -mx-4 sm:-mx-8 px-4 sm:px-8 py-3.5 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-lg flex items-center justify-between gap-3">
+        <Link
+          href="/admin/products"
+          className="px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-colors"
+        >
+          Cancel &amp; Return
+        </Link>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-sherman-700 hover:bg-sherman-800 text-white font-bold text-xs shadow-md transition-all active:scale-95 disabled:opacity-70 cursor-pointer"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Saving Product...</span>
+            </>
+          ) : (
+            <>
+              <Save className="w-4 h-4" />
+              <span>{isEditing ? 'Update Product' : 'Save & Publish'}</span>
+            </>
+          )}
+        </button>
+      </div>
     </form>
   );
 }

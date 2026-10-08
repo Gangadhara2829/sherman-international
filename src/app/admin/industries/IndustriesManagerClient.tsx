@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Plus, Edit, Trash2, ExternalLink, Factory, X, Loader2 } from 'lucide-react';
+import { Plus, Edit, Trash2, ExternalLink, Factory, CheckCircle2 } from 'lucide-react';
 import { slugify } from '@/lib/utils';
 import ImageUpload from '@/components/admin/ImageUpload';
+import AdminModal from '@/components/admin/AdminModal';
 import { DEFAULT_INDUSTRY_PLACEHOLDER, getImageUrl } from '@/lib/image';
 
 interface IndustryItem {
@@ -38,6 +39,13 @@ export default function IndustriesManagerClient({
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successToast, setSuccessToast] = useState<string | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
+
+  const showToast = (msg: string) => {
+    setSuccessToast(msg);
+    setTimeout(() => setSuccessToast(null), 4000);
+  };
 
   const openAdd = () => {
     setEditingId(null);
@@ -49,6 +57,7 @@ export default function IndustriesManagerClient({
     setDisplayOrder(industries.length + 1);
     setIsPublished(true);
     setError(null);
+    setIsDirty(false);
     setShowModal(true);
   };
 
@@ -62,13 +71,14 @@ export default function IndustriesManagerClient({
     setDisplayOrder(ind.displayOrder);
     setIsPublished(ind.isPublished);
     setError(null);
+    setIsDirty(false);
     setShowModal(true);
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !description.trim()) {
-      setError('Name and short description are required.');
+      setError('Name and short summary are required.');
       return;
     }
 
@@ -76,11 +86,11 @@ export default function IndustriesManagerClient({
     setError(null);
 
     const payload = {
-      name,
-      slug: slug || slugify(name),
-      description,
-      fullDescription,
-      image,
+      name: name.trim(),
+      slug: slug ? slugify(slug) : slugify(name),
+      description: description.trim(),
+      fullDescription: fullDescription.trim(),
+      image: image.trim(),
       displayOrder: Number(displayOrder),
       isPublished,
     };
@@ -98,14 +108,19 @@ export default function IndustriesManagerClient({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to save industry');
 
+      const savedIndustry = data.industry || data;
+
       if (editingId) {
         setIndustries((prev) =>
-          prev.map((i) => (i.id === editingId ? { ...i, ...data.industry } : i))
+          prev.map((i) => (i.id === editingId ? { ...i, ...savedIndustry } : i))
         );
+        showToast(`Industry "${savedIndustry.name}" updated successfully!`);
       } else {
-        setIndustries((prev) => [...prev, data.industry]);
+        setIndustries((prev) => [...prev, savedIndustry]);
+        showToast(`Industry "${savedIndustry.name}" created successfully!`);
       }
 
+      setIsDirty(false);
       setShowModal(false);
     } catch (err: any) {
       setError(err.message || 'An error occurred while saving.');
@@ -115,22 +130,51 @@ export default function IndustriesManagerClient({
   };
 
   const handleDelete = async (id: string, indName: string) => {
-    if (!window.confirm(`Are you sure you want to delete "${indName}"?`)) return;
+    if (!window.confirm(`Are you sure you want to delete "${indName}"? This action cannot be undone.`)) return;
 
     try {
       const res = await fetch(`/api/industries/${id}`, { method: 'DELETE' });
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.error || 'Failed to delete industry');
       }
       setIndustries((prev) => prev.filter((i) => i.id !== id));
+      showToast(`Industry "${indName}" deleted successfully.`);
     } catch (err: any) {
       alert(err.message || 'Error deleting industry');
     }
   };
 
+  const handleToggleStatus = async (ind: IndustryItem) => {
+    const updatedStatus = !ind.isPublished;
+    try {
+      const res = await fetch(`/api/industries/${ind.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isPublished: updatedStatus }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to update industry status');
+
+      setIndustries((prev) =>
+        prev.map((i) => (i.id === ind.id ? { ...i, isPublished: updatedStatus } : i))
+      );
+      showToast(`Industry "${ind.name}" is now ${updatedStatus ? 'Published' : 'Hidden'}.`);
+    } catch (err: any) {
+      alert(err.message || 'Failed to update status');
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {/* Toast Notification */}
+      {successToast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-emerald-700 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+          <span>{successToast}</span>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs">
         <div>
@@ -139,7 +183,7 @@ export default function IndustriesManagerClient({
             <span>Industrial Reach</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
-            Target Industries & Sectors
+            Target Industries &amp; Sectors
           </h1>
           <p className="text-xs text-slate-500 mt-1">
             Manage industry application sectors, background hero graphics, and case domains.
@@ -193,15 +237,17 @@ export default function IndustriesManagerClient({
                 </td>
 
                 <td className="py-3 px-4 text-center whitespace-nowrap">
-                  <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                  <button
+                    onClick={() => handleToggleStatus(ind)}
+                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors ${
                       ind.isPublished
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        : 'bg-slate-100 text-slate-500 border border-slate-200'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
+                        : 'bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200'
                     }`}
+                    title="Click to toggle published status"
                   >
                     {ind.isPublished ? 'Published' : 'Hidden'}
-                  </span>
+                  </button>
                 </td>
 
                 <td className="py-3 px-4 text-center font-mono font-bold text-slate-600">
@@ -230,6 +276,7 @@ export default function IndustriesManagerClient({
                     <button
                       onClick={() => handleDelete(ind.id, ind.name)}
                       className="p-1.5 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-50"
+                      title="Delete Industry"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -242,143 +289,137 @@ export default function IndustriesManagerClient({
       </div>
 
       {/* Industry Add/Edit Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-slate-900 text-base">
-                {editingId ? 'Edit Industry Sector' : 'Add New Industry Sector'}
-              </h3>
-              <button
-                onClick={() => setShowModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+      <AdminModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title={editingId ? 'Edit Industry Sector' : 'Add New Industry Sector'}
+        subtitle="Configure industry sector name, slug, overview summary, and graphic visual."
+        isEditing={Boolean(editingId)}
+        loading={loading}
+        error={error}
+        isDirty={isDirty}
+        onSubmit={handleSave}
+        saveLabel={editingId ? 'Save Changes' : 'Create Industry'}
+        savingLabel={editingId ? 'Saving Changes...' : 'Creating Industry...'}
+      >
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            Industry Sector Name <span className="text-rose-500">*</span>
+          </label>
+          <input
+            type="text"
+            required
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setIsDirty(true);
+              if (!editingId) setSlug(slugify(e.target.value));
+            }}
+            placeholder="e.g. Power Generation & Energy"
+            className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none"
+          />
+        </div>
 
-            {error && (
-              <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl">
-                {error}
-              </div>
-            )}
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            URL Slug
+          </label>
+          <input
+            type="text"
+            value={slug}
+            onChange={(e) => {
+              setSlug(e.target.value);
+              setIsDirty(true);
+            }}
+            placeholder="power-generation"
+            className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none"
+          />
+        </div>
 
-            <form onSubmit={handleSave} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Industry Sector Name <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    if (!editingId) setSlug(slugify(e.target.value));
-                  }}
-                  placeholder="e.g. Power Generation & Energy"
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 outline-none"
-                />
-              </div>
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            Short Summary <span className="text-rose-500">*</span>
+          </label>
+          <input
+            type="text"
+            required
+            value={description}
+            onChange={(e) => {
+              setDescription(e.target.value);
+              setIsDirty(true);
+            }}
+            placeholder="Summary for homepage industry card"
+            className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none"
+          />
+        </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  URL Slug
-                </label>
-                <input
-                  type="text"
-                  value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
-                  placeholder="power-generation"
-                  className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:border-sherman-600 outline-none"
-                />
-              </div>
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            Full Description &amp; Application Overview
+          </label>
+          <textarea
+            rows={3}
+            value={fullDescription}
+            onChange={(e) => {
+              setFullDescription(e.target.value);
+              setIsDirty(true);
+            }}
+            placeholder="Detailed explanation of solutions and equipment supplied to this sector..."
+            className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none"
+          />
+        </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Short Summary <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Summary for homepage industry card"
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 outline-none"
-                />
-              </div>
+        {/* Industry Image Upload */}
+        <ImageUpload
+          value={image}
+          onChange={(url) => {
+            setImage(url);
+            setIsDirty(true);
+          }}
+          folder="industries"
+          label="Sector Background Image"
+          helperText="Upload industrial sector photo (JPG, PNG, WEBP, SVG)"
+          fallback={DEFAULT_INDUSTRY_PLACEHOLDER}
+        />
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Full Description & Application Overview
-                </label>
-                <textarea
-                  rows={3}
-                  value={fullDescription}
-                  onChange={(e) => setFullDescription(e.target.value)}
-                  placeholder="Detailed explanation of solutions and equipment supplied to this sector..."
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 outline-none"
-                />
-              </div>
+        <div className="grid grid-cols-2 gap-4 pt-1">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Display Order
+            </label>
+            <input
+              type="number"
+              value={displayOrder}
+              onChange={(e) => {
+                setDisplayOrder(Number(e.target.value));
+                setIsDirty(true);
+              }}
+              className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none font-mono"
+            />
+          </div>
 
-              {/* Industry Image Upload */}
-              <ImageUpload
-                value={image}
-                onChange={(url) => setImage(url)}
-                folder="industries"
-                label="Sector Background Image"
-                helperText="Upload industrial sector photo (JPG, PNG, WEBP, SVG)"
-                fallback={DEFAULT_INDUSTRY_PLACEHOLDER}
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Publishing Status
+            </label>
+            <div className="flex items-center gap-2 pt-2">
+              <input
+                type="checkbox"
+                id="indPublished"
+                checked={isPublished}
+                onChange={(e) => {
+                  setIsPublished(e.target.checked);
+                  setIsDirty(true);
+                }}
+                className="w-4 h-4 rounded text-sherman-600 focus:ring-sherman-500 cursor-pointer"
               />
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Display Order
-                  </label>
-                  <input
-                    type="number"
-                    value={displayOrder}
-                    onChange={(e) => setDisplayOrder(Number(e.target.value))}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 outline-none"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2 pt-6">
-                  <input
-                    type="checkbox"
-                    id="indPublished"
-                    checked={isPublished}
-                    onChange={(e) => setIsPublished(e.target.checked)}
-                    className="w-4 h-4 rounded text-sherman-600"
-                  />
-                  <label htmlFor="indPublished" className="text-xs font-bold text-slate-800">
-                    Publish on Website
-                  </label>
-                </div>
-              </div>
-
-              <div className="pt-4 flex justify-end gap-2 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-5 py-2 rounded-xl bg-sherman-700 hover:bg-sherman-800 text-white font-bold text-xs transition-all flex items-center gap-1.5"
-                >
-                  {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  <span>{editingId ? 'Save Changes' : 'Create Industry'}</span>
-                </button>
-              </div>
-            </form>
+              <label htmlFor="indPublished" className="text-xs font-bold text-slate-800 cursor-pointer">
+                Publish on Website
+              </label>
+            </div>
           </div>
         </div>
-      )}
+      </AdminModal>
     </div>
   );
 }

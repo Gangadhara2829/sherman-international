@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Plus, Edit, Trash2, Eye, EyeOff, Layers, ExternalLink, Save, X, Loader2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, Layers, ExternalLink, CheckCircle2, AlertCircle } from 'lucide-react';
 import { slugify } from '@/lib/utils';
 import ImageUpload from '@/components/admin/ImageUpload';
+import AdminModal from '@/components/admin/AdminModal';
 import { DEFAULT_PRODUCT_PLACEHOLDER, getImageUrl } from '@/lib/image';
 
 interface CategoryItem {
@@ -25,7 +26,7 @@ export default function CategoriesManagerClient({
 }) {
   const [categories, setCategories] = useState<CategoryItem[]>(initialCategories);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   // Form states
   const [name, setName] = useState('');
@@ -37,6 +38,13 @@ export default function CategoriesManagerClient({
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successToast, setSuccessToast] = useState<string | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
+
+  const showToast = (msg: string) => {
+    setSuccessToast(msg);
+    setTimeout(() => setSuccessToast(null), 4000);
+  };
 
   const openAdd = () => {
     setEditingId(null);
@@ -47,7 +55,8 @@ export default function CategoriesManagerClient({
     setDisplayOrder(categories.length + 1);
     setIsActive(true);
     setError(null);
-    setShowAddModal(true);
+    setIsDirty(false);
+    setShowModal(true);
   };
 
   const openEdit = (cat: CategoryItem) => {
@@ -59,7 +68,8 @@ export default function CategoriesManagerClient({
     setDisplayOrder(cat.displayOrder);
     setIsActive(cat.isActive);
     setError(null);
-    setShowAddModal(true);
+    setIsDirty(false);
+    setShowModal(true);
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -73,10 +83,10 @@ export default function CategoriesManagerClient({
     setError(null);
 
     const payload = {
-      name,
-      slug: slug || slugify(name),
-      description,
-      image,
+      name: name.trim(),
+      slug: slug ? slugify(slug) : slugify(name),
+      description: description.trim(),
+      image: image.trim(),
       displayOrder: Number(displayOrder),
       isActive,
     };
@@ -94,42 +104,83 @@ export default function CategoriesManagerClient({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to save category');
 
+      const savedCategory = data.category || data;
+
       if (editingId) {
         setCategories((prev) =>
-          prev.map((c) => (c.id === editingId ? { ...c, ...data.category } : c))
+          prev.map((c) => (c.id === editingId ? { ...c, ...savedCategory } : c))
         );
+        showToast(`Category "${savedCategory.name}" updated successfully!`);
       } else {
-        setCategories((prev) => [...prev, data.category]);
+        setCategories((prev) => [...prev, savedCategory]);
+        showToast(`Category "${savedCategory.name}" created successfully!`);
       }
 
-      setShowAddModal(false);
+      setIsDirty(false);
+      setShowModal(false);
     } catch (err: any) {
-      setError(err.message || 'Error occurred');
+      setError(err.message || 'An error occurred while saving.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete category "${name}"? This may affect linked products.`)) {
+  const handleDelete = async (id: string, catName: string) => {
+    if (!confirm(`Are you sure you want to delete category "${catName}"? This action cannot be undone.`)) {
       return;
     }
 
     try {
       const res = await fetch(`/api/categories/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        setCategories((prev) => prev.filter((c) => c.id !== id));
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to delete category');
       }
-    } catch (err) {
-      console.error(err);
+      setCategories((prev) => prev.filter((c) => c.id !== id));
+      showToast(`Category "${catName}" deleted successfully.`);
+    } catch (err: any) {
+      alert(err.message || 'Error deleting category');
+    }
+  };
+
+  const handleToggleStatus = async (cat: CategoryItem) => {
+    const updatedStatus = !cat.isActive;
+    try {
+      const res = await fetch(`/api/categories/${cat.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: updatedStatus }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to update category status');
+
+      setCategories((prev) =>
+        prev.map((c) => (c.id === cat.id ? { ...c, isActive: updatedStatus } : c))
+      );
+      showToast(`Category "${cat.name}" is now ${updatedStatus ? 'Active' : 'Disabled'}.`);
+    } catch (err: any) {
+      alert(err.message || 'Failed to update status');
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Toast Notification */}
+      {successToast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-emerald-700 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+          <span>{successToast}</span>
+        </div>
+      )}
+
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs">
         <div>
-          <h1 className="font-display text-2xl font-bold text-slate-900">
+          <div className="flex items-center gap-2 text-xs font-bold text-sherman-700 uppercase tracking-wider mb-1">
+            <Layers className="w-4 h-4" />
+            <span>Product Taxonomy</span>
+          </div>
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
             Product Categories
           </h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -151,6 +202,7 @@ export default function CategoriesManagerClient({
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="bg-slate-50 text-slate-500 border-b border-slate-100 font-bold uppercase tracking-wider">
+              <th className="py-3 px-4 w-20">Banner</th>
               <th className="py-3 px-4">Category Name</th>
               <th className="py-3 px-4">Slug</th>
               <th className="py-3 px-4 text-center">Products</th>
@@ -162,6 +214,16 @@ export default function CategoriesManagerClient({
           <tbody className="divide-y divide-slate-100">
             {categories.map((cat) => (
               <tr key={cat.id} className="hover:bg-slate-50/70 transition-colors">
+                <td className="py-3 px-4">
+                  <div className="w-16 h-10 bg-slate-100 border border-slate-200 rounded-lg overflow-hidden flex items-center justify-center p-0.5">
+                    <img
+                      src={getImageUrl(cat.image, DEFAULT_PRODUCT_PLACEHOLDER)}
+                      alt={cat.name}
+                      className="w-full h-full object-cover rounded"
+                    />
+                  </div>
+                </td>
+
                 <td className="py-3 px-4">
                   <div className="font-bold text-slate-900 text-sm">{cat.name}</div>
                   <div className="text-slate-500 text-[11px] line-clamp-1">
@@ -180,15 +242,17 @@ export default function CategoriesManagerClient({
                 </td>
 
                 <td className="py-3 px-4 text-center whitespace-nowrap">
-                  <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                  <button
+                    onClick={() => handleToggleStatus(cat)}
+                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors ${
                       cat.isActive
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        : 'bg-slate-100 text-slate-500 border border-slate-200'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
+                        : 'bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200'
                     }`}
+                    title="Click to toggle active status"
                   >
                     {cat.isActive ? 'Active' : 'Disabled'}
-                  </span>
+                  </button>
                 </td>
 
                 <td className="py-3 px-4 text-center font-mono font-bold text-slate-600">
@@ -217,6 +281,7 @@ export default function CategoriesManagerClient({
                     <button
                       onClick={() => handleDelete(cat.id, cat.name)}
                       className="p-1.5 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-50"
+                      title="Delete Category"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -228,133 +293,121 @@ export default function CategoriesManagerClient({
         </table>
       </div>
 
-      {/* Add / Edit Category Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-deep/60 backdrop-blur-sm animate-in fade-in">
-          <div
-            className="w-full max-w-lg bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-2xl space-y-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-display font-bold text-lg text-slate-900">
-                {editingId ? 'Edit Product Category' : 'Add New Category'}
-              </h3>
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      {/* Responsive Viewport-Bounded AdminModal with Sticky Header & Sticky Footer */}
+      <AdminModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title={editingId ? 'Edit Product Category' : 'Add New Category'}
+        subtitle="Configure category name, slug, summary, banner visual, and display priority."
+        isEditing={Boolean(editingId)}
+        loading={loading}
+        error={error}
+        isDirty={isDirty}
+        onSubmit={handleSave}
+        saveLabel={editingId ? 'Save Changes' : 'Create Category'}
+        savingLabel={editingId ? 'Saving Changes...' : 'Creating Category...'}
+      >
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            Category Name <span className="text-rose-500">*</span>
+          </label>
+          <input
+            type="text"
+            required
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setIsDirty(true);
+              if (!editingId) setSlug(slugify(e.target.value));
+            }}
+            placeholder="e.g. Flow Measurement"
+            className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none"
+          />
+        </div>
 
-            {error && (
-              <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-lg">
-                {error}
-              </div>
-            )}
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            URL Slug
+          </label>
+          <input
+            type="text"
+            value={slug}
+            onChange={(e) => {
+              setSlug(e.target.value);
+              setIsDirty(true);
+            }}
+            placeholder="flow-measurement"
+            className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none"
+          />
+        </div>
 
-            <form onSubmit={handleSave} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Category Name <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    if (!editingId) setSlug(slugify(e.target.value));
-                  }}
-                  placeholder="e.g. Flow Measurement"
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 outline-none"
-                />
-              </div>
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">
+            Description
+          </label>
+          <textarea
+            rows={3}
+            value={description}
+            onChange={(e) => {
+              setDescription(e.target.value);
+              setIsDirty(true);
+            }}
+            placeholder="Short description displayed on category catalog and mega menu"
+            className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none"
+          />
+        </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  URL Slug
-                </label>
-                <input
-                  type="text"
-                  value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
-                  placeholder="flow-measurement"
-                  className="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-xl focus:border-sherman-600 outline-none"
-                />
-              </div>
+        {/* Category Banner Image Upload */}
+        <ImageUpload
+          value={image}
+          onChange={(url) => {
+            setImage(url);
+            setIsDirty(true);
+          }}
+          folder="categories"
+          label="Category Banner Image"
+          helperText="Upload category visual (JPG, PNG, WEBP, SVG)"
+          fallback={DEFAULT_PRODUCT_PLACEHOLDER}
+        />
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Description
-                </label>
-                <textarea
-                  rows={2}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Short description displayed on mega menu and category grid"
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 outline-none"
-                />
-              </div>
+        <div className="grid grid-cols-2 gap-4 pt-1">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Display Order
+            </label>
+            <input
+              type="number"
+              value={displayOrder}
+              onChange={(e) => {
+                setDisplayOrder(Number(e.target.value));
+                setIsDirty(true);
+              }}
+              className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 focus:ring-1 focus:ring-sherman-600 outline-none font-mono"
+            />
+          </div>
 
-              {/* Category Banner Image Upload */}
-              <ImageUpload
-                value={image}
-                onChange={(url) => setImage(url)}
-                folder="categories"
-                label="Category Banner Image"
-                helperText="Upload category visual (JPG, PNG, WEBP, SVG)"
-                fallback={DEFAULT_PRODUCT_PLACEHOLDER}
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Visibility Status
+            </label>
+            <div className="flex items-center gap-2 pt-2">
+              <input
+                type="checkbox"
+                id="catActive"
+                checked={isActive}
+                onChange={(e) => {
+                  setIsActive(e.target.checked);
+                  setIsDirty(true);
+                }}
+                className="w-4 h-4 rounded text-sherman-600 focus:ring-sherman-500 cursor-pointer"
               />
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Display Order
-                  </label>
-                  <input
-                    type="number"
-                    value={displayOrder}
-                    onChange={(e) => setDisplayOrder(Number(e.target.value))}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:border-sherman-600 outline-none"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2 pt-6">
-                  <input
-                    type="checkbox"
-                    id="catActive"
-                    checked={isActive}
-                    onChange={(e) => setIsActive(e.target.checked)}
-                    className="w-4 h-4 rounded text-sherman-600"
-                  />
-                  <label htmlFor="catActive" className="text-xs font-bold text-slate-800">
-                    Active on Menu & Site
-                  </label>
-                </div>
-              </div>
-
-              <div className="pt-4 flex justify-end gap-2 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-5 py-2 rounded-xl bg-sherman-700 hover:bg-sherman-800 text-white font-bold text-xs transition-all flex items-center gap-1.5"
-                >
-                  {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  <span>{editingId ? 'Save Changes' : 'Create Category'}</span>
-                </button>
-              </div>
-            </form>
+              <label htmlFor="catActive" className="text-xs font-bold text-slate-800 cursor-pointer">
+                Active on Site
+              </label>
+            </div>
           </div>
         </div>
-      )}
+      </AdminModal>
     </div>
   );
 }
