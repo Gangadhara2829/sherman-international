@@ -11,8 +11,10 @@ import {
   Award,
   Cpu,
   History,
-  Clock,
   ArrowRight,
+  FileText,
+  Wrench,
+  Layers,
 } from 'lucide-react';
 import prisma from '@/lib/prisma';
 import SafeImage from '@/components/SafeImage';
@@ -75,7 +77,7 @@ export default async function AboutPage() {
       if (Array.isArray(parsed) && parsed.length > 0) {
         milestones = parsed;
       }
-    } catch (e) { }
+    } catch (e) {}
   }
 
   const paragraphs = (about.content || DEFAULT_ABOUT_CONTENT.content)
@@ -109,92 +111,65 @@ export default async function AboutPage() {
         </div>
       </div>
 
-      {/* Page Hero Banner */}
-      <section className="bg-navy text-white py-12 sm:py-16 border-b border-slate-800 relative overflow-hidden">
+      {/* SECTION 1: ABOUT SHERMAN HERO/PROFILE (Full-Width Industrial Background with Navy Overlay) */}
+      <section className="relative overflow-hidden bg-[#061d43] text-white py-14 sm:py-20 border-b border-slate-800 shadow-md">
+        {/* Full-width realistic industrial engineering background */}
+        <SafeImage
+          src="/images/about/about-hero-bg.jpg"
+          fallbackSrc="/images/original/home_1c3412a0fec94c2197c237bebf94896a.jpg"
+          alt="Sherman International Industrial Process Engineering Facility"
+          fill
+          className="object-cover object-center pointer-events-none"
+          priority
+          sizes="100vw"
+        />
+
+        {/* Dark navy overlay / gradient for crisp text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#061d43]/95 via-[#061d43]/90 to-[#061d43]/85 pointer-events-none" />
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white/10 border border-white/15 text-amber-300 text-xs font-bold uppercase tracking-wider">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Corporate Profile &amp; Engineering Heritage</span>
+          <div className="max-w-4xl space-y-8">
+            {/* Direct Heading — No Eyebrow / No Tagline */}
+            <div className="space-y-3">
+              <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                {about.title || 'About Sherman'}
+              </h1>
+              <div className="border-l-4 border-amber-500 pl-4 py-1">
+                <p className="text-lg sm:text-xl font-bold text-amber-400">
+                  {about.subtitle || 'Trusted Engineering Solutions Provider'}
+                </p>
+              </div>
             </div>
-            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
-              About Sherman International
-            </h1>
-            <p className="text-base sm:text-lg text-slate-300 font-normal leading-relaxed pt-1">
-              Acting as a strategic bridge between leading global manufacturers and Indian industry through authorized representation, distribution, system integration, and turnkey engineering solutions.
-            </p>
+
+            {/* Approved Narrative Paragraphs */}
+            <div className="space-y-5 text-slate-200 text-sm sm:text-base leading-relaxed font-normal">
+              <p>{para1}</p>
+              <p>{para2}</p>
+            </div>
+
+            {/* Trusted Track Record Section */}
+            <div className="p-6 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs space-y-2.5">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                <h2 className="font-bold text-base sm:text-lg text-white">
+                  Trusted Track Record &amp; Industrial Partnerships
+                </h2>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                {para3}
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Main Content Sections */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12">
-        {/* SECTION 1: About Sherman & Strategic Bridge (2-Column Editorial) */}
-        <section className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-10 lg:p-12 shadow-2xs">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            {/* Left Column: Core Narrative */}
-            <div className="lg:col-span-7 space-y-5">
-              <div className="space-y-1.5">
-                <div className="text-xs font-bold uppercase tracking-widest text-sherman-700 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-sherman-600 inline-block" />
-                  <span>Strategic Partner &amp; Solutions Provider</span>
-                </div>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                  {about.title || 'About Sherman'}
-                </h2>
-                <h3 className="text-sm sm:text-base font-semibold text-slate-600">
-                  {about.subtitle || 'A Strategic Bridge for Leading Global Manufacturers'}
-                </h3>
-              </div>
-
-              <div className="space-y-4 text-slate-700 text-sm sm:text-base leading-relaxed">
-                <p>{para1}</p>
-                <p>{para2}</p>
-              </div>
-
-              <div className="pt-2">
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-                  <h4 className="font-bold text-xs sm:text-sm text-slate-900 mb-1">
-                    Trusted Track Record &amp; Industrial Partnerships
-                  </h4>
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                    {para3}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column: Industrial Visual Frame */}
-            <div className="lg:col-span-5 space-y-4">
-              <div className="relative h-72 sm:h-80 w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-xs">
-                <SafeImage
-                  src={about.image || '/images/why-sherman/channel-partnership.jpg'}
-                  fallbackSrc="/images/why-sherman/channel-partnership.jpg"
-                  alt="Sherman International Industrial Engineering Headquarters"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 480px"
-                  priority
-                />
-              </div>
-
-              {/* Verified Representation Note */}
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-center justify-between">
-                <span className="font-semibold text-slate-800 flex items-center gap-1.5">
-                  <Building2 className="w-4 h-4 text-sherman-700" />
-                  New Delhi Headquarters
-                </span>
-                <span className="text-slate-500 font-mono text-[11px]">Est. 1973</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
+      {/* Main Content Body */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-10">
         {/* SECTION 2: Our Core Capabilities & Engineering Pillars */}
-        <section className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-10 lg:p-12 shadow-2xs">
+        <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 lg:p-12 shadow-sm">
           <div className="max-w-3xl mb-8 space-y-2">
-            <div className="text-xs font-bold uppercase tracking-widest text-sherman-700 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-sherman-600 inline-block" />
+            <div className="text-xs font-bold uppercase tracking-widest text-[#061d43] flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" />
               <span>Core Capabilities</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -206,19 +181,19 @@ export default async function AboutPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-xl bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 transition-colors space-y-3">
-              <div className="p-2.5 rounded-lg bg-white border border-slate-200 w-fit text-navy shadow-2xs">
-                <Award className="w-5 h-5 text-sherman-700" />
+            <div className="p-6 rounded-xl bg-slate-50 border border-slate-200/90 hover:border-slate-300 transition-colors space-y-3">
+              <div className="p-2.5 rounded-lg bg-white border border-slate-200 w-fit text-[#061d43] shadow-xs">
+                <Award className="w-5 h-5 text-[#061d43]" />
               </div>
               <h3 className="font-bold text-base text-slate-900">Strategic Representation</h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Direct authorized channel distribution for world-renowned instrumentation and engineering brands.
+                Direct authorized channel distribution for world-renowned instrumentation and process engineering OEMs.
               </p>
             </div>
 
-            <div className="p-6 rounded-xl bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 transition-colors space-y-3">
-              <div className="p-2.5 rounded-lg bg-white border border-slate-200 w-fit text-navy shadow-2xs">
-                <Cpu className="w-5 h-5 text-sherman-700" />
+            <div className="p-6 rounded-xl bg-slate-50 border border-slate-200/90 hover:border-slate-300 transition-colors space-y-3">
+              <div className="p-2.5 rounded-lg bg-white border border-slate-200 w-fit text-[#061d43] shadow-xs">
+                <Cpu className="w-5 h-5 text-[#061d43]" />
               </div>
               <h3 className="font-bold text-base text-slate-900">Application Engineering</h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
@@ -226,9 +201,9 @@ export default async function AboutPage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-xl bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 transition-colors space-y-3">
-              <div className="p-2.5 rounded-lg bg-white border border-slate-200 w-fit text-navy shadow-2xs">
-                <CheckCircle2 className="w-5 h-5 text-sherman-700" />
+            <div className="p-6 rounded-xl bg-slate-50 border border-slate-200/90 hover:border-slate-300 transition-colors space-y-3">
+              <div className="p-2.5 rounded-lg bg-white border border-slate-200 w-fit text-[#061d43] shadow-xs">
+                <CheckCircle2 className="w-5 h-5 text-[#061d43]" />
               </div>
               <h3 className="font-bold text-base text-slate-900">Lifecycle Support</h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
@@ -239,12 +214,12 @@ export default async function AboutPage() {
         </section>
 
         {/* SECTION 3: Project & Engineering Expertise (EPC Contractor Portal Integration) */}
-        <section className="bg-navy text-white rounded-2xl p-6 sm:p-10 lg:p-12 border border-slate-800 shadow-md">
+        <section className="bg-[#061d43] text-white rounded-2xl p-6 sm:p-10 lg:p-12 border border-slate-800 shadow-md">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-8 space-y-4">
-              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-300">
-                <FileCheck2 className="w-4 h-4" />
-                <span>Project Execution &amp; EPC Portal Documentation</span>
+            <div className="lg:col-span-7 space-y-4">
+              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-400">
+                <FileCheck2 className="w-4 h-4 text-amber-400" />
+                <span>Project &amp; Engineering Expertise</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                 EPC Contractor Documentation &amp; Portal Integration
@@ -254,42 +229,65 @@ export default async function AboutPage() {
               </p>
             </div>
 
-            <div className="lg:col-span-4 space-y-2.5 text-xs text-slate-200">
-              <div className="p-3 rounded-lg bg-white/10 border border-white/15 flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-amber-300 flex-shrink-0" />
-                <span>Vendor Drawings &amp; General Arrangement (GA)</span>
+            <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-200">
+              <div className="p-3.5 rounded-xl bg-white/10 border border-white/15 space-y-1">
+                <div className="flex items-center gap-2 text-amber-400 font-bold">
+                  <FileText className="w-4 h-4 flex-shrink-0" />
+                  <span>Drawings &amp; GA</span>
+                </div>
+                <p className="text-slate-300 text-[11px] leading-snug">
+                  Vendor Drawings &amp; General Arrangement Layouts
+                </p>
               </div>
-              <div className="p-3 rounded-lg bg-white/10 border border-white/15 flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-amber-300 flex-shrink-0" />
-                <span>Process Datasheets &amp; Engineering Calculations</span>
+
+              <div className="p-3.5 rounded-xl bg-white/10 border border-white/15 space-y-1">
+                <div className="flex items-center gap-2 text-amber-400 font-bold">
+                  <Cpu className="w-4 h-4 flex-shrink-0" />
+                  <span>Calculations</span>
+                </div>
+                <p className="text-slate-300 text-[11px] leading-snug">
+                  Process Datasheets &amp; Engineering Calculations
+                </p>
               </div>
-              <div className="p-3 rounded-lg bg-white/10 border border-white/15 flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-amber-300 flex-shrink-0" />
-                <span>Inspection Test Plans (ITP) &amp; MTRs</span>
+
+              <div className="p-3.5 rounded-xl bg-white/10 border border-white/15 space-y-1">
+                <div className="flex items-center gap-2 text-amber-400 font-bold">
+                  <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                  <span>ITP &amp; MTRs</span>
+                </div>
+                <p className="text-slate-300 text-[11px] leading-snug">
+                  Inspection Test Plans &amp; Material Test Reports
+                </p>
               </div>
-              <div className="p-3 rounded-lg bg-white/10 border border-white/15 flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-amber-300 flex-shrink-0" />
-                <span>ATEX, PESO, CE &amp; RDSO Documentation</span>
+
+              <div className="p-3.5 rounded-xl bg-white/10 border border-white/15 space-y-1">
+                <div className="flex items-center gap-2 text-amber-400 font-bold">
+                  <ShieldCheck className="w-4 h-4 flex-shrink-0" />
+                  <span>Statutory Approvals</span>
+                </div>
+                <p className="text-slate-300 text-[11px] leading-snug">
+                  ATEX, PESO, CE &amp; RDSO Documentation
+                </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 4: Vision & Mission (2-Column Balanced Cards with Industrial Backgrounds) */}
+        {/* SECTION 4: Our Vision & Our Mission (Distinct Relevant Industrial Backgrounds) */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-          {/* Vision */}
-          <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-md p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-4 group min-h-[300px]">
-            {/* Industrial Vision Background Image */}
+          {/* OUR VISION */}
+          <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-md p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-4 group min-h-[320px]">
+            {/* Background Image */}
             <SafeImage
               src="/images/about/vision-bg.jpg"
               fallbackSrc="/images/why-sherman/system-integration.jpg"
-              alt="Sherman Industrial Vision - Advanced Process Engineering"
+              alt="Sherman Industrial Vision - Future & Engineering Growth"
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-            {/* Subtle Navy / Dark Overlay for Enhanced Readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#061d43]/90 via-[#061d43]/88 to-[#061d43]/95 pointer-events-none" />
+            {/* Dark Navy Overlay for Readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#061d43]/92 via-[#061d43]/88 to-[#061d43]/95 pointer-events-none" />
 
             {/* Content Container */}
             <div className="relative z-10 space-y-3.5">
@@ -312,19 +310,19 @@ export default async function AboutPage() {
             </div>
           </div>
 
-          {/* Mission */}
-          <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-md p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-4 group min-h-[300px]">
-            {/* Industrial Mission Background Image */}
+          {/* OUR MISSION */}
+          <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-md p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-4 group min-h-[320px]">
+            {/* Background Image */}
             <SafeImage
               src="/images/about/mission-bg.jpg"
               fallbackSrc="/images/why-sherman/technocrat-depth.jpg"
-              alt="Sherman Industrial Mission - Technocrat Engineering & Project Delivery"
+              alt="Sherman Industrial Mission - Engineering Solutions & Customer Execution"
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-            {/* Subtle Navy / Dark Overlay for Enhanced Readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#061d43]/90 via-[#061d43]/88 to-[#061d43]/95 pointer-events-none" />
+            {/* Dark Navy Overlay for Readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#061d43]/92 via-[#061d43]/88 to-[#061d43]/95 pointer-events-none" />
 
             {/* Content Container */}
             <div className="relative z-10 space-y-3.5">
@@ -349,10 +347,10 @@ export default async function AboutPage() {
         </section>
 
         {/* SECTION 5: 50+ Years Engineering Heritage (Milestones) */}
-        <section className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-10 lg:p-12 shadow-2xs">
+        <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 lg:p-12 shadow-sm">
           <div className="max-w-3xl mb-8 space-y-2">
-            <div className="text-xs font-bold uppercase tracking-widest text-sherman-700 flex items-center gap-1.5">
-              <History className="w-4 h-4 text-sherman-600" />
+            <div className="text-xs font-bold uppercase tracking-widest text-[#061d43] flex items-center gap-2">
+              <History className="w-4 h-4 text-amber-500" />
               <span>50+ Years of Excellence</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -367,13 +365,13 @@ export default async function AboutPage() {
             {milestones.map((m, idx) => (
               <div
                 key={idx}
-                className="p-5 rounded-xl bg-slate-50/80 border border-slate-200/80 flex flex-col justify-between space-y-3"
+                className="p-5 rounded-xl bg-slate-50 border border-slate-200/90 flex flex-col justify-between space-y-3 hover:border-slate-300 transition-colors"
               >
                 <div className="space-y-1.5">
-                  <div className="text-lg font-black font-mono text-sherman-700">
+                  <div className="text-xl font-black font-mono text-[#061d43]">
                     {m.year}
                   </div>
-                  <h3 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug">
+                  <h3 className="font-bold text-sm text-slate-900 leading-snug">
                     {m.title}
                   </h3>
                 </div>
@@ -391,5 +389,3 @@ export default async function AboutPage() {
     </div>
   );
 }
-
-
