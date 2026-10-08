@@ -144,141 +144,87 @@ export default async function AboutPage() {
               </div>
             </div>
 
-            {/* Narrative Content: Render rich HTML formatting if present, or legacy 3-paragraph split */}
-            {isRichHtml(about.content) ? (
-              <div className="text-slate-200 text-sm sm:text-base leading-relaxed">
-                <FormattedContent content={about.content} variant="dark" />
-              </div>
-            ) : (
-              <>
-                <div className="space-y-5 text-slate-200 text-sm sm:text-base leading-relaxed font-normal">
-                  <p>{para1}</p>
-                  <p>{para2}</p>
-                </div>
-
-                {/* Trusted Track Record Section */}
-                <div className="p-6 rounded-xl bg-white/10 border border-white/15 backdrop-blur-xs space-y-2.5">
-                  <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-amber-400 flex-shrink-0" />
-                    <h2 className="font-bold text-base sm:text-lg text-white">
-                      Trusted Track Record &amp; Industrial Partnerships
-                    </h2>
-                  </div>
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-                    {para3}
-                  </p>
-                </div>
-              </>
-            )}
+            <p className="text-base sm:text-lg text-slate-200 leading-relaxed font-normal max-w-3xl">
+              Industrial technology and solutions company working with leading global technology providers to bring advanced products, engineering expertise, and application-driven solutions to customers across the industrial sector.
+            </p>
           </div>
         </div>
       </section>
 
       {/* Main Content Body */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-10">
-        {/* SECTION 2: Our Core Capabilities & Engineering Pillars */}
-        <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 lg:p-12 shadow-sm">
-          <div className="max-w-3xl mb-8 space-y-2">
-            <div className="text-xs font-bold uppercase tracking-widest text-[#061d43] flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" />
-              <span>Core Capabilities</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Our Approach &amp; Technocrat Depth
-            </h2>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Combining global manufacturing precision with hands-on Indian engineering support and documentation compliance.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-xl bg-slate-50 border border-slate-200/90 hover:border-slate-300 transition-colors space-y-3">
-              <div className="p-2.5 rounded-lg bg-white border border-slate-200 w-fit text-[#061d43] shadow-xs">
-                <Award className="w-5 h-5 text-[#061d43]" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12">
+        {/* REDESIGNED ABOUT SHERMAN EDITORIAL CONTENT SECTION */}
+        <section className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-12 lg:p-16 shadow-xs">
+          <div className="max-w-4xl mx-auto space-y-12">
+            {/* SUBTOPIC 1: Trusted Engineering Solutions Provider */}
+            <div className="space-y-5">
+              <div className="border-l-4 border-sherman-600 pl-4 py-0.5">
+                <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  Trusted Engineering Solutions Provider
+                </h2>
               </div>
-              <h3 className="font-bold text-base text-slate-900">Strategic Representation</h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Direct authorized channel distribution for world-renowned instrumentation and process engineering OEMs.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-xl bg-slate-50 border border-slate-200/90 hover:border-slate-300 transition-colors space-y-3">
-              <div className="p-2.5 rounded-lg bg-white border border-slate-200 w-fit text-[#061d43] shadow-xs">
-                <Cpu className="w-5 h-5 text-[#061d43]" />
-              </div>
-              <h3 className="font-bold text-base text-slate-900">Application Engineering</h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Expert technical consultation, custom skid engineering, process parameter verification, and dynamic testing.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-xl bg-slate-50 border border-slate-200/90 hover:border-slate-300 transition-colors space-y-3">
-              <div className="p-2.5 rounded-lg bg-white border border-slate-200 w-fit text-[#061d43] shadow-xs">
-                <CheckCircle2 className="w-5 h-5 text-[#061d43]" />
-              </div>
-              <h3 className="font-bold text-base text-slate-900">Lifecycle Support</h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                On-site installation and commissioning assistance, FAT/SAT trials, troubleshooting, and genuine OEM spare parts supply.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* SECTION 3: Project & Engineering Expertise (EPC Contractor Portal Integration) */}
-        <section className="bg-[#061d43] text-white rounded-2xl p-6 sm:p-10 lg:p-12 border border-slate-800 shadow-md">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-7 space-y-4">
-              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-400">
-                <FileCheck2 className="w-4 h-4 text-amber-400" />
-                <span>Project &amp; Engineering Expertise</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                EPC Contractor Documentation &amp; Portal Integration
-              </h2>
-              <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
-                In addition to representing world-class manufacturers, Sherman takes pride in project execution expertise. Our experienced engineering teams have worked on multiple portals for leading EPC contractors, supporting them in executing their projects with all required drawings, datasheets, inspection test plans (ITP), and regulatory certifications.
-              </p>
-            </div>
-
-            <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-200">
-              <div className="p-3.5 rounded-xl bg-white/10 border border-white/15 space-y-1">
-                <div className="flex items-center gap-2 text-amber-400 font-bold">
-                  <FileText className="w-4 h-4 flex-shrink-0" />
-                  <span>Drawings &amp; GA</span>
-                </div>
-                <p className="text-slate-300 text-[11px] leading-snug">
-                  Vendor Drawings &amp; General Arrangement Layouts
+              <div className="space-y-4 text-slate-700 text-base sm:text-lg leading-relaxed font-normal">
+                <p>
+                  Sherman is an industrial technology and solutions company, working with leading global technology providers to bring advanced products, engineering expertise, and application-driven solutions to customers across the industrial sector.
+                </p>
+                <p>
+                  Our portfolio spans flow measurement, process control, analytical instrumentation, combustion technology, automation, and other critical industrial applications. Through our strong relationships with internationally recognized technology companies, we provide access to proven technologies and high-quality products, backed by the technical expertise required to apply them effectively.
+                </p>
+                <p>
+                  At Sherman, we believe that delivering the right solution goes beyond supplying equipment. Our team brings together professionals with strong technical and industry experience, enabling us to understand our customers’ applications, processes, and project requirements. We provide technical and pre-sales support to help identify solutions that are technically appropriate, operationally reliable, and commercially sound.
+                </p>
+                <p>
+                  Our involvement continues beyond the point of supply. Through comprehensive after-sales support and service, we work closely with our customers to ensure reliable operation, long-term performance, and maximum value from their investments.
                 </p>
               </div>
+            </div>
 
-              <div className="p-3.5 rounded-xl bg-white/10 border border-white/15 space-y-1">
-                <div className="flex items-center gap-2 text-amber-400 font-bold">
-                  <Cpu className="w-4 h-4 flex-shrink-0" />
-                  <span>Calculations</span>
-                </div>
-                <p className="text-slate-300 text-[11px] leading-snug">
-                  Process Datasheets &amp; Engineering Calculations
+            {/* SUBTOPIC 2: Project & Engineering Expertise */}
+            <div className="space-y-5 pt-6 border-t border-slate-100">
+              <div className="border-l-4 border-amber-500 pl-4 py-0.5">
+                <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  Project &amp; Engineering Expertise
+                </h2>
+              </div>
+              <div className="space-y-4 text-slate-700 text-base sm:text-lg leading-relaxed font-normal">
+                <p>
+                  Sherman also brings significant expertise in project execution and engineering support, particularly in collaboration with EPC contractors and industrial project organizations.
+                </p>
+                <p>
+                  Our experienced teams have supported projects through various EPC portals and execution platforms, managing and coordinating the required technical drawings, documentation, submissions, and project deliverables. This experience allows us to effectively bridge technology, engineering requirements, and project execution.
                 </p>
               </div>
+            </div>
 
-              <div className="p-3.5 rounded-xl bg-white/10 border border-white/15 space-y-1">
-                <div className="flex items-center gap-2 text-amber-400 font-bold">
-                  <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-                  <span>ITP &amp; MTRs</span>
-                </div>
-                <p className="text-slate-300 text-[11px] leading-snug">
-                  Inspection Test Plans &amp; Material Test Reports
+            {/* SUBTOPIC 3: Our Approach */}
+            <div className="space-y-5 pt-6 border-t border-slate-100">
+              <div className="border-l-4 border-sherman-600 pl-4 py-0.5">
+                <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  Our Approach
+                </h2>
+              </div>
+              <div className="space-y-4 text-slate-700 text-base sm:text-lg leading-relaxed font-normal">
+                <p>
+                  Sherman brings together expertise from multiple industrial disciplines to develop technically robust, application-focused, and commercially viable solutions.
+                </p>
+                <p>
+                  We take the time to understand the complete requirement—whether it is a process challenge, a specific application, a project specification, or a broader system requirement—and then bring together the appropriate technologies, products, and expertise to address it.
+                </p>
+                <p>
+                  Our strength lies in combining global technology, local expertise, engineering understanding, and project experience to create meaningful value for our customers.
+                </p>
+                <p>
+                  With established relationships across the global industrial technology ecosystem and a strong focus on technical excellence, project execution, and customer support, Sherman is committed to being a dependable technology and solutions company for the industries we serve.
                 </p>
               </div>
+            </div>
 
-              <div className="p-3.5 rounded-xl bg-white/10 border border-white/15 space-y-1">
-                <div className="flex items-center gap-2 text-amber-400 font-bold">
-                  <ShieldCheck className="w-4 h-4 flex-shrink-0" />
-                  <span>Statutory Approvals</span>
+            {/* PROMINENT CONCLUDING BRAND STATEMENT */}
+            <div className="pt-8 border-t border-slate-200">
+              <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-[#061d43] via-[#092557] to-[#0c3172] text-white shadow-md border border-slate-800">
+                <div className="font-display text-xl sm:text-2xl font-black text-amber-400 tracking-wide text-center sm:text-left">
+                  Sherman — Technology. Expertise. Solutions.
                 </div>
-                <p className="text-slate-300 text-[11px] leading-snug">
-                  ATEX, PESO, CE &amp; RDSO Documentation
-                </p>
               </div>
             </div>
           </div>

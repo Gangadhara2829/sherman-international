@@ -79,16 +79,6 @@ export default async function IndustriesPage() {
                   </p>
                 </div>
               </div>
-
-              <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-                <Link
-                  href={`/industries/${ind.slug}`}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-navy hover:underline transition-colors"
-                >
-                  <span>Explore Industry Solutions</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
             </div>
           ))}
         </div>
