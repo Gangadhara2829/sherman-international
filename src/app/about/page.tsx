@@ -275,37 +275,73 @@ export default async function AboutPage() {
           </div>
         </section>
 
-        {/* SECTION 4: Vision & Mission (2-Column Balanced Grid) */}
+        {/* SECTION 4: Vision & Mission (2-Column Balanced Cards with Industrial Backgrounds) */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
           {/* Vision */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 lg:p-10 shadow-2xs flex flex-col justify-between space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2.5 bg-slate-100 text-navy rounded-lg border border-slate-200">
-                  <Eye className="w-5 h-5 text-sherman-700" />
+          <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-md p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-4 group min-h-[300px]">
+            {/* Industrial Vision Background Image */}
+            <SafeImage
+              src="/images/about/vision-bg.jpg"
+              fallbackSrc="/images/why-sherman/system-integration.jpg"
+              alt="Sherman Industrial Vision - Advanced Process Engineering"
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+            {/* Subtle Navy / Dark Overlay for Enhanced Readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#061d43]/90 via-[#061d43]/88 to-[#061d43]/95 pointer-events-none" />
+
+            {/* Content Container */}
+            <div className="relative z-10 space-y-3.5">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-white/10 text-amber-400 rounded-lg border border-white/15 backdrop-blur-xs">
+                  <Eye className="w-5 h-5 text-amber-400" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-                  Our Vision
-                </h3>
+                <div>
+                  <div className="text-xs font-bold uppercase tracking-widest text-amber-400">
+                    Guiding Principle
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                    Our Vision
+                  </h3>
+                </div>
               </div>
-              <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
+              <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-normal">
                 {visionMission.vision}
               </p>
             </div>
           </div>
 
           {/* Mission */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 lg:p-10 shadow-2xs flex flex-col justify-between space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2.5 bg-slate-100 text-navy rounded-lg border border-slate-200">
-                  <Target className="w-5 h-5 text-sherman-700" />
+          <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-md p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-4 group min-h-[300px]">
+            {/* Industrial Mission Background Image */}
+            <SafeImage
+              src="/images/about/mission-bg.jpg"
+              fallbackSrc="/images/why-sherman/technocrat-depth.jpg"
+              alt="Sherman Industrial Mission - Technocrat Engineering & Project Delivery"
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+            {/* Subtle Navy / Dark Overlay for Enhanced Readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#061d43]/90 via-[#061d43]/88 to-[#061d43]/95 pointer-events-none" />
+
+            {/* Content Container */}
+            <div className="relative z-10 space-y-3.5">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-white/10 text-amber-400 rounded-lg border border-white/15 backdrop-blur-xs">
+                  <Target className="w-5 h-5 text-amber-400" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-                  Our Mission
-                </h3>
+                <div>
+                  <div className="text-xs font-bold uppercase tracking-widest text-amber-400">
+                    Core Commitment
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                    Our Mission
+                  </h3>
+                </div>
               </div>
-              <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
+              <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-normal">
                 {visionMission.mission}
               </p>
             </div>
