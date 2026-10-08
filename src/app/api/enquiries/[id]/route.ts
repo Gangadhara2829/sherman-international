@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { getAdminSession } from '@/lib/auth';
 export const PUT = PATCH;
@@ -25,6 +26,10 @@ export async function PATCH(
       },
     });
 
+    try {
+      revalidatePath('/admin/enquiries');
+    } catch (e) {}
+
     return NextResponse.json({ success: true, enquiry: updated });
   } catch (error) {
     console.error('Error updating enquiry:', error);
@@ -44,6 +49,11 @@ export async function DELETE(
   try {
     const { id } = params;
     await prisma.enquiry.delete({ where: { id } });
+
+    try {
+      revalidatePath('/admin/enquiries');
+    } catch (e) {}
+
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete enquiry' }, { status: 500 });

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { getAdminSession } from '@/lib/auth';
 import { slugify } from '@/lib/utils';
@@ -40,6 +41,12 @@ export async function POST(request: Request) {
         isActive: isActive ?? true,
       },
     });
+
+    try {
+      revalidatePath('/');
+      revalidatePath('/products');
+      revalidatePath('/admin/categories');
+    } catch (e) {}
 
     return NextResponse.json({ success: true, category }, { status: 201 });
   } catch (error: any) {

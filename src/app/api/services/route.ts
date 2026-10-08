@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { getAdminSession } from '@/lib/auth';
 import { slugify } from '@/lib/utils';
@@ -39,6 +40,12 @@ export async function POST(request: Request) {
         isPublished: isPublished ?? true,
       },
     });
+
+    try {
+      revalidatePath('/');
+      revalidatePath('/services');
+      revalidatePath('/admin/services');
+    } catch (e) {}
 
     return NextResponse.json({ success: true, service }, { status: 201 });
   } catch (error: any) {

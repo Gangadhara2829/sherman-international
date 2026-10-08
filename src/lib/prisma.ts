@@ -3,7 +3,7 @@ import fs from 'fs';
 import { PrismaClient } from '@prisma/client';
 
 function getDatabaseUrl(): string {
-  const envUrl = process.env.DATABASE_URL;
+  const envUrl = process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL;
 
   // 1. Direct connection to Persistent Cloud PostgreSQL (Neon, Vercel Postgres, Supabase)
   if (envUrl && (envUrl.startsWith('postgresql://') || envUrl.startsWith('postgres://'))) {

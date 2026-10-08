@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { getAdminSession } from '@/lib/auth';
 
@@ -46,6 +47,11 @@ export async function POST(req: NextRequest) {
         isActive: isActive !== undefined ? Boolean(isActive) : true,
       },
     });
+
+    try {
+      revalidatePath('/');
+      revalidatePath('/admin/clients');
+    } catch (e) {}
 
     return NextResponse.json(newClient, { status: 201 });
   } catch (error: any) {

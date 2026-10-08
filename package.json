@@ -4,15 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
-    "postinstall": "prisma generate",
+    "build": "node scripts/prepare_build.js && next build",
+    "postinstall": "node scripts/prepare_build.js",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
     "db:seed": "node prisma/seed.js",
     "db:switch:postgres": "node scripts/switch_db.js postgresql",
     "db:switch:sqlite": "node scripts/switch_db.js sqlite",
-    "db:migrate:postgres": "node scripts/migrate_to_postgres.js"
+    "db:migrate:postgres": "node scripts/migrate_to_postgres.js",
+    "db:migrate:prod": "node scripts/migrate_to_postgres.js"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
