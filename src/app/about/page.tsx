@@ -75,7 +75,7 @@ export default async function AboutPage() {
       if (Array.isArray(parsed) && parsed.length > 0) {
         milestones = parsed;
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   const paragraphs = (about.content || DEFAULT_ABOUT_CONTENT.content)
