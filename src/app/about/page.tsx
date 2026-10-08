@@ -10,7 +10,6 @@ import {
   Building2,
   Award,
   Cpu,
-  History,
   ArrowRight,
   FileText,
   Wrench,
@@ -35,53 +34,15 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function AboutPage() {
-  const [aboutRecord, visionRecord, historyRecord] = await Promise.all([
+  const [aboutRecord, visionRecord] = await Promise.all([
     prisma.siteContent.findFirst({
       where: { key: { in: ['about_company', 'about_overview'] } },
     }),
     prisma.siteContent.findUnique({ where: { key: 'vision_mission' } }),
-    prisma.siteContent.findUnique({ where: { key: 'company_history' } }),
   ]);
 
   const about = normalizeAboutContent(aboutRecord);
   const visionMission = normalizeVisionMission(visionRecord);
-
-  // Parse milestones if present or use authentic defaults
-  let milestones = [
-    {
-      year: '1973',
-      title: "Foundation as 'Sherman Corporation'",
-      description:
-        "Began as a proprietorship with the aim of representing global manufacturers for the evolving Indian Process Industry.",
-    },
-    {
-      year: '1980',
-      title: "Evolution to 'Sherman International Private Limited'",
-      description:
-        "Evolved from a product provider to a comprehensive solution provider, reflecting our commitment to the evolving industry.",
-    },
-    {
-      year: '1998',
-      title: '25 Years of Industrial Service',
-      description:
-        'Celebrated 25 years of delivering quality engineering service to the Indian process and energy industries.',
-    },
-    {
-      year: '2022',
-      title: '50 Years of Engineering Excellence',
-      description:
-        'Celebrated 50 years of trusted representation, turnkey skid integration, and technological partnerships.',
-    },
-  ];
-
-  if (historyRecord && historyRecord.content) {
-    try {
-      const parsed = JSON.parse(historyRecord.content);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        milestones = parsed;
-      }
-    } catch (e) {}
-  }
 
   const paragraphs = (about.content || DEFAULT_ABOUT_CONTENT.content)
     .split('\n\n')
@@ -303,44 +264,7 @@ export default async function AboutPage() {
           </div>
         </section>
 
-        {/* SECTION 5: 50+ Years Engineering Heritage (Milestones) */}
-        <section className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 lg:p-12 shadow-sm">
-          <div className="max-w-3xl mb-8 space-y-2">
-            <div className="text-xs font-bold uppercase tracking-widest text-[#061d43] flex items-center gap-2">
-              <History className="w-4 h-4 text-amber-500" />
-              <span>50+ Years of Excellence</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Our Journey &amp; Corporate Heritage
-            </h2>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Serving India&apos;s process and energy sectors continuously since 1973.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {milestones.map((m, idx) => (
-              <div
-                key={idx}
-                className="p-5 rounded-xl bg-slate-50 border border-slate-200/90 flex flex-col justify-between space-y-3 hover:border-slate-300 transition-colors"
-              >
-                <div className="space-y-1.5">
-                  <div className="text-xl font-black font-mono text-[#061d43]">
-                    {m.year}
-                  </div>
-                  <h3 className="font-bold text-sm text-slate-900 leading-snug">
-                    {m.title}
-                  </h3>
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed font-normal">
-                  {m.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* SECTION 6: Bottom Technical Enquiry Banner */}
+        {/* Bottom Technical Enquiry Banner */}
         <EnquiryCtaBanner />
       </div>
     </div>
