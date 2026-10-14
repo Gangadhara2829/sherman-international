@@ -31,6 +31,7 @@ export default function Footer() {
     { label: 'Represented Brands', href: '/brands' },
     { label: 'Industries Served', href: '/industries' },
     { label: 'Engineering Services', href: '/services' },
+    { label: 'Corporate Gallery', href: '/gallery' },
     { label: 'Contact Us', href: '/contact' },
   ];
 

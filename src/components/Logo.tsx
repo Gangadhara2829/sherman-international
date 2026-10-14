@@ -27,29 +27,18 @@ export default function Logo({ variant = 'dark', className = '', showText = true
 
       {showText && (
         <div className="flex flex-col justify-center leading-none">
-          <div className="flex items-start">
-            <span
-              className={`font-black text-[22px] tracking-tight leading-none uppercase ${
-                isLight ? 'text-white' : 'text-[#061d43]'
-              }`}
-              style={{
-                fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                fontWeight: 900,
-                letterSpacing: '-0.015em',
-              }}
-            >
-              SHERMAN
-            </span>
-            <span
-              className={`text-[8px] font-black leading-none ml-0.5 mt-[-1px] ${
-                isLight ? 'text-slate-300' : 'text-[#061d43]'
-              }`}
-            >
-              TM
-            </span>
+          <div className="relative flex items-center">
+            <Image
+              src={isLight ? '/images/sherman-wordmark-light.png' : '/images/sherman-wordmark.png'}
+              alt="SHERMAN"
+              width={884}
+              height={166}
+              className="h-[22px] sm:h-[24px] w-auto object-contain"
+              priority
+            />
           </div>
           <span
-            className={`text-[9px] font-extrabold tracking-[0.16em] uppercase mt-1 ${
+            className={`text-[8.5px] sm:text-[9px] font-extrabold tracking-[0.16em] uppercase mt-1 ${
               isLight ? 'text-slate-300' : 'text-slate-600'
             }`}
           >

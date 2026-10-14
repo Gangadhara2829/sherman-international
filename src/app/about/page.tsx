@@ -18,6 +18,7 @@ import {
 import prisma from '@/lib/prisma';
 import SafeImage from '@/components/SafeImage';
 import EnquiryCtaBanner from '@/components/EnquiryCtaBanner';
+import AboutStatsSection from '@/components/AboutStatsSection';
 import FormattedContent, { isRichHtml } from '@/components/FormattedContent';
 import {
   normalizeAboutContent,
@@ -191,75 +192,88 @@ export default async function AboutPage() {
           </div>
         </section>
 
+        {/* SECTION 3: Animated Company Statistics (Some Cool Facts — Numbers Speak for Themselves) */}
+        <AboutStatsSection />
+
         {/* SECTION 4: Our Vision & Our Mission (Distinct Relevant Industrial Backgrounds) */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
           {/* OUR VISION */}
-          <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-lg p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-4 group min-h-[340px] bg-[#031127]">
-            {/* Background Image */}
+          <div className="relative rounded-2xl overflow-hidden border border-slate-700/80 shadow-xl p-8 sm:p-10 lg:p-12 flex flex-col justify-between space-y-6 group min-h-[320px] bg-[#020a17]">
+            {/* Background Image - Subdued industrial texture with luminosity blend to eliminate bright pipe glare */}
             <SafeImage
               src="/images/about/vision-bg.jpg"
               fallbackSrc="/images/why-sherman/system-integration.jpg"
               alt="Sherman Industrial Vision - Future & Engineering Growth"
               fill
-              className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
+              className="object-cover opacity-25 mix-blend-luminosity transition-transform duration-700 group-hover:scale-105 group-hover:opacity-30"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-            {/* Enhanced High-Contrast Dark Navy Overlay for Maximum Text Readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#031229]/95 via-[#041836]/90 to-[#020b19]/98 pointer-events-none" />
+            {/* High-Density Deep Navy Scrim for 100% Pristine White Text Readability */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#020914]/95 via-[#031127]/90 to-[#020813]/98 pointer-events-none" />
 
             {/* Content Container */}
-            <div className="relative z-10 space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-amber-500/15 text-amber-400 rounded-xl border border-amber-400/30 backdrop-blur-md shadow-xs">
-                  <Eye className="w-5 h-5 text-amber-400" />
+            <div className="relative z-10 space-y-5">
+              <div className="flex items-center gap-3.5">
+                <div className="p-3 bg-amber-500/15 text-amber-400 rounded-xl border border-amber-400/30 backdrop-blur-md shadow-xs">
+                  <Eye className="w-6 h-6 text-amber-400" />
                 </div>
                 <div>
-                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-amber-400 drop-shadow-xs">
+                  <div className="text-xs font-bold uppercase tracking-widest text-amber-400">
                     Guiding Principle
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight drop-shadow-sm">
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                     Our Vision
                   </h3>
                 </div>
               </div>
-              <p className="text-sm sm:text-base text-slate-100 font-medium leading-relaxed drop-shadow-xs">
+              <p className="text-base sm:text-lg text-slate-100 font-normal leading-relaxed">
                 {visionMission.vision}
               </p>
+            </div>
+
+            {/* Decorative Accent Anchor */}
+            <div className="relative z-10 pt-2">
+              <div className="h-1 w-12 bg-amber-400/80 rounded-full" />
             </div>
           </div>
 
           {/* OUR MISSION */}
-          <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-lg p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-4 group min-h-[340px] bg-[#031127]">
-            {/* Background Image */}
+          <div className="relative rounded-2xl overflow-hidden border border-slate-700/80 shadow-xl p-8 sm:p-10 lg:p-12 flex flex-col justify-between space-y-6 group min-h-[320px] bg-[#020a17]">
+            {/* Background Image - Subdued industrial texture with luminosity blend to eliminate blueprint glare */}
             <SafeImage
               src="/images/about/mission-bg.jpg"
               fallbackSrc="/images/why-sherman/technocrat-depth.jpg"
               alt="Sherman Industrial Mission - Engineering Solutions & Customer Execution"
               fill
-              className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
+              className="object-cover opacity-25 mix-blend-luminosity transition-transform duration-700 group-hover:scale-105 group-hover:opacity-30"
               sizes="(max-width: 768px) 100vw, 50vw"
             />
-            {/* Enhanced High-Contrast Dark Navy Overlay for Maximum Text Readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#031229]/95 via-[#041836]/90 to-[#020b19]/98 pointer-events-none" />
+            {/* High-Density Deep Navy Scrim for 100% Pristine White Text Readability */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#020914]/95 via-[#031127]/90 to-[#020813]/98 pointer-events-none" />
 
             {/* Content Container */}
-            <div className="relative z-10 space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-amber-500/15 text-amber-400 rounded-xl border border-amber-400/30 backdrop-blur-md shadow-xs">
-                  <Target className="w-5 h-5 text-amber-400" />
+            <div className="relative z-10 space-y-5">
+              <div className="flex items-center gap-3.5">
+                <div className="p-3 bg-amber-500/15 text-amber-400 rounded-xl border border-amber-400/30 backdrop-blur-md shadow-xs">
+                  <Target className="w-6 h-6 text-amber-400" />
                 </div>
                 <div>
-                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-amber-400 drop-shadow-xs">
+                  <div className="text-xs font-bold uppercase tracking-widest text-amber-400">
                     Core Commitment
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight drop-shadow-sm">
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                     Our Mission
                   </h3>
                 </div>
               </div>
-              <p className="text-sm sm:text-base text-slate-100 font-medium leading-relaxed drop-shadow-xs">
+              <p className="text-base sm:text-lg text-slate-100 font-normal leading-relaxed">
                 {visionMission.mission}
               </p>
+            </div>
+
+            {/* Decorative Accent Anchor */}
+            <div className="relative z-10 pt-2">
+              <div className="h-1 w-12 bg-amber-400/80 rounded-full" />
             </div>
           </div>
         </section>

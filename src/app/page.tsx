@@ -6,13 +6,15 @@ import ServicesSection from '@/components/ServicesSection';
 import IndustriesSection from '@/components/IndustriesSection';
 import WeProudlyServeCarousel from '@/components/WeProudlyServeCarousel';
 import WhyShermanSection from '@/components/WhyShermanSection';
+import GallerySection from '@/components/GallerySection';
 import EnquiryCtaBanner from '@/components/EnquiryCtaBanner';
 import { normalizeHeroContent, normalizeAboutContent } from '@/lib/content';
+import { getGalleryItems } from '@/lib/gallery';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 export default async function HomePage() {
   // Fetch dynamic content and entities from database
-  const [heroRecord, aboutRecord, services, industries, proudlyServedClients] =
+  const [heroRecord, aboutRecord, services, industries, proudlyServedClients, galleryItems] =
     await Promise.all([
       prisma.siteContent.findUnique({ where: { key: 'hero_section' } }),
       prisma.siteContent.findFirst({
@@ -30,6 +32,7 @@ export default async function HomePage() {
         where: { isActive: true },
         orderBy: { displayOrder: 'asc' },
       }),
+      getGalleryItems({ includeUnpublished: false }),
     ]);
 
   const heroContent = normalizeHeroContent(heroRecord);
@@ -64,7 +67,10 @@ export default async function HomePage() {
       {/* 6. WHY SHERMAN / TRUST SECTION */}
       <WhyShermanSection />
 
-      {/* 7. ENQUIRY CTA BANNER */}
+      {/* 7. CORPORATE GALLERY SHOWCASE */}
+      <GallerySection items={galleryItems} />
+
+      {/* 8. ENQUIRY CTA BANNER */}
       <EnquiryCtaBanner />
     </div>
   );

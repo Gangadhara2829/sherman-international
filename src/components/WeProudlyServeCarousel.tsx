@@ -89,20 +89,20 @@ export default function WeProudlyServeCarousel({
 
         {/* Carousel Container */}
         <div
-          className="relative group py-2"
+          className="relative group py-4"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           onTouchStart={() => setIsPaused(true)}
           onTouchEnd={() => setIsPaused(false)}
         >
           {/* Subtle edge fade overlays for infinite scroll effect */}
-          <div className="absolute left-0 top-0 bottom-0 w-10 sm:w-20 bg-gradient-to-r from-slate-50/90 to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-10 sm:w-20 bg-gradient-to-l from-slate-50/90 to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" />
 
           {/* Continuous Horizontal Scrolling Track */}
           <div
             ref={scrollContainerRef}
-            className="flex items-center gap-4 sm:gap-6 md:gap-8 overflow-x-auto py-3 scrollbar-none select-none"
+            className="flex items-center gap-8 sm:gap-12 md:gap-16 overflow-x-auto py-4 scrollbar-none select-none"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
@@ -110,24 +110,24 @@ export default function WeProudlyServeCarousel({
           >
             {/* Animated Marquee Flex Strip */}
             <div
-              className={`flex items-center gap-4 sm:gap-6 md:gap-8 flex-shrink-0 animate-marquee ${
+              className={`flex items-center gap-8 sm:gap-12 md:gap-16 flex-shrink-0 animate-marquee ${
                 isHovered || isPaused ? 'pause-animation' : ''
               }`}
             >
               {duplicatedClients.map((client, idx) => {
                 const logoSrc = getImageUrl(client.logo, DEFAULT_CLIENT_PLACEHOLDER);
 
-                const cardInner = (
-                  <div className="w-full h-full flex items-center justify-center p-3.5 sm:p-4 md:p-5">
+                const logoElement = (
+                  <div className="relative flex items-center justify-center w-[200px] sm:w-[240px] md:w-[270px] lg:w-[290px] h-[90px] sm:h-[110px] md:h-[125px] transition-transform duration-300 ease-out group-hover/logo:scale-110">
                     <img
                       src={logoSrc}
                       alt={client.name ? `${client.name} Logo` : 'Client Logo'}
                       loading="lazy"
-                      className="w-auto h-auto max-w-[145px] sm:max-w-[175px] md:max-w-[200px] lg:max-w-[220px] max-h-[58px] sm:max-h-[72px] md:max-h-[82px] lg:max-h-[90px] object-contain object-center transition-transform duration-300 group-hover/card:scale-105"
+                      className="w-auto h-auto max-w-[190px] sm:max-w-[230px] md:max-w-[260px] lg:max-w-[280px] max-h-[85px] sm:max-h-[105px] md:max-h-[115px] lg:max-h-[120px] object-contain object-center transition-all duration-300 drop-shadow-none"
                       style={{
                         opacity: 1,
                         filter: 'none',
-                        mixBlendMode: 'normal',
+                        mixBlendMode: 'multiply',
                       }}
                       onError={(e) => {
                         console.warn(
@@ -142,13 +142,10 @@ export default function WeProudlyServeCarousel({
                   </div>
                 );
 
-                const cardClasses =
-                  'group/card relative flex items-center justify-center w-[170px] sm:w-[205px] md:w-[235px] lg:w-[255px] h-[95px] sm:h-[110px] md:h-[122px] lg:h-[130px] bg-white rounded-xl border border-slate-200/90 shadow-2xs hover:shadow-md hover:border-sherman-400/80 transition-all duration-300';
-
                 return (
                   <div
                     key={`${client.id}-${idx}`}
-                    className="flex-shrink-0 flex items-center justify-center"
+                    className="group/logo flex-shrink-0 flex items-center justify-center cursor-default"
                     title={client.name}
                   >
                     {client.websiteUrl ? (
@@ -156,14 +153,16 @@ export default function WeProudlyServeCarousel({
                         href={client.websiteUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`${cardClasses} cursor-pointer`}
+                        className="inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-sherman-500 rounded-lg p-1"
                         aria-label={`Visit ${client.name} website`}
                       >
-                        {cardInner}
+                        {logoElement}
                         <span className="sr-only">{client.name}</span>
                       </a>
                     ) : (
-                      <div className={cardClasses}>{cardInner}</div>
+                      <div className="inline-flex items-center justify-center p-1">
+                        {logoElement}
+                      </div>
                     )}
                   </div>
                 );
@@ -183,14 +182,19 @@ export default function WeProudlyServeCarousel({
           }
         }
         .animate-marquee {
-          animation: marquee 38s linear infinite;
+          animation: marquee 42s linear infinite;
         }
         .pause-animation {
           animation-play-state: paused;
         }
         @media (max-width: 640px) {
           .animate-marquee {
-            animation-duration: 28s;
+            animation-duration: 32s;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-marquee {
+            animation: none;
           }
         }
       `}</style>

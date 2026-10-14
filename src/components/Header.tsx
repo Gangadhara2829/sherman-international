@@ -61,6 +61,7 @@ export default function Header({ categories = [] }: HeaderProps) {
     { label: 'Products', href: '/products', hasMegaMenu: true },
     { label: 'Services', href: '/services' },
     { label: 'Industries', href: '/industries' },
+    { label: 'Gallery', href: '/gallery' },
     { label: 'About Us', href: '/about' },
     { label: 'Contact Us', href: '/contact' },
   ];

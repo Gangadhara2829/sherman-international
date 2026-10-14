@@ -16,7 +16,7 @@ import { validateImageFile, getImageUrl } from '@/lib/image';
 interface ImageUploadProps {
   value: string | null | undefined;
   onChange: (url: string) => void;
-  folder?: 'products' | 'brands' | 'categories' | 'services' | 'industries' | 'clients' | 'general';
+  folder?: 'products' | 'brands' | 'categories' | 'services' | 'industries' | 'clients' | 'gallery' | 'general';
   label?: string;
   helperText?: string;
   required?: boolean;
