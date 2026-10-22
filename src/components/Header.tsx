@@ -102,12 +102,14 @@ export default function Header({ categories = [] }: HeaderProps) {
           isScrolled ? 'border-slate-200 shadow-sm py-3' : 'border-slate-200/80 py-4'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3 xl:gap-6">
           {/* Logo */}
-          <Logo />
+          <div className="flex-shrink-0">
+            <Logo />
+          </div>
 
           {/* Center Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
+          <nav className="hidden lg:flex items-center gap-3 xl:gap-5 2xl:gap-6">
             {navLinks.map((link) => {
               const isActive =
                 link.href === '/'
@@ -123,7 +125,7 @@ export default function Header({ categories = [] }: HeaderProps) {
                   >
                     <Link
                       href={link.href}
-                      className={`inline-flex items-center gap-1 text-sm font-semibold transition-colors py-1 ${
+                      className={`inline-flex items-center gap-1 text-[13px] xl:text-sm font-semibold transition-colors py-1 whitespace-nowrap ${
                         isActive
                           ? 'text-sherman-700 border-b-2 border-sherman-700'
                           : 'text-slate-700 hover:text-slate-950'
@@ -145,7 +147,7 @@ export default function Header({ categories = [] }: HeaderProps) {
                 <Link
                   key={link.label}
                   href={link.href}
-                  className={`text-sm font-semibold transition-colors py-1 ${
+                  className={`text-[13px] xl:text-sm font-semibold transition-colors py-1 whitespace-nowrap ${
                     isActive
                       ? 'text-sherman-700 border-b-2 border-sherman-700'
                       : 'text-slate-700 hover:text-slate-950'
@@ -159,10 +161,10 @@ export default function Header({ categories = [] }: HeaderProps) {
           </nav>
 
           {/* Right Header Actions */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-2 xl:gap-3 flex-shrink-0">
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="p-2 text-slate-600 hover:text-slate-950 hover:bg-slate-100 rounded-md transition-colors flex items-center gap-2 border border-slate-200 text-xs px-2.5"
+              className="p-2 text-slate-600 hover:text-slate-950 hover:bg-slate-100 rounded-md transition-colors flex items-center gap-1.5 border border-slate-200 text-xs px-2.5 whitespace-nowrap"
               aria-label="Search site"
               title="Search products and brands"
             >
@@ -172,9 +174,9 @@ export default function Header({ categories = [] }: HeaderProps) {
 
             <Link
               href="/contact?type=enquiry"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-md text-xs font-semibold text-white bg-navy hover:bg-sherman-800 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3.5 xl:px-4 py-2 rounded-md text-xs font-bold text-white bg-navy hover:bg-sherman-800 transition-colors whitespace-nowrap flex-shrink-0 shadow-xs"
             >
-              <span>Request an Enquiry</span>
+              <span>Request a Quote</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -245,7 +247,7 @@ export default function Header({ categories = [] }: HeaderProps) {
               onClick={() => setIsMobileMenuOpen(false)}
               className="block px-3 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 rounded-md"
             >
-              Services &amp; Integration
+              Services
             </Link>
 
             <Link
@@ -253,7 +255,23 @@ export default function Header({ categories = [] }: HeaderProps) {
               onClick={() => setIsMobileMenuOpen(false)}
               className="block px-3 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 rounded-md"
             >
-              Industries Served
+              Industries
+            </Link>
+
+            <Link
+              href="/our-partners"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block px-3 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 rounded-md"
+            >
+              Our Partners
+            </Link>
+
+            <Link
+              href="/gallery"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block px-3 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 rounded-md"
+            >
+              Gallery
             </Link>
 
             <Link
@@ -261,7 +279,7 @@ export default function Header({ categories = [] }: HeaderProps) {
               onClick={() => setIsMobileMenuOpen(false)}
               className="block px-3 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 rounded-md"
             >
-              About Sherman
+              About Us
             </Link>
 
             <Link
@@ -279,7 +297,7 @@ export default function Header({ categories = [] }: HeaderProps) {
               onClick={() => setIsMobileMenuOpen(false)}
               className="w-full py-2.5 px-4 rounded-md bg-navy text-white font-semibold text-center text-xs flex items-center justify-center gap-2"
             >
-              <span>Request an Enquiry</span>
+              <span>Request a Quote</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
 

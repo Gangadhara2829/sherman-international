@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ChevronRight, ShieldCheck, Handshake } from 'lucide-react';
-import { getPartners } from '@/lib/partners';
+import { getPartners, getPartnersPageHeader } from '@/lib/partners';
 import PartnersGridClient from './PartnersGridClient';
 
 export const metadata = {
@@ -14,7 +14,10 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function OurPartnersPage() {
-  const partners = await getPartners({ includeInactive: false });
+  const [partners, header] = await Promise.all([
+    getPartners({ includeInactive: false }),
+    getPartnersPageHeader(),
+  ]);
 
   return (
     <div className="bg-slate-50 min-h-screen py-10">
@@ -37,10 +40,11 @@ export default async function OurPartnersPage() {
               Strategic Industrial Partnerships
             </span>
             <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
-              Our Partners &amp; Principals
+              {header.heading || 'Our Partners & Principals'}
             </h1>
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
-              Sherman International acts as a strategic technical channel partner and authorized representative for premier global instrumentation and equipment manufacturers across process industries in India.
+              {header.intro ||
+                'Sherman International acts as a strategic technical channel partner and authorized representative for premier global instrumentation and equipment manufacturers across process industries in India.'}
             </p>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { getAdminSession } from '@/lib/auth';
-import { getPartners, createPartner, savePartners, PartnerItem } from '@/lib/partners';
+import { getPartners, createPartner, savePartners, savePartnersPageHeader, PartnerItem } from '@/lib/partners';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,6 +28,18 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
+
+    // Support updating public page header/intro
+    if (body && body.action === 'update_header') {
+      const { heading, intro } = body;
+      const updatedHeader = await savePartnersPageHeader(heading || '', intro || '');
+      try {
+        revalidatePath('/our-partners');
+        revalidatePath('/admin/partners');
+        revalidatePath('/');
+      } catch (e) {}
+      return NextResponse.json({ success: true, header: updatedHeader });
+    }
 
     // Support batch reorder update if payload is an array
     if (Array.isArray(body)) {

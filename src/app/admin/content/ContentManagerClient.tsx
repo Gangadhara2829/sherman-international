@@ -80,6 +80,9 @@ export default function ContentManagerClient({
 
   // Form State: 4. Contact Information
   const [companyName, setCompanyName] = useState(normalizedInitial.contact.company);
+  const [companyDescription, setCompanyDescription] = useState(
+    normalizedInitial.contact.description || DEFAULT_CONTACT_INFO.description || ''
+  );
   const [contactTitle, setContactTitle] = useState(normalizedInitial.contact.title);
   const [contactAddress, setContactAddress] = useState(normalizedInitial.contact.address);
   const [contactPhone, setContactPhone] = useState(normalizedInitial.contact.phone);
@@ -232,6 +235,7 @@ export default function ContentManagerClient({
           key: 'contact_info',
           section: 'contact',
           company: companyName.trim(),
+          description: companyDescription.trim() || undefined,
           title: contactTitle.trim(),
           address: contactAddress.trim(),
           phone: contactPhone.trim(),
@@ -737,6 +741,22 @@ export default function ContentManagerClient({
                 placeholder="Corporate Headquarters & Registered Office"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5">
+              <span>Company Description / Footer Summary</span>
+            </label>
+            <textarea
+              rows={2}
+              value={companyDescription}
+              onChange={(e) => setCompanyDescription(e.target.value)}
+              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600 leading-relaxed"
+              placeholder="Brief summary of company operations shown in website footer..."
+            />
+            <p className="text-[11px] text-slate-400 mt-1">
+              Synchronized automatically as the company introductory summary in the global website footer.
+            </p>
           </div>
 
           <div>

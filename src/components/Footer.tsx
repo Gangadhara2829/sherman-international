@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Mail, Phone, MapPin, ArrowRight, ShieldCheck, Clock } from 'lucide-react';
 import Logo from './Logo';
+import { DEFAULT_CONTACT_INFO, NormalizedContactInfo } from '@/lib/content';
 
 export interface FooterCategoryItem {
   id: string;
@@ -18,9 +19,11 @@ export interface FooterServiceItem {
 interface FooterProps {
   categories?: FooterCategoryItem[];
   services?: FooterServiceItem[];
+  contact?: NormalizedContactInfo;
 }
 
-export default function Footer({ categories = [], services = [] }: FooterProps) {
+export default function Footer({ categories = [], services = [], contact }: FooterProps) {
+  const activeContact = contact || DEFAULT_CONTACT_INFO;
   const defaultProductLinks = [
     { label: 'Flow Measurement', href: '/products/flow-measurement' },
     { label: 'Process Switches', href: '/products/process-switches' },
@@ -79,31 +82,59 @@ export default function Footer({ categories = [], services = [] }: FooterProps) 
             <Logo variant="light" />
 
             <p className="text-xs text-slate-400 leading-relaxed pt-2">
-              Sherman International (P) Limited is a strategic bridge between leading global manufacturers and the Indian industry, delivering cutting-edge flow measurement, combustion systems, dynamic balancing, and railway electrification solutions.
+              {activeContact.description || DEFAULT_CONTACT_INFO.description}
             </p>
 
             <div className="pt-2 space-y-2 text-xs text-slate-400">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-sherman-400 mt-0.5 flex-shrink-0" />
-                <span>
-                  D-94, 9th Floor, Himalaya House, 23 K.G. Marg, New Delhi – 110001
+                <span className="break-words leading-relaxed">
+                  {activeContact.address || DEFAULT_CONTACT_INFO.address}
                 </span>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-sherman-400 flex-shrink-0" />
                 <a
-                  href="mailto:admin@sherman-india.com"
-                  className="hover:text-white transition-colors"
+                  href={`mailto:${activeContact.enquiryEmail || activeContact.email || DEFAULT_CONTACT_INFO.email}`}
+                  className="hover:text-white transition-colors break-all"
                 >
-                  admin@sherman-india.com
+                  {activeContact.enquiryEmail || activeContact.email || DEFAULT_CONTACT_INFO.email}
                 </a>
               </div>
+              {activeContact.technicalSupportEmail &&
+                activeContact.technicalSupportEmail !== (activeContact.enquiryEmail || activeContact.email) && (
+                  <div className="flex items-center gap-2.5">
+                    <Mail className="w-4 h-4 text-sherman-400 flex-shrink-0" />
+                    <a
+                      href={`mailto:${activeContact.technicalSupportEmail}`}
+                      className="hover:text-white transition-colors break-all"
+                      title="Technical Support Desk"
+                    >
+                      {activeContact.technicalSupportEmail} (Support)
+                    </a>
+                  </div>
+                )}
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-sherman-400 flex-shrink-0" />
-                <a href="tel:+919015122200" className="hover:text-white transition-colors">
-                  +91 90151 22200
+                <a
+                  href={`tel:${(activeContact.phone || DEFAULT_CONTACT_INFO.phone).replace(/\s+/g, '')}`}
+                  className="hover:text-white transition-colors"
+                >
+                  {activeContact.phone || DEFAULT_CONTACT_INFO.phone}
                 </a>
               </div>
+              {activeContact.phoneSecondary &&
+                activeContact.phoneSecondary !== activeContact.phone && (
+                  <div className="flex items-center gap-2.5">
+                    <Phone className="w-4 h-4 text-sherman-400 flex-shrink-0" />
+                    <a
+                      href={`tel:${activeContact.phoneSecondary.replace(/\s+/g, '')}`}
+                      className="hover:text-white transition-colors"
+                    >
+                      {activeContact.phoneSecondary}
+                    </a>
+                  </div>
+                )}
             </div>
           </div>
 

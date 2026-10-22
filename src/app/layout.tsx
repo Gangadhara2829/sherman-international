@@ -5,6 +5,7 @@ import prisma from '@/lib/prisma';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { EnquiryProvider } from '@/components/EnquiryModal';
+import { normalizeContactInfo } from '@/lib/content';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -59,9 +60,10 @@ export default async function RootLayout({
 }>) {
   let categories: any[] = [];
   let services: any[] = [];
+  let contactRecord: any = null;
 
   try {
-    [categories, services] = await Promise.all([
+    const [cats, servs, contactRec] = await Promise.all([
       prisma.productCategory.findMany({
         where: { isActive: true },
         include: {
@@ -89,10 +91,18 @@ export default async function RootLayout({
         },
         orderBy: { displayOrder: 'asc' },
       }),
+      prisma.siteContent.findUnique({
+        where: { key: 'contact_info' },
+      }),
     ]);
+    categories = cats;
+    services = servs;
+    contactRecord = contactRec;
   } catch (err) {
     console.warn('Failed to load navigation categories/services in layout:', err);
   }
+
+  const normalizedContact = normalizeContactInfo(contactRecord);
 
   const formattedCategories = categories.map((cat) => ({
     id: cat.id,
@@ -122,7 +132,7 @@ export default async function RootLayout({
         <EnquiryProvider>
           <Header categories={formattedCategories} />
           <main className="flex-1">{children}</main>
-          <Footer categories={footerCategories} services={services} />
+          <Footer categories={footerCategories} services={services} contact={normalizedContact} />
         </EnquiryProvider>
       </body>
     </html>

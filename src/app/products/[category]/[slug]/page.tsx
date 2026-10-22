@@ -10,11 +10,10 @@ import {
   FileText,
   Tag,
   ArrowRight,
-  ExternalLink,
 } from 'lucide-react';
 import prisma from '@/lib/prisma';
 import ProductDetailActions from './ProductDetailActions';
-import { DEFAULT_PRODUCT_PLACEHOLDER } from '@/lib/image';
+import { DEFAULT_PRODUCT_PLACEHOLDER, DEFAULT_BRAND_PLACEHOLDER, getImageUrl } from '@/lib/image';
 
 interface ProductDetailPageProps {
   params: { category: string; slug: string };
@@ -117,12 +116,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           {product.brand && (
             <>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-              <Link
-                href={`/brands/${product.brand.slug}`}
-                className="hover:text-slate-900 transition-colors"
-              >
-                {product.brand.name}
-              </Link>
+              <span className="text-slate-600 font-medium">{product.brand.name}</span>
             </>
           )}
           <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
@@ -134,13 +128,13 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
             {/* LEFT: Product Image */}
             <div className="lg:col-span-5 space-y-4">
-              <div className="relative h-80 sm:h-96 w-full rounded bg-slate-100 border border-slate-200 overflow-hidden">
+              <div className="relative h-80 sm:h-96 w-full rounded-xl bg-slate-50 border border-slate-200 overflow-hidden flex items-center justify-center p-3">
                 <SafeImage
                   src={product.image}
                   alt={product.name}
                   fill
                   priority
-                  className="object-cover"
+                  className="object-contain p-2"
                   fallbackSrc={DEFAULT_PRODUCT_PLACEHOLDER}
                   sizes="(max-width: 768px) 100vw, 500px"
                 />
@@ -165,21 +159,21 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 </span>
 
                 {product.brand && (
-                  <Link
-                    href={`/brands/${product.brand.slug}`}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-navy text-amber-300 text-xs font-bold uppercase tracking-wider hover:bg-sherman-900 transition-colors shadow-2xs"
-                  >
+                  <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-bold uppercase tracking-wider shadow-2xs">
                     {product.brand.logo ? (
-                      <div className="h-4 w-auto max-w-[50px] flex items-center justify-center bg-white/10 px-1 py-0.5 rounded">
+                      <div className="h-5 w-auto max-w-[60px] flex items-center justify-center bg-white px-1.5 py-0.5 rounded">
                         <img
-                          src={product.brand.logo}
+                          src={getImageUrl(product.brand.logo, DEFAULT_BRAND_PLACEHOLDER)}
                           alt={`${product.brand.name} Logo`}
-                          className="max-h-3.5 max-w-[45px] object-contain"
+                          className="max-h-4 max-w-[50px] object-contain"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
                         />
                       </div>
                     ) : null}
                     <span>Brand: {product.brand.name}</span>
-                  </Link>
+                  </span>
                 )}
               </div>
 
@@ -195,42 +189,41 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 </p>
               )}
 
-              {/* Authorized OEM Brand Partner Box */}
+              {/* Brand Manufacturer Display (Clean non-clickable brand display with recognizable logo) */}
               {product.brand && (
                 <div className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
                   {product.brand.logo ? (
-                    <div className="h-12 w-24 relative flex items-center justify-center p-1.5 bg-white rounded-lg border border-slate-200/80 shadow-2xs">
+                    <div className="h-16 w-32 relative flex items-center justify-center p-2 bg-white rounded-lg border border-slate-200/90 shadow-2xs flex-shrink-0 overflow-hidden">
                       <img
-                        src={product.brand.logo}
+                        src={getImageUrl(product.brand.logo, DEFAULT_BRAND_PLACEHOLDER)}
                         alt={`${product.brand.name} Logo`}
-                        className="max-h-10 max-w-[85px] object-contain"
+                        className="max-h-12 max-w-[110px] w-auto h-auto object-contain object-center"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
                       />
                     </div>
                   ) : null}
-                  <div className="space-y-0.5">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                      OEM Principal Partner
+                  <div className="space-y-1">
+                    <div className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      Brand
                     </div>
-                    <Link
-                      href={`/brands/${product.brand.slug}`}
-                      className="text-sm sm:text-base font-bold text-slate-900 hover:text-sherman-700 transition-colors inline-flex items-center gap-1.5"
-                    >
-                      <span>{product.brand.name}</span>
-                      <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-                    </Link>
+                    <div className="text-base sm:text-lg font-extrabold text-slate-900">
+                      {product.brand.name}
+                    </div>
                   </div>
                 </div>
               )}
 
               {/* Full Description text */}
-              <div className="text-sm sm:text-base text-slate-700 leading-relaxed space-y-4 whitespace-pre-line border-t border-b border-slate-200 py-5 font-normal">
+              <div className="text-base text-slate-700 leading-relaxed space-y-4 whitespace-pre-line border-t border-b border-slate-200 py-6 font-normal">
                 {product.description}
               </div>
 
               {/* Technical Specifications Table if available */}
               {specs.length > 0 && (
                 <div className="space-y-3 pt-2">
-                  <h3 className="font-display font-bold text-base text-slate-900 flex items-center gap-2">
+                  <h3 className="font-display font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2">
                     <FileText className="w-4 h-4 text-sherman-700" />
                     <span>Technical Specifications</span>
                   </h3>
@@ -240,12 +233,12 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                         {specs.map((s, idx) => (
                           <tr
                             key={idx}
-                            className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/70'}
+                            className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}
                           >
-                            <td className="py-2.5 px-4 font-bold text-slate-800 border-b border-slate-100 w-1/3">
+                            <td className="py-3 px-4 font-bold text-slate-900 border-b border-slate-100 w-1/3 bg-slate-50/40">
                               {s.label}
                             </td>
-                            <td className="py-2.5 px-4 text-slate-600 border-b border-slate-100">
+                            <td className="py-3 px-4 text-slate-700 font-medium border-b border-slate-100">
                               {s.value}
                             </td>
                           </tr>

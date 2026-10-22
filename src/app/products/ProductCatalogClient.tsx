@@ -5,7 +5,7 @@ import Link from 'next/link';
 import SafeImage from '@/components/SafeImage';
 import { Search, ArrowRight, MessageSquare, Package } from 'lucide-react';
 import { useEnquiry } from '@/components/EnquiryModal';
-import { DEFAULT_PRODUCT_PLACEHOLDER } from '@/lib/image';
+import { DEFAULT_PRODUCT_PLACEHOLDER, DEFAULT_BRAND_PLACEHOLDER, getImageUrl } from '@/lib/image';
 
 interface ProductItem {
   id: string;
@@ -163,28 +163,31 @@ export default function ProductCatalogClient({
           >
             <div>
               {/* Product Image */}
-              <div className="relative h-48 w-full bg-slate-100 overflow-hidden border-b border-slate-100">
+              <div className="relative h-52 w-full bg-slate-50/80 p-2 overflow-hidden border-b border-slate-100 flex items-center justify-center">
                 <SafeImage
                   src={prod.image}
                   alt={prod.name}
                   fill
-                  className="object-cover"
+                  className="object-contain p-2"
                   fallbackSrc={DEFAULT_PRODUCT_PLACEHOLDER}
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
 
                 {/* Badges */}
                 <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2 pointer-events-none">
-                  <span className="px-2.5 py-1 rounded bg-white/95 backdrop-blur-xs text-[11px] font-bold text-slate-800 border border-slate-200/80 shadow-xs">
+                  <span className="px-2.5 py-1.5 rounded bg-white/95 backdrop-blur-xs text-xs font-bold text-slate-800 border border-slate-200/90 shadow-2xs">
                     {prod.category?.name || 'General Product'}
                   </span>
                   {prod.brand && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/95 backdrop-blur-xs text-[11px] font-bold text-slate-900 border border-slate-200/80 shadow-xs max-w-[60%]">
+                    <span className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded bg-white/95 backdrop-blur-xs text-xs font-bold text-slate-900 border border-slate-200/90 shadow-2xs max-w-[65%]">
                       {prod.brand.logo ? (
                         <img
-                          src={prod.brand.logo}
+                          src={getImageUrl(prod.brand.logo, DEFAULT_BRAND_PLACEHOLDER)}
                           alt={prod.brand.name}
-                          className="h-3.5 w-auto max-w-[45px] object-contain flex-shrink-0"
+                          className="h-5 sm:h-6 w-auto max-w-[70px] object-contain flex-shrink-0"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
                         />
                       ) : null}
                       <span className="truncate">{prod.brand.name}</span>
@@ -195,7 +198,7 @@ export default function ProductCatalogClient({
 
               {/* Product Info */}
               <div className="p-5 sm:p-6 space-y-3">
-                <h3 className="font-display font-bold text-base sm:text-lg text-slate-900 group-hover:text-sherman-700 transition-colors leading-snug">
+                <h3 className="font-display font-bold text-lg sm:text-xl text-slate-900 group-hover:text-sherman-700 transition-colors leading-snug">
                   {prod.name}
                 </h3>
 

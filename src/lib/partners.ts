@@ -1,20 +1,11 @@
 import prisma from '@/lib/prisma';
-
-export interface PartnerItem {
-  id: string;
-  name: string;
-  logo: string;
-  websiteUrl?: string | null;
-  description?: string | null;
-  displayOrder: number;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+export * from './partners-types';
+import { PartnerItem, PartnersPageHeader, DEFAULT_PARTNERS_HEADER } from './partners-types';
 
 /**
  * Fetch all partners from persistent SiteContent storage.
- * If not yet seeded, seeds authentic Sherman principal partners.
+ * Strictly returns only partners explicitly managed through Our Partners Management.
+ * Does NOT import or merge manufacturer brands.
  */
 export async function getPartners(options?: {
   includeInactive?: boolean;
@@ -40,38 +31,80 @@ export async function getPartners(options?: {
     console.warn('[Partners] Failed to fetch partners from siteContent:', err);
   }
 
-  // Initial seeding from existing authentic Brand records
+  // Strictly return empty list when no separate partners have been added
+  return [];
+}
+
+/**
+ * Fetch Our Partners page heading and introductory description.
+ */
+export async function getPartnersPageHeader(): Promise<PartnersPageHeader> {
   try {
-    const brands = await prisma.brand.findMany({
-      where: { isActive: true, logo: { not: null } },
-      orderBy: { displayOrder: 'asc' },
+    const record = await prisma.siteContent.findUnique({
+      where: { key: 'our_partners' },
     });
-
-    if (brands && brands.length > 0) {
-      const initialPartners: PartnerItem[] = brands.map((b, idx) => ({
-        id: `partner-${b.id || idx + 1}`,
-        name: b.name,
-        logo: b.logo || '',
-        websiteUrl: b.websiteUrl || null,
-        description: b.description || 'Authorized OEM Partner & Global Principal',
-        displayOrder: idx + 1,
-        isActive: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }));
-
-      // Persist so admin can edit independently of brand records
-      await savePartners(initialPartners);
-
-      return includeInactive
-        ? initialPartners
-        : initialPartners.filter((p) => p.isActive !== false);
+    if (record) {
+      let intro = DEFAULT_PARTNERS_HEADER.intro;
+      if (record.metadata) {
+        try {
+          const meta = JSON.parse(record.metadata);
+          if (meta.intro) intro = meta.intro;
+        } catch {}
+      } else if (record.subtitle) {
+        intro = record.subtitle;
+      }
+      return {
+        heading: record.title?.trim() || DEFAULT_PARTNERS_HEADER.heading,
+        intro: intro.trim(),
+      };
     }
   } catch (err) {
-    console.warn('[Partners] Failed to seed initial partners from brands:', err);
+    console.warn('[Partners] Failed to fetch partners header:', err);
   }
+  return DEFAULT_PARTNERS_HEADER;
+}
 
-  return [];
+/**
+ * Persistently save page heading and introductory text for Our Partners.
+ */
+export async function savePartnersPageHeader(
+  heading: string,
+  intro: string
+): Promise<boolean> {
+  try {
+    const existing = await prisma.siteContent.findUnique({
+      where: { key: 'our_partners' },
+    });
+    let existingMeta: any = {};
+    if (existing?.metadata) {
+      try {
+        existingMeta = JSON.parse(existing.metadata);
+      } catch {}
+    }
+    const updatedMeta = { ...existingMeta, intro: intro.trim() };
+
+    await prisma.siteContent.upsert({
+      where: { key: 'our_partners' },
+      create: {
+        key: 'our_partners',
+        section: 'partners',
+        title: heading.trim(),
+        subtitle: intro.trim(),
+        content: '[]',
+        metadata: JSON.stringify(updatedMeta),
+      },
+      update: {
+        title: heading.trim(),
+        subtitle: intro.trim(),
+        metadata: JSON.stringify(updatedMeta),
+      },
+    });
+
+    return true;
+  } catch (err) {
+    console.error('[Partners] Failed to save partners header:', err);
+    return false;
+  }
 }
 
 /**
@@ -83,14 +116,19 @@ export async function savePartners(items: PartnerItem[]): Promise<boolean> {
       (a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)
     );
 
+    const existing = await prisma.siteContent.findUnique({
+      where: { key: 'our_partners' },
+    });
+
     await prisma.siteContent.upsert({
       where: { key: 'our_partners' },
       create: {
         key: 'our_partners',
         section: 'partners',
-        title: 'Our Partners & Global Principals',
-        subtitle: 'Strategic OEM Partnerships Delivering Global Industrial Engineering Solutions',
+        title: DEFAULT_PARTNERS_HEADER.heading,
+        subtitle: DEFAULT_PARTNERS_HEADER.intro,
         content: JSON.stringify(sorted),
+        metadata: JSON.stringify({ intro: DEFAULT_PARTNERS_HEADER.intro }),
       },
       update: {
         content: JSON.stringify(sorted),

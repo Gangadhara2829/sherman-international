@@ -28,6 +28,7 @@ export interface NormalizedVisionMission {
 export interface NormalizedContactInfo {
   company: string;
   title: string;
+  description?: string;
   address: string;
   phone: string;
   phoneSecondary: string;
@@ -94,6 +95,8 @@ export const DEFAULT_VISION_MISSION: NormalizedVisionMission = {
 export const DEFAULT_CONTACT_INFO: NormalizedContactInfo = {
   company: 'Sherman International (P) Limited',
   title: 'Corporate Headquarters & Registered Office',
+  description:
+    'Sherman International (P) Limited is a strategic bridge between leading global manufacturers and the Indian industry, delivering cutting-edge flow measurement, combustion systems, dynamic balancing, and railway electrification solutions.',
   address: 'D-94, 9th Floor, Himalaya House, 23 K.G. Marg, New Delhi – 110001',
   phone: '+91 90151 22200',
   phoneSecondary: '+91 90151 22200',
@@ -255,6 +258,7 @@ export function normalizeContactInfo(rawRecord?: any): NormalizedContactInfo {
   const parsedMeta = parseContentValue(rawRecord.metadata) || {};
 
   let company = DEFAULT_CONTACT_INFO.company;
+  let description = DEFAULT_CONTACT_INFO.description;
   let address = DEFAULT_CONTACT_INFO.address;
   let phone = DEFAULT_CONTACT_INFO.phone;
   let phoneSecondary = DEFAULT_CONTACT_INFO.phoneSecondary;
@@ -267,6 +271,7 @@ export function normalizeContactInfo(rawRecord?: any): NormalizedContactInfo {
 
   if (parsedContent && typeof parsedContent === 'object') {
     if (parsedContent.company) company = parsedContent.company;
+    if (parsedContent.description) description = parsedContent.description;
     if (parsedContent.address) address = parsedContent.address;
     if (parsedContent.phone) phone = parsedContent.phone;
     if (parsedContent.phoneSecondary) phoneSecondary = parsedContent.phoneSecondary;
@@ -284,6 +289,7 @@ export function normalizeContactInfo(rawRecord?: any): NormalizedContactInfo {
 
   // Check metadata overrides
   if (parsedMeta.company) company = parsedMeta.company;
+  if (parsedMeta.description) description = parsedMeta.description;
   if (parsedMeta.address) address = parsedMeta.address;
   if (parsedMeta.phone) phone = parsedMeta.phone;
   if (parsedMeta.phoneSecondary) phoneSecondary = parsedMeta.phoneSecondary;
@@ -304,6 +310,7 @@ export function normalizeContactInfo(rawRecord?: any): NormalizedContactInfo {
   return {
     company,
     title: rawRecord.title?.trim() || DEFAULT_CONTACT_INFO.title,
+    description,
     address,
     phone,
     phoneSecondary,

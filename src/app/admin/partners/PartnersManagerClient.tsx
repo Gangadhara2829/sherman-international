@@ -15,24 +15,36 @@ import {
   Eye,
   EyeOff,
   AlertTriangle,
+  Save,
 } from 'lucide-react';
 import ImageUpload from '@/components/admin/ImageUpload';
 import AdminModal from '@/components/admin/AdminModal';
-import { PartnerItem } from '@/lib/partners';
+import { PartnerItem, PartnersPageHeader, DEFAULT_PARTNERS_HEADER } from '@/lib/partners-types';
 import { DEFAULT_BRAND_PLACEHOLDER, getImageUrl } from '@/lib/image';
 
 interface PartnersManagerClientProps {
   initialPartners: PartnerItem[];
+  initialHeader?: PartnersPageHeader;
 }
 
 export default function PartnersManagerClient({
   initialPartners,
+  initialHeader,
 }: PartnersManagerClientProps) {
   const [partners, setPartners] = useState<PartnerItem[]>(initialPartners);
   const [searchQuery, setSearchQuery] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+  // Page Header & Intro State
+  const [pageHeading, setPageHeading] = useState(
+    initialHeader?.heading || DEFAULT_PARTNERS_HEADER.heading
+  );
+  const [pageIntro, setPageIntro] = useState(
+    initialHeader?.intro || DEFAULT_PARTNERS_HEADER.intro
+  );
+  const [isSavingHeader, setIsSavingHeader] = useState(false);
 
   // Form State
   const [name, setName] = useState('');
@@ -50,6 +62,35 @@ export default function PartnersManagerClient({
     setSuccessMessage(msg);
     setError(null);
     setTimeout(() => setSuccessMessage(null), 4000);
+  };
+
+  const handleSaveHeader = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingHeader(true);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/admin/partners', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update_header',
+          heading: pageHeading.trim(),
+          intro: pageIntro.trim(),
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to update page header');
+      }
+
+      showSuccess('Public page heading and introductory text saved successfully!');
+    } catch (err: any) {
+      setError(err.message || 'Error saving page header');
+    } finally {
+      setIsSavingHeader(false);
+    }
   };
 
   const openAdd = () => {
@@ -248,6 +289,48 @@ export default function PartnersManagerClient({
           <span>{error}</span>
         </div>
       )}
+
+      {/* Public Page Header & Intro Settings */}
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <h2 className="text-sm font-bold text-slate-800">Public Page Heading & Introductory Text</h2>
+            <p className="text-[11px] text-slate-500">Customize the title and description displayed at the top of the /our-partners page.</p>
+          </div>
+          <button
+            type="button"
+            onClick={handleSaveHeader}
+            disabled={isSavingHeader}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold disabled:opacity-50 transition-colors self-start sm:self-auto cursor-pointer"
+          >
+            {isSavingHeader ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+            <span>Save Header Info</span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-1">
+            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Page Heading</label>
+            <input
+              type="text"
+              value={pageHeading}
+              onChange={(e) => setPageHeading(e.target.value)}
+              placeholder="e.g. Our Trusted Partners & Principals"
+              className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sherman-600 bg-slate-50 focus:bg-white"
+            />
+          </div>
+          <div className="md:col-span-2 space-y-1">
+            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Introductory Text</label>
+            <textarea
+              rows={2}
+              value={pageIntro}
+              onChange={(e) => setPageIntro(e.target.value)}
+              placeholder="Enter brief introductory text explaining Sherman International's partnership network..."
+              className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sherman-600 bg-slate-50 focus:bg-white resize-none"
+            />
+          </div>
+        </div>
+      </div>
 
       {/* Search and Summary */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">

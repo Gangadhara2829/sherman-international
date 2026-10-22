@@ -60,6 +60,10 @@ export async function POST(request: Request) {
         body.company !== undefined
           ? body.company
           : existingContentParsed?.company || 'Sherman International (P) Limited';
+      const description =
+        body.description !== undefined
+          ? body.description
+          : existingContentParsed?.description || undefined;
       const address =
         body.address !== undefined
           ? body.address
@@ -99,6 +103,7 @@ export async function POST(request: Request) {
 
       finalContent = JSON.stringify({
         company,
+        description,
         address,
         phone,
         phoneSecondary,
@@ -161,6 +166,7 @@ export async function POST(request: Request) {
 
     // Invalidate stale caches immediately across public and admin pages
     try {
+      revalidatePath('/', 'layout');
       revalidatePath('/');
       revalidatePath('/about');
       revalidatePath('/contact');
