@@ -43,7 +43,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     include: { category: true, brand: true },
   });
 
-  if (!product || product.category.slug !== params.category) {
+  if (!product) {
     notFound();
   }
 
@@ -166,9 +166,6 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                           src={getImageUrl(product.brand.logo, DEFAULT_BRAND_PLACEHOLDER)}
                           alt={`${product.brand.name} Logo`}
                           className="max-h-4 max-w-[50px] object-contain"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
                         />
                       </div>
                     ) : null}
@@ -198,9 +195,6 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                         src={getImageUrl(product.brand.logo, DEFAULT_BRAND_PLACEHOLDER)}
                         alt={`${product.brand.name} Logo`}
                         className="max-h-12 max-w-[110px] w-auto h-auto object-contain object-center"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
                       />
                     </div>
                   ) : null}
