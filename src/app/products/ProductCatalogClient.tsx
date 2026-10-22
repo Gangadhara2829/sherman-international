@@ -162,8 +162,33 @@ export default function ProductCatalogClient({
             className="bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-colors duration-200 overflow-hidden flex flex-col justify-between group shadow-xs"
           >
             <div>
-              {/* Product Image */}
-              <div className="relative h-52 w-full bg-slate-50/80 p-2 overflow-hidden border-b border-slate-100 flex items-center justify-center">
+              {/* Brand Header Bar: Clean dedicated section above image so product image has NO overlays */}
+              <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between gap-3 min-h-[48px]">
+                {prod.brand ? (
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    {prod.brand.logo ? (
+                      <div className="h-8 w-20 sm:w-24 bg-white border border-slate-200/90 rounded p-1 flex items-center justify-center flex-shrink-0 shadow-2xs">
+                        <img
+                          src={getImageUrl(prod.brand.logo, DEFAULT_BRAND_PLACEHOLDER)}
+                          alt={prod.brand.name}
+                          className="max-h-full max-w-full object-contain"
+                          onError={(e) => {
+                            (e.currentTarget.parentElement as HTMLElement)?.classList.add('hidden');
+                          }}
+                        />
+                      </div>
+                    ) : null}
+                    <span className="text-xs font-bold text-slate-800 truncate">
+                      {prod.brand.name}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-xs font-semibold text-slate-400">Sherman Engineering</span>
+                )}
+              </div>
+
+              {/* Product Image: 100% Unobstructed without category or brand overlay badges */}
+              <div className="relative h-52 w-full bg-white p-3 overflow-hidden border-b border-slate-100 flex items-center justify-center">
                 <SafeImage
                   src={prod.image}
                   alt={prod.name}
@@ -172,28 +197,6 @@ export default function ProductCatalogClient({
                   fallbackSrc={DEFAULT_PRODUCT_PLACEHOLDER}
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
-
-                {/* Badges */}
-                <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2 pointer-events-none">
-                  <span className="px-2.5 py-1.5 rounded bg-white/95 backdrop-blur-xs text-xs font-bold text-slate-800 border border-slate-200/90 shadow-2xs">
-                    {prod.category?.name || 'General Product'}
-                  </span>
-                  {prod.brand && (
-                    <span className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded bg-white/95 backdrop-blur-xs text-xs font-bold text-slate-900 border border-slate-200/90 shadow-2xs max-w-[65%]">
-                      {prod.brand.logo ? (
-                        <img
-                          src={getImageUrl(prod.brand.logo, DEFAULT_BRAND_PLACEHOLDER)}
-                          alt={prod.brand.name}
-                          className="h-5 sm:h-6 w-auto max-w-[70px] object-contain flex-shrink-0"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      ) : null}
-                      <span className="truncate">{prod.brand.name}</span>
-                    </span>
-                  )}
-                </div>
               </div>
 
               {/* Product Info */}

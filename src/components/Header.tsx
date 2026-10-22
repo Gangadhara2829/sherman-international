@@ -28,6 +28,7 @@ interface CategoryItem {
     name: string;
     slug: string;
     brandName?: string | null;
+    brandLogo?: string | null;
     shortDescription?: string | null;
   }[];
 }

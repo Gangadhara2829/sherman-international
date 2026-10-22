@@ -20,6 +20,7 @@ interface CategoryWithProducts {
     name: string;
     slug: string;
     brandName?: string | null;
+    brandLogo?: string | null;
     shortDescription?: string | null;
   }[];
 }
@@ -44,14 +45,14 @@ export default function ProductsMegaMenu({ categories, onClose }: ProductsMegaMe
       onMouseLeave={onClose}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-12 gap-6 min-h-[340px]">
-          {/* COLUMN 1: Categories List (LEFT - 4 cols) */}
-          <div className="col-span-4 border-r border-slate-200 pr-4 space-y-1">
+        <div className="grid grid-cols-12 gap-6 min-h-[360px]">
+          {/* COLUMN 1: Categories List (LEFT - 3 cols) */}
+          <div className="col-span-3 border-r border-slate-200 pr-3 space-y-1">
             <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 px-3 pb-2 border-b border-slate-100 flex items-center justify-between">
               <span>Categories ({categories.length})</span>
             </div>
 
-            <div className="space-y-0.5 max-h-[290px] overflow-y-auto pr-1 pt-1">
+            <div className="space-y-0.5 max-h-[300px] overflow-y-auto pr-1 pt-1">
               {categories.map((cat) => {
                 const isActive = cat.slug === (activeCategory?.slug || '');
                 return (
@@ -88,8 +89,8 @@ export default function ProductsMegaMenu({ categories, onClose }: ProductsMegaMe
             </div>
           </div>
 
-          {/* COLUMN 2: Products within selected Category (MIDDLE - 5 cols) */}
-          <div className="col-span-5 border-r border-slate-200 pr-4">
+          {/* COLUMN 2: Products within selected Category (MIDDLE - 6 cols) */}
+          <div className="col-span-6 border-r border-slate-200 pr-4">
             {activeCategory && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">
@@ -111,30 +112,48 @@ export default function ProductsMegaMenu({ categories, onClose }: ProductsMegaMe
                   </Link>
                 </div>
 
-                <div className="space-y-1 max-h-[260px] overflow-y-auto pr-1">
+                <div className="space-y-1.5 max-h-[300px] overflow-y-auto pr-1">
                   {activeCategory.products && activeCategory.products.length > 0 ? (
                     activeCategory.products.map((prod) => (
                       <Link
                         key={prod.id}
                         href={`/products/${activeCategory.slug}/${prod.slug}`}
                         onClick={onClose}
-                        className="block p-2 rounded hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-colors group"
+                        className="block p-2 rounded-lg hover:bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors group"
                       >
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-semibold text-slate-800 group-hover:text-sherman-700">
-                            {prod.name}
-                          </span>
-                          {prod.brandName && (
-                            <span className="text-[10px] uppercase font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
-                              {prod.brandName}
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <span className="text-xs font-semibold text-slate-800 group-hover:text-sherman-700 transition-colors block">
+                              {prod.name}
                             </span>
+                            {prod.shortDescription && (
+                              <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
+                                {prod.shortDescription}
+                              </p>
+                            )}
+                          </div>
+                          {(prod.brandLogo || prod.brandName) && (
+                            <div className="flex-shrink-0 flex items-center gap-2">
+                              {prod.brandLogo ? (
+                                <div className="h-12 w-20 sm:h-14 sm:w-24 bg-white border border-slate-200/90 rounded-md p-1 flex items-center justify-center shadow-2xs">
+                                  <img
+                                    src={prod.brandLogo}
+                                    alt={prod.brandName || 'Brand logo'}
+                                    className="max-h-full max-w-full object-contain"
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = 'none';
+                                    }}
+                                  />
+                                </div>
+                              ) : null}
+                              {prod.brandName && (
+                                <span className="text-[10px] uppercase font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded max-w-[130px] truncate">
+                                  {prod.brandName}
+                                </span>
+                              )}
+                            </div>
                           )}
                         </div>
-                        {prod.shortDescription && (
-                          <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">
-                            {prod.shortDescription}
-                          </p>
-                        )}
                       </Link>
                     ))
                   ) : (

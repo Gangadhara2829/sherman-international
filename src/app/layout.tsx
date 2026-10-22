@@ -74,7 +74,7 @@ export default async function RootLayout({
               name: true,
               slug: true,
               shortDescription: true,
-              brand: { select: { name: true } },
+              brand: { select: { name: true, logo: true } },
             },
             orderBy: { displayOrder: 'asc' },
             take: 6,
@@ -116,6 +116,7 @@ export default async function RootLayout({
       name: p.name,
       slug: p.slug,
       brandName: p.brand?.name || null,
+      brandLogo: p.brand?.logo || null,
       shortDescription: p.shortDescription,
     })),
   }));

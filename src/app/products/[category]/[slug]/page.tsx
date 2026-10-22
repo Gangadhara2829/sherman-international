@@ -190,11 +190,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               {product.brand && (
                 <div className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
                   {product.brand.logo ? (
-                    <div className="h-16 w-32 relative flex items-center justify-center p-2 bg-white rounded-lg border border-slate-200/90 shadow-2xs flex-shrink-0 overflow-hidden">
+                    <div className="h-20 w-36 relative flex items-center justify-center p-2.5 bg-white rounded-xl border border-slate-200/90 shadow-2xs flex-shrink-0 overflow-hidden">
                       <img
                         src={getImageUrl(product.brand.logo, DEFAULT_BRAND_PLACEHOLDER)}
                         alt={`${product.brand.name} Logo`}
-                        className="max-h-12 max-w-[110px] w-auto h-auto object-contain object-center"
+                        className="max-h-16 max-w-[125px] w-auto h-auto object-contain object-center"
                       />
                     </div>
                   ) : null}
