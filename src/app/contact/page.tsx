@@ -22,6 +22,20 @@ export default async function ContactPage() {
   const cleanPhone = contact.phone.replace(/[^0-9+]/g, '');
   const cleanWhatsApp = contact.whatsapp.replace(/[^0-9]/g, '');
 
+  const rawPhones = [
+    contact.phone,
+    contact.phoneSecondary,
+  ].filter(Boolean);
+
+  const phoneNumbers = Array.from(
+    new Set(
+      rawPhones
+        .flatMap((p) => (typeof p === 'string' ? p.split(/[\/,]/) : []))
+        .map((p) => p.trim())
+        .filter(Boolean)
+    )
+  );
+
   return (
     <div className="bg-slate-50 min-h-screen py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -127,12 +141,27 @@ export default async function ContactPage() {
                   </div>
                   <div>
                     <div className="font-bold text-slate-900">Telephone / Mobile</div>
-                    <div className="text-slate-700 font-semibold mt-0.5">
-                      <a href={`tel:${cleanPhone}`} className="hover:underline">
-                        {contact.phone}
-                      </a>
-                      {contact.phoneSecondary && (
-                        <span> / {contact.phoneSecondary}</span>
+                    <div className="mt-1 space-y-1">
+                      {phoneNumbers.length > 0 ? (
+                        phoneNumbers.map((num) => {
+                          const cleanNum = num.replace(/[^0-9+]/g, '');
+                          return (
+                            <a
+                              key={num}
+                              href={`tel:${cleanNum}`}
+                              className="block text-slate-700 font-semibold hover:text-navy hover:underline transition-colors"
+                            >
+                              {num}
+                            </a>
+                          );
+                        })
+                      ) : (
+                        <a
+                          href={`tel:${cleanPhone}`}
+                          className="block text-slate-700 font-semibold hover:text-navy hover:underline transition-colors"
+                        >
+                          {contact.phone}
+                        </a>
                       )}
                     </div>
                   </div>
