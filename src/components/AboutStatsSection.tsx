@@ -1,52 +1,34 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Package, Clock, CheckCircle2, Sparkles } from 'lucide-react';
+import { Package, Clock, CheckCircle2, Sparkles, Award, Zap, TrendingUp } from 'lucide-react';
+import { NormalizedAboutStats, DEFAULT_ABOUT_STATS, StatItemData } from '@/lib/content';
 
-interface StatItem {
-  id: string;
-  target: number;
-  suffix: string;
-  label: string;
-  description: string;
-  icon: React.ElementType;
+function getStatIcon(id: string, index: number) {
+  const lower = id.toLowerCase();
+  if (lower.includes('product') || lower.includes('item')) return Package;
+  if (lower.includes('experience') || lower.includes('year') || lower.includes('decade')) return Clock;
+  if (lower.includes('project') || lower.includes('client') || lower.includes('completion')) return CheckCircle2;
+  if (lower.includes('award') || lower.includes('certif')) return Award;
+  if (lower.includes('grow') || lower.includes('track')) return TrendingUp;
+  const icons = [Package, Clock, CheckCircle2, Sparkles, Award, Zap];
+  return icons[index % icons.length] || Sparkles;
 }
 
-const STATS_DATA: StatItem[] = [
-  {
-    id: 'products',
-    target: 150,
-    suffix: '',
-    label: 'Products',
-    description: 'High-precision industrial instrumentation & engineered components',
-    icon: Package,
-  },
-  {
-    id: 'experience',
-    target: 45,
-    suffix: '',
-    label: 'Years of Experience',
-    description: 'Decades of deep technocrat domain knowledge & execution expertise',
-    icon: Clock,
-  },
-  {
-    id: 'projects',
-    target: 900,
-    suffix: '+',
-    label: 'Completed Projects',
-    description: 'Successful multi-sector engineering installations & turnkey deliveries',
-    icon: CheckCircle2,
-  },
-];
-
-export default function AboutStatsSection() {
+export default function AboutStatsSection({ stats }: { stats?: NormalizedAboutStats }) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
-  const [counts, setCounts] = useState<{ [key: string]: number }>({
-    products: 0,
-    experience: 0,
-    projects: 0,
-  });
+
+  const activeStats = stats || DEFAULT_ABOUT_STATS;
+  const items = activeStats.items && activeStats.items.length > 0 ? activeStats.items : DEFAULT_ABOUT_STATS.items;
+
+  // Initialize counts
+  const initialCounts = items.reduce<{ [key: string]: number }>((acc, it) => {
+    acc[it.id] = 0;
+    return acc;
+  }, {});
+
+  const [counts, setCounts] = useState<{ [key: string]: number }>(initialCounts);
 
   useEffect(() => {
     // Check user preference for reduced motion
@@ -55,11 +37,11 @@ export default function AboutStatsSection() {
     ).matches;
 
     if (prefersReducedMotion) {
-      setCounts({
-        products: 150,
-        experience: 45,
-        projects: 900,
-      });
+      const finalCounts = items.reduce<{ [key: string]: number }>((acc, it) => {
+        acc[it.id] = it.target;
+        return acc;
+      }, {});
+      setCounts(finalCounts);
       setHasAnimated(true);
       return;
     }
@@ -79,20 +61,20 @@ export default function AboutStatsSection() {
             // Cubic ease-out curve
             const easeOut = 1 - Math.pow(1 - progress, 3);
 
-            setCounts({
-              products: Math.floor(easeOut * 150),
-              experience: Math.floor(easeOut * 45),
-              projects: Math.floor(easeOut * 900),
+            const updated: { [key: string]: number } = {};
+            items.forEach((it) => {
+              updated[it.id] = Math.floor(easeOut * it.target);
             });
+            setCounts(updated);
 
             if (progress < 1) {
               requestAnimationFrame(animate);
             } else {
-              setCounts({
-                products: 150,
-                experience: 45,
-                projects: 900,
-              });
+              const finalCounts = items.reduce<{ [key: string]: number }>((acc, it) => {
+                acc[it.id] = it.target;
+                return acc;
+              }, {});
+              setCounts(finalCounts);
             }
           };
 
@@ -114,7 +96,7 @@ export default function AboutStatsSection() {
         observer.unobserve(currentElem);
       }
     };
-  }, [hasAnimated]);
+  }, [hasAnimated, items]);
 
   return (
     <section
@@ -141,27 +123,37 @@ export default function AboutStatsSection() {
         <div className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/30 backdrop-blur-md text-amber-400 text-xs font-bold uppercase tracking-widest shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>Some Cool Facts</span>
+            <span>{activeStats.badge}</span>
           </div>
 
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight uppercase">
-            Numbers Speak for Themselves
+            {activeStats.heading}
           </h2>
 
           <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed">
-            A quantifiable proven track record built on precision engineering, long-term industrial partnerships, and relentless execution quality.
+            {activeStats.intro}
           </p>
         </div>
 
-        {/* 3 Animated Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-          {STATS_DATA.map((item) => {
-            const Icon = item.icon;
+        {/* Animated Statistics Cards */}
+        <div
+          className={`grid grid-cols-1 ${
+            items.length === 1
+              ? 'max-w-md mx-auto'
+              : items.length === 2
+              ? 'md:grid-cols-2 max-w-3xl mx-auto'
+              : items.length === 4
+              ? 'md:grid-cols-2 lg:grid-cols-4'
+              : 'md:grid-cols-3'
+          } gap-6 sm:gap-8`}
+        >
+          {items.map((item, idx) => {
+            const Icon = getStatIcon(item.id || item.label, idx);
             const currentCount = counts[item.id] ?? 0;
 
             return (
               <div
-                key={item.id}
+                key={item.id || idx}
                 className="relative group p-6 sm:p-8 rounded-2xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-amber-400/40 transition-all duration-300 flex flex-col justify-between space-y-4 backdrop-blur-xs shadow-lg"
               >
                 {/* Top Icon Pill */}

@@ -15,7 +15,14 @@ function getDatabaseUrl(): string {
     if (url && typeof url === 'string' && url.trim().length > 0) {
       const trimmed = url.trim();
       if (trimmed.startsWith('postgresql://') || trimmed.startsWith('postgres://')) {
-        return trimmed;
+        let url = trimmed;
+        if (!url.includes('pool_timeout=')) {
+          url += (url.includes('?') ? '&' : '?') + 'pool_timeout=45';
+        }
+        if (!url.includes('connection_limit=')) {
+          url += '&connection_limit=10';
+        }
+        return url;
       }
     }
   }

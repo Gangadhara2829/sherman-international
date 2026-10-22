@@ -16,6 +16,11 @@ import {
   Image as ImageIcon,
   Sparkles,
   AlertCircle,
+  Plus,
+  Trash2,
+  ArrowUp,
+  ArrowDown,
+  BarChart2,
 } from 'lucide-react';
 import ImageUpload from '@/components/admin/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
@@ -26,6 +31,8 @@ import {
   DEFAULT_ABOUT_CONTENT,
   DEFAULT_VISION_MISSION,
   DEFAULT_CONTACT_INFO,
+  DEFAULT_ABOUT_STATS,
+  StatItemData,
 } from '@/lib/content';
 
 interface SiteContentItem {
@@ -45,7 +52,7 @@ export default function ContentManagerClient({
   initialContents: SiteContentItem[];
 }) {
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'hero' | 'about' | 'vision' | 'contact'>('hero');
+  const [activeTab, setActiveTab] = useState<'hero' | 'about' | 'vision' | 'contact' | 'stats'>('hero');
   const [savedSuccess, setSavedSuccess] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [savingKey, setSavingKey] = useState<string | null>(null);
@@ -78,9 +85,22 @@ export default function ContentManagerClient({
   const [contactPhone, setContactPhone] = useState(normalizedInitial.contact.phone);
   const [contactPhoneSec, setContactPhoneSec] = useState(normalizedInitial.contact.phoneSecondary);
   const [contactEmail, setContactEmail] = useState(normalizedInitial.contact.email);
+  const [enquiryEmail, setEnquiryEmail] = useState(
+    normalizedInitial.contact.enquiryEmail || normalizedInitial.contact.email
+  );
+  const [technicalSupportEmail, setTechnicalSupportEmail] = useState(
+    normalizedInitial.contact.technicalSupportEmail || ''
+  );
   const [contactHours, setContactHours] = useState(normalizedInitial.contact.workingHours);
   const [contactWhatsApp, setContactWhatsApp] = useState(normalizedInitial.contact.whatsapp);
   const [contactMapsUrl, setContactMapsUrl] = useState(normalizedInitial.contact.googleMapsUrl);
+
+  // Form State: 5. About Us Animated Statistics
+  const initialStats = normalizedInitial.aboutStats || DEFAULT_ABOUT_STATS;
+  const [statsBadge, setStatsBadge] = useState(initialStats.badge);
+  const [statsHeading, setStatsHeading] = useState(initialStats.heading);
+  const [statsIntro, setStatsIntro] = useState(initialStats.intro);
+  const [statCards, setStatCards] = useState<StatItemData[]>(initialStats.items);
 
   const showSuccess = (msg: string) => {
     setSavedSuccess(msg);
@@ -192,6 +212,18 @@ export default function ContentManagerClient({
     setSavingKey('contact_info');
     setErrorMessage(null);
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (enquiryEmail && !emailRegex.test(enquiryEmail.trim())) {
+      showError('Please enter a valid Enquiry Email address.');
+      setSavingKey(null);
+      return;
+    }
+    if (technicalSupportEmail && technicalSupportEmail.trim() && !emailRegex.test(technicalSupportEmail.trim())) {
+      showError('Please enter a valid Technical Support Email address or leave it empty.');
+      setSavingKey(null);
+      return;
+    }
+
     try {
       const res = await fetch('/api/content', {
         method: 'POST',
@@ -204,7 +236,9 @@ export default function ContentManagerClient({
           address: contactAddress.trim(),
           phone: contactPhone.trim(),
           phoneSecondary: contactPhoneSec.trim(),
-          email: contactEmail.trim(),
+          email: enquiryEmail.trim() || contactEmail.trim(),
+          enquiryEmail: enquiryEmail.trim() || contactEmail.trim(),
+          technicalSupportEmail: technicalSupportEmail.trim() || null,
           workingHours: contactHours.trim(),
           whatsapp: contactWhatsApp.trim(),
           googleMapsUrl: contactMapsUrl.trim(),
@@ -220,6 +254,79 @@ export default function ContentManagerClient({
     } finally {
       setSavingKey(null);
     }
+  };
+
+  // 5. Save About Us Statistics
+  const handleSaveStats = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingKey('about_stats');
+    setErrorMessage(null);
+
+    try {
+      const res = await fetch('/api/content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          key: 'about_stats',
+          section: 'about',
+          badge: statsBadge.trim(),
+          heading: statsHeading.trim(),
+          intro: statsIntro.trim(),
+          items: statCards.map((it, idx) => ({
+            id: it.id || `stat-${idx + 1}`,
+            target: typeof it.target === 'number' ? it.target : parseInt(it.target as any, 10) || 0,
+            suffix: it.suffix || '',
+            label: it.label.trim(),
+            description: it.description.trim(),
+          })),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to save About Statistics');
+
+      showSuccess('About Us statistics & metrics updated successfully!');
+    } catch (err: any) {
+      showError(err.message || 'Error saving about statistics');
+    } finally {
+      setSavingKey(null);
+    }
+  };
+
+  const handleAddStatCard = () => {
+    setStatCards([
+      ...statCards,
+      {
+        id: `stat-${Date.now()}`,
+        target: 100,
+        suffix: '+',
+        label: 'New Statistic',
+        description: 'Description of key operational or industrial metric',
+      },
+    ]);
+  };
+
+  const handleUpdateStatCard = (index: number, field: keyof StatItemData, value: any) => {
+    setStatCards(
+      statCards.map((c, i) => (i === index ? { ...c, [field]: value } : c))
+    );
+  };
+
+  const handleRemoveStatCard = (index: number) => {
+    if (statCards.length <= 1) {
+      showError('At least one statistic card is required.');
+      return;
+    }
+    setStatCards(statCards.filter((_, i) => i !== index));
+  };
+
+  const handleMoveStatCard = (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= statCards.length) return;
+    const copy = [...statCards];
+    const [moved] = copy.splice(index, 1);
+    copy.splice(targetIndex, 0, moved);
+    setStatCards(copy);
   };
 
   return (
@@ -303,6 +410,18 @@ export default function ContentManagerClient({
           }`}
         >
           Office &amp; Contact Info
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('stats')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+            activeTab === 'stats'
+              ? 'bg-sherman-700 text-white shadow-xs'
+              : 'text-slate-600 hover:bg-slate-200/60'
+          }`}
+        >
+          About Us Statistics
         </button>
       </div>
 
@@ -670,30 +789,36 @@ export default function ContentManagerClient({
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5">
                 <Mail className="w-3.5 h-3.5 text-sherman-700" />
-                <span>Email Correspondence</span>
+                <span>Enquiry Email (Customer Notifications)</span>
               </label>
               <input
                 type="email"
                 required
-                value={contactEmail}
-                onChange={(e) => setContactEmail(e.target.value)}
+                value={enquiryEmail}
+                onChange={(e) => setEnquiryEmail(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600"
                 placeholder="admin@sherman-india.com"
               />
+              <p className="text-[11px] text-slate-400 mt-1">
+                Receives submissions from Contact Us, Product Enquiry &amp; Request a Quote forms.
+              </p>
             </div>
 
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5">
-                <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
-                <span>WhatsApp Contact Number</span>
+                <Mail className="w-3.5 h-3.5 text-amber-600" />
+                <span>Technical Support Email (Optional)</span>
               </label>
               <input
-                type="text"
-                value={contactWhatsApp}
-                onChange={(e) => setContactWhatsApp(e.target.value)}
+                type="email"
+                value={technicalSupportEmail}
+                onChange={(e) => setTechnicalSupportEmail(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600"
-                placeholder="+919015122200"
+                placeholder="Leave blank if unset"
               />
+              <p className="text-[11px] text-slate-400 mt-1">
+                Shown under Technical Support Desk on Contact page if specified; kept unset otherwise.
+              </p>
             </div>
           </div>
 
@@ -713,17 +838,31 @@ export default function ContentManagerClient({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                Google Maps Embed URL
+              <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5">
+                <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
+                <span>WhatsApp Contact Number</span>
               </label>
               <input
                 type="text"
-                value={contactMapsUrl}
-                onChange={(e) => setContactMapsUrl(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600 text-slate-600 font-mono text-[11px]"
-                placeholder="https://www.google.com/maps/embed?pb=..."
+                value={contactWhatsApp}
+                onChange={(e) => setContactWhatsApp(e.target.value)}
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600"
+                placeholder="+919015122200"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Google Maps Embed URL
+            </label>
+            <input
+              type="text"
+              value={contactMapsUrl}
+              onChange={(e) => setContactMapsUrl(e.target.value)}
+              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600 text-slate-600 font-mono text-[11px]"
+              placeholder="https://www.google.com/maps/embed?pb=..."
+            />
           </div>
 
           <div className="sticky bottom-0 bg-white/95 backdrop-blur-md pt-3 pb-1 border-t border-slate-100 flex items-center justify-between z-10">
@@ -742,6 +881,204 @@ export default function ContentManagerClient({
                 <>
                   <Save className="w-4 h-4" />
                   <span>Save Contact Information</span>
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      )}
+
+      {/* TAB 5: ABOUT US ANIMATED STATISTICS */}
+      {activeTab === 'stats' && (
+        <form
+          onSubmit={handleSaveStats}
+          className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-2xs space-y-6 animate-in fade-in"
+        >
+          <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">About Us Statistics — "Some Cool Facts"</h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Configure the numbers, metrics, labels, and introductory text displayed in the animated count-up section on the About page.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleAddStatCard}
+              className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto"
+            >
+              <Plus className="w-4 h-4 text-sherman-700" />
+              <span>Add Metric Card</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Badge / Tagline
+              </label>
+              <input
+                type="text"
+                required
+                value={statsBadge}
+                onChange={(e) => setStatsBadge(e.target.value)}
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600"
+                placeholder="Some Cool Facts"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Section Headline
+              </label>
+              <input
+                type="text"
+                required
+                value={statsHeading}
+                onChange={(e) => setStatsHeading(e.target.value)}
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600"
+                placeholder="Numbers Speak for Themselves"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">
+              Introductory Narrative
+            </label>
+            <textarea
+              rows={2}
+              required
+              value={statsIntro}
+              onChange={(e) => setStatsIntro(e.target.value)}
+              className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sherman-600 leading-relaxed"
+              placeholder="A quantifiable proven track record built on precision engineering..."
+            />
+          </div>
+
+          {/* Cards List */}
+          <div className="space-y-4 pt-2">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+              Metric Cards ({statCards.length})
+            </h3>
+
+            <div className="space-y-4">
+              {statCards.map((card, idx) => (
+                <div
+                  key={card.id || idx}
+                  className="p-5 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-4 transition-all"
+                >
+                  <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
+                    <span className="text-xs font-bold text-sherman-800">
+                      Card #{idx + 1}: {card.label || 'Untitled Metric'}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        disabled={idx === 0}
+                        onClick={() => handleMoveStatCard(idx, 'up')}
+                        title="Move Up"
+                        className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-200 disabled:opacity-30 cursor-pointer"
+                      >
+                        <ArrowUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={idx === statCards.length - 1}
+                        onClick={() => handleMoveStatCard(idx, 'down')}
+                        title="Move Down"
+                        className="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-200 disabled:opacity-30 cursor-pointer"
+                      >
+                        <ArrowDown className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveStatCard(idx)}
+                        title="Delete Card"
+                        className="p-1.5 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-100 cursor-pointer ml-1"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                        Target Value (Number)
+                      </label>
+                      <input
+                        type="number"
+                        required
+                        value={card.target}
+                        onChange={(e) =>
+                          handleUpdateStatCard(idx, 'target', parseInt(e.target.value, 10) || 0)
+                        }
+                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-sherman-600 font-mono"
+                        placeholder="150"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                        Suffix Symbol (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={card.suffix}
+                        onChange={(e) => handleUpdateStatCard(idx, 'suffix', e.target.value)}
+                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-sherman-600"
+                        placeholder="e.g. + or %"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                        Metric Label
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={card.label}
+                        onChange={(e) => handleUpdateStatCard(idx, 'label', e.target.value)}
+                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-sherman-600 font-bold"
+                        placeholder="e.g. Products"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                      Supporting Description
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={card.description}
+                      onChange={(e) => handleUpdateStatCard(idx, 'description', e.target.value)}
+                      className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-sherman-600 leading-relaxed"
+                      placeholder="Brief context explaining the metric..."
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="sticky bottom-0 bg-white/95 backdrop-blur-md pt-3 pb-1 border-t border-slate-100 flex items-center justify-between z-10">
+            <span className="text-[11px] text-slate-400">Statistics save to database and update About page</span>
+            <button
+              type="submit"
+              disabled={savingKey === 'about_stats'}
+              className="px-6 py-2.5 rounded-xl bg-sherman-700 hover:bg-sherman-800 text-white text-xs font-bold flex items-center gap-2 shadow-xs transition-colors cursor-pointer disabled:opacity-50"
+            >
+              {savingKey === 'about_stats' ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Saving About Statistics...</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  <span>Save About Statistics</span>
                 </>
               )}
             </button>

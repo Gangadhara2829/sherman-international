@@ -30,39 +30,71 @@ export async function GET(request: Request) {
   }
 }
 
+import { sendEnquiryNotificationEmail, SendEmailResult } from '@/lib/email';
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, company, email, phone, productId, productName, categoryName, message } = body;
+    const { name, company, email, phone, productId, productName, categoryName, message, source } = body;
 
-    if (!name || !email || !message) {
-      return NextResponse.json(
-        { error: 'Name, email, and message are required.' },
-        { status: 400 }
-      );
+    // Validate essential fields
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return NextResponse.json({ error: 'Please provide your full name.' }, { status: 400 });
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || typeof email !== 'string' || !emailRegex.test(email.trim())) {
+      return NextResponse.json({ error: 'Please provide a valid email address.' }, { status: 400 });
+    }
+
+    if (!message || typeof message !== 'string' || !message.trim()) {
+      return NextResponse.json({ error: 'Please enter your message or technical requirement.' }, { status: 400 });
+    }
+
+    // 1. Save enquiry to database (source of truth)
     const enquiry = await prisma.enquiry.create({
       data: {
-        name,
-        company: company || null,
-        email,
-        phone: phone || null,
+        name: name.trim(),
+        company: company && typeof company === 'string' ? company.trim() : null,
+        email: email.trim().toLowerCase(),
+        phone: phone && typeof phone === 'string' ? phone.trim() : null,
         productId: productId || null,
-        productName: productName || 'General Enquiry',
-        categoryName: categoryName || null,
-        message,
+        productName: productName && typeof productName === 'string' ? productName.trim() : 'General Enquiry',
+        categoryName: categoryName && typeof categoryName === 'string' ? categoryName.trim() : null,
+        message: message.trim(),
         status: 'NEW',
       },
     });
 
-    // In a production server, here we dispatch an email to admin@sherman-india.com
-    console.log(`[ENQUIRY RECEIVED] To Sherman: ${enquiry.id} from ${name} (${email}) for ${productName}`);
+    console.log(`[ENQUIRY SAVED] DB ID: ${enquiry.id} from ${name} (${email}) for ${productName || 'General'}`);
+
+    // 2. Dispatch email notification via Resend to configured Enquiry Email
+    let emailResult: SendEmailResult = { sent: false };
+    try {
+      emailResult = await sendEnquiryNotificationEmail({
+        name: enquiry.name,
+        email: enquiry.email,
+        phone: enquiry.phone,
+        company: enquiry.company,
+        productName: enquiry.productName,
+        categoryName: enquiry.categoryName,
+        message: enquiry.message,
+        enquiryId: enquiry.id,
+        source: source || 'general',
+      });
+    } catch (mailErr: any) {
+      console.error('[Email Dispatch Warning]', mailErr);
+      emailResult.error = mailErr.message || 'Email delivery failed';
+    }
 
     return NextResponse.json(
       {
         success: true,
         enquiryId: enquiry.id,
+        emailNotification: {
+          sent: emailResult.sent,
+          recipient: emailResult.recipient,
+        },
         message: 'Your enquiry has been received by Sherman International (P) Limited.',
       },
       { status: 201 }

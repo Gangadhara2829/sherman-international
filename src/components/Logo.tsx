@@ -16,7 +16,7 @@ export default function Logo({ variant = 'dark', className = '', showText = true
       {/* Official Sherman Emblem Logo - Clean Integration without box container */}
       <div className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
         <Image
-          src="/images/sherman-logo.png"
+          src={isLight ? '/images/sherman-logo-light.png' : '/images/sherman-logo.png'}
           alt="Sherman International (P) Limited"
           width={40}
           height={40}

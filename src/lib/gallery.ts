@@ -245,7 +245,7 @@ export async function getGalleryItemById(id: string): Promise<GalleryItem | null
  * Create a new gallery item
  */
 export async function createGalleryItem(data: {
-  title: string;
+  title?: string | null;
   caption?: string | null;
   altText?: string | null;
   imageUrl: string;
@@ -253,10 +253,11 @@ export async function createGalleryItem(data: {
   displayOrder?: number;
   isPublished?: boolean;
 }): Promise<GalleryItem> {
+  const safeTitle = data.title ? data.title.trim() : '';
   try {
     const created = await (prisma as any).galleryItem.create({
       data: {
-        title: data.title.trim(),
+        title: safeTitle,
         caption: data.caption ? data.caption.trim() : null,
         altText: data.altText ? data.altText.trim() : null,
         imageUrl: data.imageUrl.trim(),
@@ -274,7 +275,7 @@ export async function createGalleryItem(data: {
   const items = await getFallbackGalleryItems();
   const newItem: GalleryItem = {
     id: `gal-${Date.now()}`,
-    title: data.title.trim(),
+    title: safeTitle,
     caption: data.caption ? data.caption.trim() : null,
     altText: data.altText ? data.altText.trim() : null,
     imageUrl: data.imageUrl.trim(),
@@ -301,12 +302,12 @@ export async function updateGalleryItem(
     const updated = await (prisma as any).galleryItem.update({
       where: { id },
       data: {
-        ...(data.title !== undefined && { title: data.title.trim() }),
+        ...(data.title !== undefined && { title: data.title ? data.title.trim() : '' }),
         ...(data.caption !== undefined && { caption: data.caption ? data.caption.trim() : null }),
         ...(data.altText !== undefined && { altText: data.altText ? data.altText.trim() : null }),
         ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl.trim() }),
-        ...(data.category !== undefined && { category: data.category ? data.category.trim() : 'GENERAL' }),
-        ...(data.displayOrder !== undefined && { displayOrder: Number(data.displayOrder) }),
+        ...(data.category !== undefined && { category: data.category && data.category.trim() ? data.category.trim() : 'General' }),
+        ...(data.displayOrder !== undefined && { displayOrder: Number(data.displayOrder) || 0 }),
         ...(data.isPublished !== undefined && { isPublished: Boolean(data.isPublished) }),
       },
     });

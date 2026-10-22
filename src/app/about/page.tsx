@@ -23,6 +23,7 @@ import FormattedContent, { isRichHtml } from '@/components/FormattedContent';
 import {
   normalizeAboutContent,
   normalizeVisionMission,
+  normalizeAboutStats,
   DEFAULT_ABOUT_CONTENT,
 } from '@/lib/content';
 
@@ -35,15 +36,17 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function AboutPage() {
-  const [aboutRecord, visionRecord] = await Promise.all([
+  const [aboutRecord, visionRecord, statsRecord] = await Promise.all([
     prisma.siteContent.findFirst({
       where: { key: { in: ['about_company', 'about_overview'] } },
     }),
     prisma.siteContent.findUnique({ where: { key: 'vision_mission' } }),
+    prisma.siteContent.findUnique({ where: { key: 'about_stats' } }),
   ]);
 
   const about = normalizeAboutContent(aboutRecord);
   const visionMission = normalizeVisionMission(visionRecord);
+  const aboutStats = normalizeAboutStats(statsRecord);
 
   const paragraphs = (about.content || DEFAULT_ABOUT_CONTENT.content)
     .split('\n\n')
@@ -193,7 +196,7 @@ export default async function AboutPage() {
         </section>
 
         {/* SECTION 3: Animated Company Statistics (Some Cool Facts — Numbers Speak for Themselves) */}
-        <AboutStatsSection />
+        <AboutStatsSection stats={aboutStats} />
 
         {/* SECTION 4: Our Vision & Our Mission (Distinct Relevant Industrial Backgrounds) */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">

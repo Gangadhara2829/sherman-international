@@ -33,19 +33,19 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { title, caption, altText, imageUrl, category, displayOrder, isPublished } = body;
 
-    if (!title || !imageUrl) {
+    if (!imageUrl || typeof imageUrl !== 'string' || !imageUrl.trim()) {
       return NextResponse.json(
-        { error: 'Image title and Image file/URL are required' },
+        { error: 'Image file or URL is required' },
         { status: 400 }
       );
     }
 
     const newItem = await createGalleryItem({
-      title: title.trim(),
+      title: title ? title.trim() : '',
       caption: caption ? caption.trim() : null,
-      altText: altText ? altText.trim() : title.trim(),
+      altText: altText ? altText.trim() : (title ? title.trim() : ''),
       imageUrl: imageUrl.trim(),
-      category: category ? category.trim() : 'GENERAL',
+      category: category && category.trim() ? category.trim() : 'General',
       displayOrder: displayOrder !== undefined ? Number(displayOrder) : 0,
       isPublished: isPublished !== undefined ? Boolean(isPublished) : true,
     });

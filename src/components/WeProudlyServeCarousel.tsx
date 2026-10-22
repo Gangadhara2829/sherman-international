@@ -102,7 +102,7 @@ export default function WeProudlyServeCarousel({
           {/* Continuous Horizontal Scrolling Track */}
           <div
             ref={scrollContainerRef}
-            className="flex items-center gap-8 sm:gap-12 md:gap-16 overflow-x-auto py-4 scrollbar-none select-none"
+            className="flex items-center gap-5 sm:gap-7 md:gap-8 overflow-x-auto py-4 scrollbar-none select-none"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
@@ -110,7 +110,7 @@ export default function WeProudlyServeCarousel({
           >
             {/* Animated Marquee Flex Strip */}
             <div
-              className={`flex items-center gap-8 sm:gap-12 md:gap-16 flex-shrink-0 animate-marquee ${
+              className={`flex items-center gap-5 sm:gap-7 md:gap-8 flex-shrink-0 animate-marquee ${
                 isHovered || isPaused ? 'pause-animation' : ''
               }`}
             >
@@ -118,12 +118,12 @@ export default function WeProudlyServeCarousel({
                 const logoSrc = getImageUrl(client.logo, DEFAULT_CLIENT_PLACEHOLDER);
 
                 const logoElement = (
-                  <div className="relative flex items-center justify-center w-[200px] sm:w-[240px] md:w-[270px] lg:w-[290px] h-[90px] sm:h-[110px] md:h-[125px] transition-transform duration-300 ease-out group-hover/logo:scale-110">
+                  <div className="relative flex items-center justify-center w-[220px] sm:w-[260px] md:w-[290px] lg:w-[310px] h-[100px] sm:h-[115px] md:h-[130px] transition-transform duration-300 ease-out group-hover/logo:scale-105">
                     <img
                       src={logoSrc}
                       alt={client.name ? `${client.name} Logo` : 'Client Logo'}
                       loading="lazy"
-                      className="w-auto h-auto max-w-[190px] sm:max-w-[230px] md:max-w-[260px] lg:max-w-[280px] max-h-[85px] sm:max-h-[105px] md:max-h-[115px] lg:max-h-[120px] object-contain object-center transition-all duration-300 drop-shadow-none"
+                      className="w-auto h-auto max-w-[210px] sm:max-w-[250px] md:max-w-[280px] lg:max-w-[300px] max-h-[95px] sm:max-h-[110px] md:max-h-[125px] object-contain object-center transition-all duration-300 drop-shadow-none"
                       style={{
                         opacity: 1,
                         filter: 'none',

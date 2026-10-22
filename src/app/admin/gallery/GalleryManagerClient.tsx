@@ -105,10 +105,6 @@ export default function GalleryManagerClient({
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) {
-      setError('Image title is required.');
-      return;
-    }
     if (!imageUrl.trim()) {
       setError('Please select or upload an image.');
       return;
@@ -120,10 +116,10 @@ export default function GalleryManagerClient({
     const payload = {
       title: title.trim(),
       caption: caption ? caption.trim() : null,
-      altText: altText.trim() || title.trim(),
+      altText: altText.trim() || title.trim() || '',
       imageUrl: imageUrl.trim(),
-      category: category.trim(),
-      displayOrder: Number(displayOrder),
+      category: category.trim() || 'General',
+      displayOrder: Number(displayOrder) || 0,
       isPublished,
     };
 
@@ -623,17 +619,16 @@ export default function GalleryManagerClient({
           {/* Title */}
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-              Photograph Title *
+              Photograph Title (Optional)
             </label>
             <input
               type="text"
-              required
               value={title}
               onChange={(e) => {
                 setTitle(e.target.value);
                 if (!altText) setAltText(e.target.value);
               }}
-              placeholder="e.g. Turbine Dynamic Balancing Rig"
+              placeholder="Optional title (e.g. Turbine Dynamic Balancing Rig)"
               className="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-sherman-600 focus:outline-none"
             />
           </div>
@@ -643,7 +638,7 @@ export default function GalleryManagerClient({
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                  Category *
+                  Category (Optional)
                 </label>
                 <button
                   type="button"

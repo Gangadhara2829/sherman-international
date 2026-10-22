@@ -141,17 +141,21 @@ export default function GalleryLightbox({
           />
         </div>
 
-        {/* Captions and Details */}
-        <div className="mt-4 text-center max-w-2xl px-4 space-y-1.5">
-          <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-            {currentItem.title}
-          </h2>
-          {currentItem.caption && (
-            <p className="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed">
-              {currentItem.caption}
-            </p>
-          )}
-        </div>
+        {/* Captions and Details - only rendered if title or caption exists */}
+        {Boolean((currentItem.title && currentItem.title.trim()) || (currentItem.caption && currentItem.caption.trim())) && (
+          <div className="mt-4 text-center max-w-2xl px-4 space-y-1.5">
+            {currentItem.title && currentItem.title.trim() && (
+              <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                {currentItem.title.trim()}
+              </h2>
+            )}
+            {currentItem.caption && currentItem.caption.trim() && (
+              <p className="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed">
+                {currentItem.caption.trim()}
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -159,16 +159,25 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             {/* RIGHT: Product Information & CTAs */}
             <div className="lg:col-span-7 space-y-6">
               {/* Category & Brand badges */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2.5 py-1 rounded bg-slate-100 text-slate-800 text-xs font-bold uppercase tracking-wider border border-slate-200">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-800 text-xs font-bold uppercase tracking-wider border border-slate-200 shadow-2xs">
                   {product.category.name}
                 </span>
 
                 {product.brand && (
                   <Link
                     href={`/brands/${product.brand.slug}`}
-                    className="px-2.5 py-1 rounded bg-navy text-amber-300 text-xs font-bold uppercase tracking-wider flex items-center gap-1 hover:bg-sherman-900 transition-colors"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-navy text-amber-300 text-xs font-bold uppercase tracking-wider hover:bg-sherman-900 transition-colors shadow-2xs"
                   >
+                    {product.brand.logo ? (
+                      <div className="h-4 w-auto max-w-[50px] flex items-center justify-center bg-white/10 px-1 py-0.5 rounded">
+                        <img
+                          src={product.brand.logo}
+                          alt={`${product.brand.name} Logo`}
+                          className="max-h-3.5 max-w-[45px] object-contain"
+                        />
+                      </div>
+                    ) : null}
                     <span>Brand: {product.brand.name}</span>
                   </Link>
                 )}
@@ -181,15 +190,71 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
               {/* Short description */}
               {product.shortDescription && (
-                <p className="text-base text-slate-700 font-medium leading-relaxed">
+                <p className="text-base sm:text-lg text-slate-800 font-medium leading-relaxed">
                   {product.shortDescription}
                 </p>
               )}
 
+              {/* Authorized OEM Brand Partner Box */}
+              {product.brand && (
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  {product.brand.logo ? (
+                    <div className="h-12 w-24 relative flex items-center justify-center p-1.5 bg-white rounded-lg border border-slate-200/80 shadow-2xs">
+                      <img
+                        src={product.brand.logo}
+                        alt={`${product.brand.name} Logo`}
+                        className="max-h-10 max-w-[85px] object-contain"
+                      />
+                    </div>
+                  ) : null}
+                  <div className="space-y-0.5">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                      OEM Principal Partner
+                    </div>
+                    <Link
+                      href={`/brands/${product.brand.slug}`}
+                      className="text-sm sm:text-base font-bold text-slate-900 hover:text-sherman-700 transition-colors inline-flex items-center gap-1.5"
+                    >
+                      <span>{product.brand.name}</span>
+                      <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+                    </Link>
+                  </div>
+                </div>
+              )}
+
               {/* Full Description text */}
-              <div className="text-sm text-slate-600 leading-relaxed space-y-3 whitespace-pre-line border-t border-b border-slate-200 py-4">
+              <div className="text-sm sm:text-base text-slate-700 leading-relaxed space-y-4 whitespace-pre-line border-t border-b border-slate-200 py-5 font-normal">
                 {product.description}
               </div>
+
+              {/* Technical Specifications Table if available */}
+              {specs.length > 0 && (
+                <div className="space-y-3 pt-2">
+                  <h3 className="font-display font-bold text-base text-slate-900 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-sherman-700" />
+                    <span>Technical Specifications</span>
+                  </h3>
+                  <div className="rounded-xl border border-slate-200 overflow-hidden shadow-2xs">
+                    <table className="w-full text-left text-xs sm:text-sm">
+                      <tbody>
+                        {specs.map((s, idx) => (
+                          <tr
+                            key={idx}
+                            className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/70'}
+                          >
+                            <td className="py-2.5 px-4 font-bold text-slate-800 border-b border-slate-100 w-1/3">
+                              {s.label}
+                            </td>
+                            <td className="py-2.5 px-4 text-slate-600 border-b border-slate-100">
+                              {s.value}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
 
               {/* Direct Enquiry Actions */}
               <ProductDetailActions

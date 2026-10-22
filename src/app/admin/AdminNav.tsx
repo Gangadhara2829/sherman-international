@@ -20,6 +20,7 @@ import {
   User,
   ShieldCheck,
   Images,
+  Handshake,
 } from 'lucide-react';
 import Logo from '@/components/Logo';
 
@@ -66,6 +67,7 @@ export default function AdminNav({ session, children }: AdminNavProps) {
     { label: 'Products', href: '/admin/products', icon: Package },
     { label: 'Categories', href: '/admin/categories', icon: Layers },
     { label: 'Brands & Principals', href: '/admin/brands', icon: Building2 },
+    { label: 'Our Partners', href: '/admin/partners', icon: Handshake },
     { label: 'Proudly Served (Clients)', href: '/admin/clients', icon: ShieldCheck },
     { label: 'Gallery Management', href: '/admin/gallery', icon: Images },
     { label: 'Industries', href: '/admin/industries', icon: Factory },

@@ -3,8 +3,25 @@ import Link from 'next/link';
 import { Mail, Phone, MapPin, ArrowRight, ShieldCheck, Clock } from 'lucide-react';
 import Logo from './Logo';
 
-export default function Footer() {
-  const productLinks = [
+export interface FooterCategoryItem {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface FooterServiceItem {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+interface FooterProps {
+  categories?: FooterCategoryItem[];
+  services?: FooterServiceItem[];
+}
+
+export default function Footer({ categories = [], services = [] }: FooterProps) {
+  const defaultProductLinks = [
     { label: 'Flow Measurement', href: '/products/flow-measurement' },
     { label: 'Process Switches', href: '/products/process-switches' },
     { label: 'Balancing Machine', href: '/products/balancing-machine' },
@@ -15,7 +32,7 @@ export default function Footer() {
     { label: 'Railway OHE Fittings', href: '/products/ohe-fittings-and-accessories' },
   ];
 
-  const serviceLinks = [
+  const defaultServiceLinks = [
     { label: 'Sales and Marketing', href: '/services/sales-and-marketing' },
     { label: 'Installation & Commissioning', href: '/services/installation-and-commissioning' },
     { label: 'System Integration', href: '/services/system-integration' },
@@ -24,10 +41,27 @@ export default function Footer() {
     { label: 'EPC & Turnkey Contracting', href: '/services/epc-and-turnkey-contracting' },
   ];
 
+  const productLinks =
+    categories && categories.length > 0
+      ? categories.map((c) => ({
+          label: c.name,
+          href: `/products/${c.slug}`,
+        }))
+      : defaultProductLinks;
+
+  const serviceLinks =
+    services && services.length > 0
+      ? services.map((s) => ({
+          label: s.name,
+          href: `/services/${s.slug}`,
+        }))
+      : defaultServiceLinks;
+
   const quickLinks = [
     { label: 'Home', href: '/' },
     { label: 'About Sherman', href: '/about' },
     { label: 'All Products', href: '/products' },
+    { label: 'Our Partners', href: '/our-partners' },
     { label: 'Represented Brands', href: '/brands' },
     { label: 'Industries Served', href: '/industries' },
     { label: 'Engineering Services', href: '/services' },

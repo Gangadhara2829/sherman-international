@@ -32,9 +32,26 @@ export interface NormalizedContactInfo {
   phone: string;
   phoneSecondary: string;
   email: string;
+  enquiryEmail: string;
+  technicalSupportEmail?: string | null;
   workingHours: string;
   whatsapp: string;
   googleMapsUrl: string;
+}
+
+export interface StatItemData {
+  id: string;
+  target: number;
+  suffix: string;
+  label: string;
+  description: string;
+}
+
+export interface NormalizedAboutStats {
+  badge: string;
+  heading: string;
+  intro: string;
+  items: StatItemData[];
 }
 
 export interface NormalizedWebsiteContent {
@@ -42,6 +59,7 @@ export interface NormalizedWebsiteContent {
   about: NormalizedAboutContent;
   visionMission: NormalizedVisionMission;
   contact: NormalizedContactInfo;
+  aboutStats?: NormalizedAboutStats;
 }
 
 // 1. DEFAULT AUTHENTIC CONTENT FROM ORIGINAL SHERMAN INDIA WEBSITE
@@ -80,10 +98,42 @@ export const DEFAULT_CONTACT_INFO: NormalizedContactInfo = {
   phone: '+91 90151 22200',
   phoneSecondary: '+91 90151 22200',
   email: 'admin@sherman-india.com',
+  enquiryEmail: 'admin@sherman-india.com',
+  technicalSupportEmail: null,
   workingHours: 'Monday to Friday: 9:30 AM – 6:00 PM IST',
   whatsapp: '+919015122200',
   googleMapsUrl:
     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.2694119939527!2d77.2215682!3d28.6217148!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd369a48be43%3A0x6b4beec892e85093!2sHimalaya%20House%2C%2023%2C%20Kasturba%20Gandhi%20Marg%2C%20Connaught%20Lane%2C%20Barakhamba%2C%20New%20Delhi%2C%20Delhi%20110001!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin',
+};
+
+export const DEFAULT_ABOUT_STATS: NormalizedAboutStats = {
+  badge: 'Some Cool Facts',
+  heading: 'Numbers Speak for Themselves',
+  intro:
+    'A quantifiable proven track record built on precision engineering, long-term industrial partnerships, and relentless execution quality.',
+  items: [
+    {
+      id: 'products',
+      target: 150,
+      suffix: '',
+      label: 'Products',
+      description: 'High-precision industrial instrumentation & engineered components',
+    },
+    {
+      id: 'experience',
+      target: 45,
+      suffix: '',
+      label: 'Years of Experience',
+      description: 'Decades of deep technocrat domain knowledge & execution expertise',
+    },
+    {
+      id: 'projects',
+      target: 900,
+      suffix: '+',
+      label: 'Completed Projects',
+      description: 'Successful multi-sector engineering installations & turnkey deliveries',
+    },
+  ],
 };
 
 /**
@@ -209,6 +259,8 @@ export function normalizeContactInfo(rawRecord?: any): NormalizedContactInfo {
   let phone = DEFAULT_CONTACT_INFO.phone;
   let phoneSecondary = DEFAULT_CONTACT_INFO.phoneSecondary;
   let email = DEFAULT_CONTACT_INFO.email;
+  let enquiryEmail = DEFAULT_CONTACT_INFO.enquiryEmail;
+  let technicalSupportEmail: string | null = DEFAULT_CONTACT_INFO.technicalSupportEmail ?? null;
   let workingHours = DEFAULT_CONTACT_INFO.workingHours;
   let whatsapp = DEFAULT_CONTACT_INFO.whatsapp;
   let googleMapsUrl = DEFAULT_CONTACT_INFO.googleMapsUrl;
@@ -219,6 +271,10 @@ export function normalizeContactInfo(rawRecord?: any): NormalizedContactInfo {
     if (parsedContent.phone) phone = parsedContent.phone;
     if (parsedContent.phoneSecondary) phoneSecondary = parsedContent.phoneSecondary;
     if (parsedContent.email) email = parsedContent.email;
+    if (parsedContent.enquiryEmail) enquiryEmail = parsedContent.enquiryEmail;
+    if (parsedContent.technicalSupportEmail !== undefined) {
+      technicalSupportEmail = parsedContent.technicalSupportEmail ? parsedContent.technicalSupportEmail.trim() : null;
+    }
     if (parsedContent.workingHours) workingHours = parsedContent.workingHours;
     if (parsedContent.whatsapp) whatsapp = parsedContent.whatsapp;
     if (parsedContent.googleMapsUrl) googleMapsUrl = parsedContent.googleMapsUrl;
@@ -232,9 +288,18 @@ export function normalizeContactInfo(rawRecord?: any): NormalizedContactInfo {
   if (parsedMeta.phone) phone = parsedMeta.phone;
   if (parsedMeta.phoneSecondary) phoneSecondary = parsedMeta.phoneSecondary;
   if (parsedMeta.email) email = parsedMeta.email;
+  if (parsedMeta.enquiryEmail) enquiryEmail = parsedMeta.enquiryEmail;
+  if (parsedMeta.technicalSupportEmail !== undefined) {
+    technicalSupportEmail = parsedMeta.technicalSupportEmail ? parsedMeta.technicalSupportEmail.trim() : null;
+  }
   if (parsedMeta.workingHours) workingHours = parsedMeta.workingHours;
   if (parsedMeta.whatsapp) whatsapp = parsedMeta.whatsapp;
   if (parsedMeta.googleMapsUrl) googleMapsUrl = parsedMeta.googleMapsUrl;
+
+  // Ensure enquiryEmail defaults to email if not explicitly set
+  if (!enquiryEmail || !enquiryEmail.trim()) {
+    enquiryEmail = email || DEFAULT_CONTACT_INFO.enquiryEmail;
+  }
 
   return {
     company,
@@ -243,9 +308,48 @@ export function normalizeContactInfo(rawRecord?: any): NormalizedContactInfo {
     phone,
     phoneSecondary,
     email,
+    enquiryEmail: enquiryEmail.trim(),
+    technicalSupportEmail: technicalSupportEmail && technicalSupportEmail.trim() ? technicalSupportEmail.trim() : null,
     workingHours,
     whatsapp,
     googleMapsUrl,
+  };
+}
+
+/**
+ * Normalizes About Us Animated Statistics from SiteContent record.
+ */
+export function normalizeAboutStats(rawRecord?: any): NormalizedAboutStats {
+  if (!rawRecord) return { ...DEFAULT_ABOUT_STATS };
+
+  const parsedContent = parseContentValue(rawRecord.content);
+  const parsedMeta = parseContentValue(rawRecord.metadata) || {};
+
+  const badge = parsedMeta.badge || rawRecord.subtitle?.trim() || DEFAULT_ABOUT_STATS.badge;
+  const heading = parsedMeta.heading || rawRecord.title?.trim() || DEFAULT_ABOUT_STATS.heading;
+  const intro =
+    typeof parsedContent === 'string' && parsedContent.trim()
+      ? parsedContent.trim()
+      : typeof parsedMeta.intro === 'string'
+      ? parsedMeta.intro
+      : DEFAULT_ABOUT_STATS.intro;
+
+  let items: StatItemData[] = DEFAULT_ABOUT_STATS.items;
+  if (Array.isArray(parsedMeta.items) && parsedMeta.items.length > 0) {
+    items = parsedMeta.items.map((it: any, idx: number) => ({
+      id: it.id || `stat-${idx + 1}`,
+      target: typeof it.target === 'number' ? it.target : parseInt(it.target, 10) || 0,
+      suffix: typeof it.suffix === 'string' ? it.suffix : '',
+      label: it.label?.trim() || `Stat ${idx + 1}`,
+      description: it.description?.trim() || '',
+    }));
+  }
+
+  return {
+    badge,
+    heading,
+    intro,
+    items,
   };
 }
 
@@ -262,11 +366,13 @@ export function normalizeWebsiteContent(rawContents: any[]): NormalizedWebsiteCo
     contents.find((c) => c.section === 'about' && c.key !== 'vision_mission' && c.key !== 'company_history');
   const visionRecord = contents.find((c) => c.key === 'vision_mission');
   const contactRecord = contents.find((c) => c.key === 'contact_info');
+  const statsRecord = contents.find((c) => c.key === 'about_stats');
 
   return {
     hero: normalizeHeroContent(heroRecord),
     about: normalizeAboutContent(aboutRecord),
     visionMission: normalizeVisionMission(visionRecord),
     contact: normalizeContactInfo(contactRecord),
+    aboutStats: normalizeAboutStats(statsRecord),
   };
 }

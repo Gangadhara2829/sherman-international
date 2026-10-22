@@ -57,25 +57,42 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetch active categories with their published products for mega menu
-  const categories = await prisma.productCategory.findMany({
-    where: { isActive: true },
-    include: {
-      products: {
+  let categories: any[] = [];
+  let services: any[] = [];
+
+  try {
+    [categories, services] = await Promise.all([
+      prisma.productCategory.findMany({
+        where: { isActive: true },
+        include: {
+          products: {
+            where: { isPublished: true },
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              shortDescription: true,
+              brand: { select: { name: true } },
+            },
+            orderBy: { displayOrder: 'asc' },
+            take: 6,
+          },
+        },
+        orderBy: { displayOrder: 'asc' },
+      }),
+      prisma.service.findMany({
         where: { isPublished: true },
         select: {
           id: true,
           name: true,
           slug: true,
-          shortDescription: true,
-          brand: { select: { name: true } },
         },
         orderBy: { displayOrder: 'asc' },
-        take: 6,
-      },
-    },
-    orderBy: { displayOrder: 'asc' },
-  });
+      }),
+    ]);
+  } catch (err) {
+    console.warn('Failed to load navigation categories/services in layout:', err);
+  }
 
   const formattedCategories = categories.map((cat) => ({
     id: cat.id,
@@ -84,7 +101,7 @@ export default async function RootLayout({
     description: cat.description,
     image: cat.image,
     icon: cat.icon,
-    products: cat.products.map((p) => ({
+    products: (cat.products || []).map((p: any) => ({
       id: p.id,
       name: p.name,
       slug: p.slug,
@@ -93,13 +110,19 @@ export default async function RootLayout({
     })),
   }));
 
+  const footerCategories = categories.map((cat) => ({
+    id: cat.id,
+    name: cat.name,
+    slug: cat.slug,
+  }));
+
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen flex flex-col antialiased bg-white text-slate-900 font-sans">
         <EnquiryProvider>
           <Header categories={formattedCategories} />
           <main className="flex-1">{children}</main>
-          <Footer />
+          <Footer categories={footerCategories} services={services} />
         </EnquiryProvider>
       </body>
     </html>

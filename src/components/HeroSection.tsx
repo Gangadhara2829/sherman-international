@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { useEnquiry } from './EnquiryModal';
 import { DEFAULT_HERO_CONTENT } from '@/lib/content';
+import { resolveImageSrc } from '@/lib/image';
 
 interface HeroSectionProps {
   title?: string;
@@ -17,14 +18,16 @@ export default function HeroSection({
   title = DEFAULT_HERO_CONTENT.title,
   subtitle = DEFAULT_HERO_CONTENT.subtitle,
   content = DEFAULT_HERO_CONTENT.content,
+  image,
 }: HeroSectionProps) {
   const { openEnquiry } = useEnquiry();
+  const bgImageSrc = resolveImageSrc(image, '/images/hero-industrial-background.png');
 
   return (
     <section
       className="relative w-full overflow-hidden text-white bg-[#041426] border-b border-slate-800"
       style={{
-        backgroundImage: "url('/images/hero-industrial-background.png')",
+        backgroundImage: `url('${bgImageSrc}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
@@ -75,10 +78,10 @@ export default function HeroSection({
 
             <button
               type="button"
-              onClick={() => openEnquiry()}
+              onClick={() => openEnquiry('Request a Quote', 'Hero Quotation Request')}
               className="inline-flex items-center gap-2 px-7 py-3.5 rounded-[6px] text-xs sm:text-sm font-bold text-white bg-white/[0.08] hover:bg-white/[0.14] border border-white/30 hover:border-white/50 backdrop-blur-sm transition-all duration-200 cursor-pointer"
             >
-              <span>Request Technical Consultation</span>
+              <span>Request a Quote</span>
             </button>
           </div>
         </div>

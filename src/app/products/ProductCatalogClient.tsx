@@ -15,7 +15,7 @@ interface ProductItem {
   image: string | null;
   isFeatured: boolean;
   category?: { id: string; name: string; slug: string } | null;
-  brand?: { id: string; name: string; slug: string } | null;
+  brand?: { id: string; name: string; slug: string; logo?: string | null } | null;
 }
 
 interface CategoryItem {
@@ -28,6 +28,7 @@ interface BrandItem {
   id: string;
   name: string;
   slug: string;
+  logo?: string | null;
 }
 
 interface ProductCatalogClientProps {
@@ -173,25 +174,32 @@ export default function ProductCatalogClient({
                 />
 
                 {/* Badges */}
-                <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2">
-                  <span className="px-2 py-0.5 rounded bg-white/95 text-[10px] font-bold text-slate-800 border border-slate-200 shadow-xs">
+                <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2 pointer-events-none">
+                  <span className="px-2.5 py-1 rounded bg-white/95 backdrop-blur-xs text-[11px] font-bold text-slate-800 border border-slate-200/80 shadow-xs">
                     {prod.category?.name || 'General Product'}
                   </span>
                   {prod.brand && (
-                    <span className="px-2 py-0.5 rounded bg-navy text-[10px] font-bold text-amber-300 uppercase tracking-wider shadow-xs">
-                      {prod.brand.name}
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/95 backdrop-blur-xs text-[11px] font-bold text-slate-900 border border-slate-200/80 shadow-xs max-w-[60%]">
+                      {prod.brand.logo ? (
+                        <img
+                          src={prod.brand.logo}
+                          alt={prod.brand.name}
+                          className="h-3.5 w-auto max-w-[45px] object-contain flex-shrink-0"
+                        />
+                      ) : null}
+                      <span className="truncate">{prod.brand.name}</span>
                     </span>
                   )}
                 </div>
               </div>
 
               {/* Product Info */}
-              <div className="p-5 space-y-2.5">
-                <h3 className="font-display font-bold text-base text-slate-900 group-hover:text-navy transition-colors leading-snug">
+              <div className="p-5 sm:p-6 space-y-3">
+                <h3 className="font-display font-bold text-base sm:text-lg text-slate-900 group-hover:text-sherman-700 transition-colors leading-snug">
                   {prod.name}
                 </h3>
 
-                <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 line-clamp-3 leading-relaxed font-normal">
                   {prod.shortDescription || 'Precision engineered instrumentation backed by Sherman International.'}
                 </p>
               </div>

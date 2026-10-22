@@ -15,43 +15,45 @@ export async function GET(request: Request) {
         where: {
           isPublished: true,
           OR: [
-            { name: { contains: query } },
-            { description: { contains: query } },
-            { shortDescription: { contains: query } },
+            { name: { contains: query, mode: 'insensitive' } },
+            { description: { contains: query, mode: 'insensitive' } },
+            { shortDescription: { contains: query, mode: 'insensitive' } },
+            { brand: { name: { contains: query, mode: 'insensitive' } } },
+            { category: { name: { contains: query, mode: 'insensitive' } } },
           ],
         },
         include: { category: true, brand: true },
-        take: 8,
+        take: 10,
       }),
       prisma.productCategory.findMany({
         where: {
           isActive: true,
           OR: [
-            { name: { contains: query } },
-            { description: { contains: query } },
+            { name: { contains: query, mode: 'insensitive' } },
+            { description: { contains: query, mode: 'insensitive' } },
           ],
         },
-        take: 4,
+        take: 5,
       }),
       prisma.brand.findMany({
         where: {
           isActive: true,
           OR: [
-            { name: { contains: query } },
-            { description: { contains: query } },
+            { name: { contains: query, mode: 'insensitive' } },
+            { description: { contains: query, mode: 'insensitive' } },
           ],
         },
-        take: 4,
+        take: 5,
       }),
       prisma.service.findMany({
         where: {
           isPublished: true,
           OR: [
-            { name: { contains: query } },
-            { shortDescription: { contains: query } },
+            { name: { contains: query, mode: 'insensitive' } },
+            { shortDescription: { contains: query, mode: 'insensitive' } },
           ],
         },
-        take: 4,
+        take: 5,
       }),
     ]);
 

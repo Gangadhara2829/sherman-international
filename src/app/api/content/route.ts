@@ -76,6 +76,14 @@ export async function POST(request: Request) {
         body.email !== undefined
           ? body.email
           : existingContentParsed?.email || 'admin@sherman-india.com';
+      const enquiryEmail =
+        body.enquiryEmail !== undefined
+          ? body.enquiryEmail
+          : existingContentParsed?.enquiryEmail || email;
+      const technicalSupportEmail =
+        body.technicalSupportEmail !== undefined
+          ? body.technicalSupportEmail
+          : existingContentParsed?.technicalSupportEmail || null;
       const workingHours =
         body.workingHours !== undefined
           ? body.workingHours
@@ -94,10 +102,24 @@ export async function POST(request: Request) {
         address,
         phone,
         phoneSecondary,
-        email,
+        email: enquiryEmail,
+        enquiryEmail,
+        technicalSupportEmail,
         workingHours,
         whatsapp,
         googleMapsUrl,
+      });
+    } else if (key === 'about_stats') {
+      const badge = body.badge !== undefined ? body.badge : existingContentParsed?.badge || 'Some Cool Facts';
+      const heading = body.heading !== undefined ? body.heading : body.title || existing?.title || 'Numbers Speak for Themselves';
+      const intro = body.intro !== undefined ? body.intro : body.content || existing?.content || 'A quantifiable proven track record built on precision engineering, long-term industrial partnerships, and relentless execution quality.';
+      const items = body.items !== undefined ? body.items : existingMeta?.items || [];
+
+      finalContent = typeof intro === 'string' ? intro : JSON.stringify(intro);
+      finalMetadata = JSON.stringify({
+        badge,
+        heading,
+        items: Array.isArray(items) ? items : [],
       });
     } else if (typeof finalContent === 'object' && finalContent !== null) {
       finalContent = JSON.stringify(finalContent);

@@ -111,17 +111,21 @@ export default function GalleryGridClient({
                   </div>
                 </div>
 
-                {/* Content */}
-                <div className="p-5 flex-1 flex flex-col justify-center space-y-1.5">
-                  <h3 className="font-bold text-sm sm:text-base text-slate-900 group-hover:text-sherman-700 transition-colors line-clamp-1">
-                    {item.title}
-                  </h3>
-                  {item.caption && (
-                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal">
-                      {item.caption}
-                    </p>
-                  )}
-                </div>
+                {/* Content - ONLY rendered if title or caption is present */}
+                {Boolean((item.title && item.title.trim()) || (item.caption && item.caption.trim())) && (
+                  <div className="p-4 sm:p-5 flex-1 flex flex-col justify-center space-y-1.5 border-t border-slate-100">
+                    {item.title && item.title.trim() && (
+                      <h3 className="font-bold text-sm sm:text-base text-slate-900 group-hover:text-sherman-700 transition-colors line-clamp-1">
+                        {item.title.trim()}
+                      </h3>
+                    )}
+                    {item.caption && item.caption.trim() && (
+                      <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal">
+                        {item.caption.trim()}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}

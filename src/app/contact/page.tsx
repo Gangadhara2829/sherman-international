@@ -94,15 +94,32 @@ export default async function ContactPage() {
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="font-bold text-slate-900">Email Correspondence</div>
+                    <div className="font-bold text-slate-900">General &amp; Commercial Enquiries</div>
                     <a
-                      href={`mailto:${contact.email || DEFAULT_CONTACT_INFO.email}`}
+                      href={`mailto:${contact.enquiryEmail || contact.email || DEFAULT_CONTACT_INFO.enquiryEmail}`}
                       className="text-navy hover:underline font-semibold block mt-0.5"
                     >
-                      {contact.email || DEFAULT_CONTACT_INFO.email}
+                      {contact.enquiryEmail || contact.email || DEFAULT_CONTACT_INFO.enquiryEmail}
                     </a>
                   </div>
                 </div>
+
+                {contact.technicalSupportEmail && (
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 rounded bg-amber-50 text-amber-700 mt-0.5 border border-amber-200">
+                      <Mail className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-slate-900">Technical Support Desk</div>
+                      <a
+                        href={`mailto:${contact.technicalSupportEmail}`}
+                        className="text-navy hover:underline font-semibold block mt-0.5"
+                      >
+                        {contact.technicalSupportEmail}
+                      </a>
+                    </div>
+                  </div>
+                )}
 
                 <div className="flex items-start gap-3">
                   <div className="p-2 rounded bg-slate-100 text-slate-700 mt-0.5 border border-slate-200">
