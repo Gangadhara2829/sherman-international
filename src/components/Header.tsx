@@ -59,12 +59,12 @@ export default function Header({ categories = [] }: HeaderProps) {
 
   const navLinks = [
     { label: 'Home', href: '/' },
-    { label: 'Products', href: '/products', hasMegaMenu: true },
-    { label: 'Services', href: '/services' },
-    { label: 'Industries', href: '/industries' },
-    { label: 'Our Partners', href: '/our-partners' },
-    { label: 'Gallery', href: '/gallery' },
     { label: 'About Us', href: '/about' },
+    { label: 'Products', href: '/products', hasMegaMenu: true },
+    { label: 'Our Partners', href: '/our-partners' },
+    { label: 'Industries', href: '/industries' },
+    { label: 'Services', href: '/services' },
+    { label: 'Gallery', href: '/gallery' },
     { label: 'Contact Us', href: '/contact' },
   ];
 
@@ -224,9 +224,30 @@ export default function Header({ categories = [] }: HeaderProps) {
               Home
             </Link>
 
+            <Link
+              href="/about"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`block px-3 py-2.5 text-sm font-semibold rounded-md ${
+                pathname === '/about' ? 'bg-slate-100 text-sherman-800' : 'text-slate-800 hover:bg-slate-50'
+              }`}
+            >
+              About Us
+            </Link>
+
             <div className="py-2">
-              <div className="px-3 py-1 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                Product Categories
+              <div className="flex items-center justify-between px-3 py-1">
+                <Link
+                  href="/products"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`text-sm font-semibold ${
+                    pathname.startsWith('/products') ? 'text-sherman-800 font-bold' : 'text-slate-800 hover:text-sherman-800'
+                  }`}
+                >
+                  Products
+                </Link>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  Categories
+                </span>
               </div>
               <div className="divide-y divide-slate-100 mt-1 pl-2">
                 {categories.map((cat) => (
@@ -244,49 +265,51 @@ export default function Header({ categories = [] }: HeaderProps) {
             </div>
 
             <Link
-              href="/services"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 rounded-md"
-            >
-              Services
-            </Link>
-
-            <Link
-              href="/industries"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 rounded-md"
-            >
-              Industries
-            </Link>
-
-            <Link
               href="/our-partners"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 rounded-md"
+              className={`block px-3 py-2.5 text-sm font-semibold rounded-md ${
+                pathname === '/our-partners' ? 'bg-slate-100 text-sherman-800' : 'text-slate-800 hover:bg-slate-50'
+              }`}
             >
               Our Partners
             </Link>
 
             <Link
+              href="/industries"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`block px-3 py-2.5 text-sm font-semibold rounded-md ${
+                pathname.startsWith('/industries') ? 'bg-slate-100 text-sherman-800' : 'text-slate-800 hover:bg-slate-50'
+              }`}
+            >
+              Industries
+            </Link>
+
+            <Link
+              href="/services"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`block px-3 py-2.5 text-sm font-semibold rounded-md ${
+                pathname.startsWith('/services') ? 'bg-slate-100 text-sherman-800' : 'text-slate-800 hover:bg-slate-50'
+              }`}
+            >
+              Services
+            </Link>
+
+            <Link
               href="/gallery"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 rounded-md"
+              className={`block px-3 py-2.5 text-sm font-semibold rounded-md ${
+                pathname === '/gallery' ? 'bg-slate-100 text-sherman-800' : 'text-slate-800 hover:bg-slate-50'
+              }`}
             >
               Gallery
             </Link>
 
             <Link
-              href="/about"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 rounded-md"
-            >
-              About Us
-            </Link>
-
-            <Link
               href="/contact"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 rounded-md"
+              className={`block px-3 py-2.5 text-sm font-semibold rounded-md ${
+                pathname === '/contact' ? 'bg-slate-100 text-sherman-800' : 'text-slate-800 hover:bg-slate-50'
+              }`}
             >
               Contact Us
             </Link>

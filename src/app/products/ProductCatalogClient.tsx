@@ -88,7 +88,7 @@ export default function ProductCatalogClient({
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="py-2 px-3 bg-slate-50 border border-slate-200 rounded text-xs font-semibold text-slate-700 outline-none focus:border-navy cursor-pointer"
           >
-            <option value="all">All Categories ({categories.length})</option>
+            <option value="all">All Categories</option>
             {categories.map((c) => (
               <option key={c.id} value={c.slug}>
                 {c.name}
@@ -101,7 +101,7 @@ export default function ProductCatalogClient({
             onChange={(e) => setSelectedBrand(e.target.value)}
             className="py-2 px-3 bg-slate-50 border border-slate-200 rounded text-xs font-semibold text-slate-700 outline-none focus:border-navy cursor-pointer"
           >
-            <option value="all">All Brands ({brands.length})</option>
+            <option value="all">All Brands</option>
             {brands.map((b) => (
               <option key={b.id} value={b.slug}>
                 {b.name}
