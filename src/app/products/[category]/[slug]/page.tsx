@@ -152,26 +152,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
             {/* RIGHT: Product Information & CTAs */}
             <div className="lg:col-span-7 space-y-6">
-              {/* Category & Brand badges */}
-              <div className="flex flex-wrap items-center gap-3">
+              {/* Category badge */}
+              <div className="flex items-center">
                 <span className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-800 text-xs font-bold uppercase tracking-wider border border-slate-200 shadow-2xs">
                   {product.category.name}
                 </span>
-
-                {product.brand && (
-                  <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-bold uppercase tracking-wider shadow-2xs">
-                    {product.brand.logo ? (
-                      <div className="h-5 w-auto max-w-[60px] flex items-center justify-center bg-white px-1.5 py-0.5 rounded">
-                        <img
-                          src={getImageUrl(product.brand.logo, DEFAULT_BRAND_PLACEHOLDER)}
-                          alt={`${product.brand.name} Logo`}
-                          className="max-h-4 max-w-[50px] object-contain"
-                        />
-                      </div>
-                    ) : null}
-                    <span>Brand: {product.brand.name}</span>
-                  </span>
-                )}
               </div>
 
               {/* Main Title */}
