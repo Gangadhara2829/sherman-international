@@ -190,3 +190,127 @@ ${params.message}
     };
   }
 }
+
+export interface SendPasswordResetEmailParams {
+  to: string;
+  adminName: string;
+  resetUrl: string;
+  expiresInMinutes?: number;
+}
+
+/**
+ * Dispatches a secure password reset link to the registered admin email address.
+ */
+export async function sendPasswordResetEmail(
+  params: SendPasswordResetEmailParams
+): Promise<SendEmailResult> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const recipient = params.to;
+
+  if (!apiKey || !apiKey.trim()) {
+    console.warn('[Resend] RESEND_API_KEY environment variable is not configured. Reset email skipped.');
+    return {
+      sent: false,
+      recipient,
+      error: 'RESEND_API_KEY environment variable is not configured.',
+    };
+  }
+
+  const resend = new Resend(apiKey.trim());
+  const senderAddress =
+    process.env.RESEND_FROM_EMAIL || 'Sherman International Security <onboarding@resend.dev>';
+
+  const subject = '[Sherman Admin Portal] Password Reset Request';
+  const expiryMinutes = params.expiresInMinutes || 30;
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Admin Password Reset Request</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0b192c; color: #1e293b; padding: 24px; margin: 0;">
+  <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);">
+    
+    <!-- Header -->
+    <div style="background-color: #061d43; padding: 28px 32px; border-bottom: 3px solid #d9a82e;">
+      <h2 style="color: #ffffff; margin: 0 0 4px 0; font-size: 20px; font-weight: 800; letter-spacing: 0.05em;">SHERMAN INTERNATIONAL</h2>
+      <p style="color: #cbd5e1; margin: 0; font-size: 13px;">Authorized Administration Portal &middot; Security Access</p>
+    </div>
+
+    <!-- Body Content -->
+    <div style="padding: 32px 32px 24px 32px;">
+      <h3 style="color: #0b192c; margin: 0 0 16px 0; font-size: 18px; font-weight: 700;">Password Reset Request</h3>
+      <p style="font-size: 14px; line-height: 1.6; color: #334155; margin: 0 0 16px 0;">
+        Hello <strong>${params.adminName || 'Administrator'}</strong>,
+      </p>
+      <p style="font-size: 14px; line-height: 1.6; color: #334155; margin: 0 0 24px 0;">
+        A request has been submitted to reset the password for your Sherman International administrative account (<code>${recipient}</code>).
+      </p>
+
+      <!-- Action Button -->
+      <div style="text-align: center; margin: 32px 0;">
+        <a href="${params.resetUrl}" style="display: inline-block; background-color: #1769aa; color: #ffffff; font-weight: 700; font-size: 14px; text-decoration: none; padding: 14px 32px; border-radius: 8px; box-shadow: 0 4px 10px rgba(23, 105, 170, 0.3);">
+          Reset Admin Password
+        </a>
+      </div>
+
+      <!-- Expiry Notice -->
+      <div style="background-color: #f8fafc; border-left: 4px solid #d9a82e; padding: 12px 16px; border-radius: 4px; margin-bottom: 24px; font-size: 13px; color: #475569;">
+        <strong>Important:</strong> This single-use reset link is strictly valid for <strong>${expiryMinutes} minutes</strong>. If expired or already used, a new request must be generated.
+      </div>
+
+      <p style="font-size: 12px; line-height: 1.5; color: #64748b; margin: 0 0 12px 0;">
+        If the button above does not open, copy and paste this secure URL directly into your browser:
+      </p>
+      <p style="font-size: 11px; word-break: break-all; color: #1769aa; background-color: #f1f5f9; padding: 10px; border-radius: 6px; margin: 0 0 24px 0;">
+        ${params.resetUrl}
+      </p>
+
+      <p style="font-size: 13px; line-height: 1.5; color: #64748b; margin: 0; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+        If you did not request this password reset, please ignore this email. Your current password remains fully secure and unchanged.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="background-color: #f8fafc; padding: 16px 32px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 11px; color: #94a3b8;">
+      Sherman International (P) Limited &middot; Confidential Administrative Security Dispatch
+    </div>
+  </div>
+</body>
+</html>
+  `;
+
+  try {
+    const data = await resend.emails.send({
+      from: senderAddress,
+      to: [recipient],
+      subject,
+      html: htmlContent,
+    });
+
+    if (data.error) {
+      console.error('[Resend Error]', data.error);
+      return {
+        sent: false,
+        recipient,
+        error: data.error.message || 'Resend failed to send password reset email',
+      };
+    }
+
+    console.log(`[Resend Success] Password reset email accepted with ID: ${data.data?.id} to: ${recipient}`);
+    return {
+      sent: true,
+      messageId: data.data?.id,
+      recipient,
+    };
+  } catch (err: any) {
+    console.error('[Resend Exception]', err);
+    return {
+      sent: false,
+      recipient,
+      error: err.message || 'Exception during reset email delivery',
+    };
+  }
+}

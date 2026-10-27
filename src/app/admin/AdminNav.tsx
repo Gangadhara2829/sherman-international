@@ -21,8 +21,10 @@ import {
   ShieldCheck,
   Images,
   Handshake,
+  KeyRound,
 } from 'lucide-react';
 import Logo from '@/components/Logo';
+import ChangePasswordModal from '@/components/admin/ChangePasswordModal';
 
 interface AdminNavProps {
   session: { id: string; email: string; name: string; role: string } | null;
@@ -33,6 +35,7 @@ export default function AdminNav({ session, children }: AdminNavProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   // If on login page, don't show admin chrome
   if (pathname === '/admin/login') {
@@ -146,6 +149,15 @@ export default function AdminNav({ session, children }: AdminNavProps) {
             </button>
           </div>
 
+          <button
+            type="button"
+            onClick={() => setChangePasswordOpen(true)}
+            className="w-full py-2 px-3 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 border border-white/10 transition-colors cursor-pointer"
+          >
+            <KeyRound className="w-3.5 h-3.5 text-amber-400" />
+            <span>Change Password</span>
+          </button>
+
           <Link
             href="/"
             target="_blank"
@@ -179,6 +191,17 @@ export default function AdminNav({ session, children }: AdminNavProps) {
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setChangePasswordOpen(true)}
+              className="text-xs font-semibold text-slate-600 hover:text-sherman-700 hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+            >
+              <KeyRound className="w-3.5 h-3.5 text-sherman-600" />
+              <span>Change Password</span>
+            </button>
+
+            <div className="h-4 w-px bg-slate-200 hidden sm:block" />
+
             <Link
               href="/"
               target="_blank"
@@ -192,7 +215,7 @@ export default function AdminNav({ session, children }: AdminNavProps) {
 
             <button
               onClick={handleLogout}
-              className="text-xs font-semibold text-slate-600 hover:text-rose-600 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 transition-colors"
+              className="text-xs font-semibold text-slate-600 hover:text-rose-600 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Logout</span>
@@ -214,12 +237,30 @@ export default function AdminNav({ session, children }: AdminNavProps) {
                 <span>{item.label}</span>
               </Link>
             ))}
+
+            <button
+              type="button"
+              onClick={() => {
+                setMobileOpen(false);
+                setChangePasswordOpen(true);
+              }}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-amber-400 hover:bg-white/10 text-left"
+            >
+              <KeyRound className="w-4 h-4" />
+              <span>Change Password</span>
+            </button>
           </div>
         )}
 
         {/* Page Children */}
         <main className="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto">{children}</main>
       </div>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={changePasswordOpen}
+        onClose={() => setChangePasswordOpen(false)}
+      />
     </div>
   );
 }

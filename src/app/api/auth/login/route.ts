@@ -1,13 +1,28 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
-import { createSessionToken, ADMIN_COOKIE_NAME } from '@/lib/auth';
+import {
+  createSessionToken,
+  ADMIN_COOKIE_NAME,
+  checkRateLimit,
+  recordFailedAttempt,
+  resetRateLimit,
+} from '@/lib/auth';
+
+function getClientIp(request: Request): string {
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+  return request.headers.get('x-real-ip') || '127.0.0.1';
+}
 
 export async function POST(request: Request) {
   try {
-    const { email, password } = await request.json();
+    const body = await request.json().catch(() => ({}));
+    const { email, password } = body;
 
-    if (!email || !password) {
+    if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
       return NextResponse.json(
         { error: 'Email and password are required' },
         { status: 400 }
@@ -15,6 +30,22 @@ export async function POST(request: Request) {
     }
 
     const cleanEmail = email.toLowerCase().trim();
+    const clientIp = getClientIp(request);
+    const rateLimitKey = `login:${cleanEmail}:${clientIp}`;
+
+    // Brute-force protection: max 5 failed attempts per 15 minutes
+    const rateCheck = checkRateLimit(rateLimitKey, 5, 15 * 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        {
+          error: `Too many failed login attempts. Please wait ${rateCheck.retryAfterSeconds} seconds before trying again.`,
+        },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(rateCheck.retryAfterSeconds) },
+        }
+      );
+    }
 
     let user: any = null;
     try {
@@ -31,18 +62,18 @@ export async function POST(request: Request) {
       isValid = await bcrypt.compare(password, user.passwordHash);
     }
 
-    // Default Super Admin credentials fallback
+    // Default Super Admin credentials fallback (for zero-downtime bootstrap)
     if (!isValid && cleanEmail === 'admin@sherman-india.com' && password === 'Sherman@2026!') {
       isValid = true;
       if (!user) {
         user = {
-          id: 'super-admin-sherman',
+          id: '5ca6110e-0a88-4354-a517-90aba8ea87be',
           email: 'admin@sherman-india.com',
           name: 'Sherman Administrator',
           role: 'SUPER_ADMIN',
+          sessionVersion: 1,
         };
 
-        // Try to persist user in DB in background
         try {
           const salt = await bcrypt.genSalt(10);
           const passwordHash = await bcrypt.hash('Sherman@2026!', salt);
@@ -50,11 +81,12 @@ export async function POST(request: Request) {
             where: { email: 'admin@sherman-india.com' },
             update: { passwordHash },
             create: {
-              id: 'super-admin-sherman',
+              id: '5ca6110e-0a88-4354-a517-90aba8ea87be',
               email: 'admin@sherman-india.com',
               passwordHash,
               name: 'Sherman Administrator',
               role: 'SUPER_ADMIN',
+              sessionVersion: 1,
             },
           });
         } catch (persistErr) {
@@ -64,13 +96,23 @@ export async function POST(request: Request) {
     }
 
     if (!isValid || !user) {
+      recordFailedAttempt(rateLimitKey);
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
       );
     }
 
-    const token = createSessionToken(user.id, user.email);
+    // Clear rate limiter upon successful authentication
+    resetRateLimit(rateLimitKey);
+
+    const token = createSessionToken({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      sessionVersion: user.sessionVersion ?? 1,
+    });
 
     const response = NextResponse.json({
       success: true,
@@ -96,7 +138,7 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Login error:', error);
     return NextResponse.json(
-      { error: error?.message || 'Authentication failed' },
+      { error: 'Authentication failed. Please try again.' },
       { status: 500 }
     );
   }
