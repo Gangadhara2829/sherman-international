@@ -21,10 +21,7 @@ import EnquiryCtaBanner from '@/components/EnquiryCtaBanner';
 import AboutStatsSection from '@/components/AboutStatsSection';
 import FormattedContent, { isRichHtml } from '@/components/FormattedContent';
 import {
-  normalizeAboutContent,
-  normalizeVisionMission,
-  normalizeAboutStats,
-  DEFAULT_ABOUT_CONTENT,
+  normalizeCompleteAboutPage,
 } from '@/lib/content';
 
 export const metadata = {
@@ -36,33 +33,29 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function AboutPage() {
-  const [aboutRecord, visionRecord, statsRecord] = await Promise.all([
-    prisma.siteContent.findFirst({
-      where: { key: { in: ['about_company', 'about_overview'] } },
-    }),
-    prisma.siteContent.findUnique({ where: { key: 'vision_mission' } }),
-    prisma.siteContent.findUnique({ where: { key: 'about_stats' } }),
-  ]);
+  const aboutRecords = await prisma.siteContent.findMany({
+    where: {
+      OR: [
+        { section: 'about' },
+        {
+          key: {
+            in: [
+              'about_hero',
+              'about_company',
+              'about_overview',
+              'about_expertise',
+              'about_approach',
+              'about_closing',
+              'about_stats',
+              'vision_mission',
+            ],
+          },
+        },
+      ],
+    },
+  });
 
-  const about = normalizeAboutContent(aboutRecord);
-  const visionMission = normalizeVisionMission(visionRecord);
-  const aboutStats = normalizeAboutStats(statsRecord);
-
-  const paragraphs = (about.content || DEFAULT_ABOUT_CONTENT.content)
-    .split('\n\n')
-    .filter((p) => p.trim().length > 0);
-
-  const para1 =
-    paragraphs[0] ||
-    'Sherman International Pvt. Ltd. is a trusted and forward-looking engineering solutions provider, acting as a strategic bridge between leading global manufacturers and the Indian industry. We specialize in representation, distribution, system integration, customization, and turnkey project execution across a wide range of industrial applications.';
-
-  const para2 =
-    paragraphs[1] ||
-    'Backed by a team of experienced and innovative technocrats, we work in close collaboration with our principals to deliver high-performance solutions that enhance operational efficiency, reduce costs, and ensure the highest standards of safety and reliability. Our expertise extends beyond product supply to include technical consulting, system optimization, auditing, and after-sales support—enabling our customers to achieve sustainable and long-term success.';
-
-  const para3 =
-    paragraphs[2] ||
-    "With a proven track record, Sherman has built strong partnerships with some of India's most prominent industrial organizations. Our commitment to quality, precision, and customer satisfaction makes us a preferred partner for advanced engineering solutions.";
+  const aboutData = normalizeCompleteAboutPage(aboutRecords);
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -100,18 +93,18 @@ export default async function AboutPage() {
             {/* Direct Heading — No Eyebrow / No Tagline */}
             <div className="space-y-3">
               <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
-                {about.title || 'About Sherman'}
+                {aboutData.hero.title}
               </h1>
               <div className="border-l-4 border-amber-500 pl-4 py-1">
                 <p className="text-lg sm:text-xl font-bold text-amber-400">
-                  {about.subtitle || 'Trusted Engineering Solutions Provider'}
+                  {aboutData.hero.subtitle}
                 </p>
               </div>
             </div>
 
-            <p className="text-base sm:text-lg text-slate-200 leading-relaxed font-normal max-w-3xl">
-              Industrial technology and solutions company working with leading global technology providers to bring advanced products, engineering expertise, and application-driven solutions to customers across the industrial sector.
-            </p>
+            <div className="text-base sm:text-lg text-slate-200 leading-relaxed font-normal max-w-3xl">
+              <FormattedContent content={aboutData.hero.lead} variant="dark" />
+            </div>
           </div>
         </div>
       </section>
@@ -125,22 +118,11 @@ export default async function AboutPage() {
             <div className="space-y-5">
               <div className="border-l-4 border-sherman-600 pl-4 py-0.5">
                 <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                  Trusted Engineering Solutions Provider
+                  {aboutData.overview.heading}
                 </h2>
               </div>
-              <div className="space-y-4 text-slate-700 text-base sm:text-lg leading-relaxed font-normal">
-                <p>
-                  Sherman is an industrial technology and solutions company, working with leading global technology providers to bring advanced products, engineering expertise, and application-driven solutions to customers across the industrial sector.
-                </p>
-                <p>
-                  Our portfolio spans flow measurement, process control, analytical instrumentation, combustion technology, automation, and other critical industrial applications. Through our strong relationships with internationally recognized technology companies, we provide access to proven technologies and high-quality products, backed by the technical expertise required to apply them effectively.
-                </p>
-                <p>
-                  At Sherman, we believe that delivering the right solution goes beyond supplying equipment. Our team brings together professionals with strong technical and industry experience, enabling us to understand our customers’ applications, processes, and project requirements. We provide technical and pre-sales support to help identify solutions that are technically appropriate, operationally reliable, and commercially sound.
-                </p>
-                <p>
-                  Our involvement continues beyond the point of supply. Through comprehensive after-sales support and service, we work closely with our customers to ensure reliable operation, long-term performance, and maximum value from their investments.
-                </p>
+              <div className="text-slate-700 text-base sm:text-lg leading-relaxed font-normal">
+                <FormattedContent content={aboutData.overview.content} />
               </div>
             </div>
 
@@ -148,16 +130,11 @@ export default async function AboutPage() {
             <div className="space-y-5 pt-6 border-t border-slate-100">
               <div className="border-l-4 border-amber-500 pl-4 py-0.5">
                 <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                  Project &amp; Engineering Expertise
+                  {aboutData.expertise.heading}
                 </h2>
               </div>
-              <div className="space-y-4 text-slate-700 text-base sm:text-lg leading-relaxed font-normal">
-                <p>
-                  Sherman also brings significant expertise in project execution and engineering support, particularly in collaboration with EPC contractors and industrial project organizations.
-                </p>
-                <p>
-                  Our experienced teams have supported projects through various EPC portals and execution platforms, managing and coordinating the required technical drawings, documentation, submissions, and project deliverables. This experience allows us to effectively bridge technology, engineering requirements, and project execution.
-                </p>
+              <div className="text-slate-700 text-base sm:text-lg leading-relaxed font-normal">
+                <FormattedContent content={aboutData.expertise.content} />
               </div>
             </div>
 
@@ -165,22 +142,11 @@ export default async function AboutPage() {
             <div className="space-y-5 pt-6 border-t border-slate-100">
               <div className="border-l-4 border-sherman-600 pl-4 py-0.5">
                 <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                  Our Approach
+                  {aboutData.approach.heading}
                 </h2>
               </div>
-              <div className="space-y-4 text-slate-700 text-base sm:text-lg leading-relaxed font-normal">
-                <p>
-                  Sherman brings together expertise from multiple industrial disciplines to develop technically robust, application-focused, and commercially viable solutions.
-                </p>
-                <p>
-                  We take the time to understand the complete requirement—whether it is a process challenge, a specific application, a project specification, or a broader system requirement—and then bring together the appropriate technologies, products, and expertise to address it.
-                </p>
-                <p>
-                  Our strength lies in combining global technology, local expertise, engineering understanding, and project experience to create meaningful value for our customers.
-                </p>
-                <p>
-                  With established relationships across the global industrial technology ecosystem and a strong focus on technical excellence, project execution, and customer support, Sherman is committed to being a dependable technology and solutions company for the industries we serve.
-                </p>
+              <div className="text-slate-700 text-base sm:text-lg leading-relaxed font-normal">
+                <FormattedContent content={aboutData.approach.content} />
               </div>
             </div>
 
@@ -188,7 +154,7 @@ export default async function AboutPage() {
             <div className="pt-8 border-t border-slate-200">
               <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-[#061d43] via-[#092557] to-[#0c3172] text-white shadow-md border border-slate-800">
                 <div className="font-display text-xl sm:text-2xl font-black text-amber-400 tracking-wide text-center sm:text-left">
-                  Sherman — Technology. Expertise. Solutions.
+                  {aboutData.closing.statement}
                 </div>
               </div>
             </div>
@@ -196,7 +162,7 @@ export default async function AboutPage() {
         </section>
 
         {/* SECTION 3: Animated Company Statistics (Some Cool Facts — Numbers Speak for Themselves) */}
-        <AboutStatsSection stats={aboutStats} />
+        <AboutStatsSection stats={aboutData.stats} />
 
         {/* SECTION 4: Our Vision & Our Mission (Distinct Relevant Industrial Backgrounds) */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
@@ -222,16 +188,16 @@ export default async function AboutPage() {
                 </div>
                 <div>
                   <div className="text-xs font-bold uppercase tracking-widest text-amber-400">
-                    Guiding Principle
+                    {aboutData.visionMission.visionEyebrow}
                   </div>
                   <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                    Our Vision
+                    {aboutData.visionMission.visionTitle}
                   </h3>
                 </div>
               </div>
-              <p className="text-base sm:text-lg text-slate-100 font-normal leading-relaxed">
-                {visionMission.vision}
-              </p>
+              <div className="text-base sm:text-lg text-slate-100 font-normal leading-relaxed">
+                <FormattedContent content={aboutData.visionMission.vision} variant="dark" />
+              </div>
             </div>
 
             {/* Decorative Accent Anchor */}
@@ -262,16 +228,16 @@ export default async function AboutPage() {
                 </div>
                 <div>
                   <div className="text-xs font-bold uppercase tracking-widest text-amber-400">
-                    Core Commitment
+                    {aboutData.visionMission.missionEyebrow}
                   </div>
                   <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                    Our Mission
+                    {aboutData.visionMission.missionTitle}
                   </h3>
                 </div>
               </div>
-              <p className="text-base sm:text-lg text-slate-100 font-normal leading-relaxed">
-                {visionMission.mission}
-              </p>
+              <div className="text-base sm:text-lg text-slate-100 font-normal leading-relaxed">
+                <FormattedContent content={aboutData.visionMission.mission} variant="dark" />
+              </div>
             </div>
 
             {/* Decorative Accent Anchor */}

@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import ImageUpload from '@/components/admin/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import AboutPageEditor from '@/components/admin/AboutPageEditor';
 import {
   normalizeWebsiteContent,
   NormalizedWebsiteContent,
@@ -52,7 +53,9 @@ export default function ContentManagerClient({
   initialContents: SiteContentItem[];
 }) {
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'hero' | 'about' | 'vision' | 'contact' | 'stats'>('hero');
+  const [activeTab, setActiveTab] = useState<
+    'about_page' | 'hero' | 'about' | 'vision' | 'contact' | 'stats'
+  >('about_page');
   const [savedSuccess, setSavedSuccess] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [savingKey, setSavingKey] = useState<string | null>(null);
@@ -370,6 +373,19 @@ export default function ContentManagerClient({
       <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto">
         <button
           type="button"
+          onClick={() => setActiveTab('about_page')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+            activeTab === 'about_page'
+              ? 'bg-sherman-700 text-white shadow-xs'
+              : 'text-slate-600 hover:bg-slate-200/60'
+          }`}
+        >
+          <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+          <span>About Us Page Editor</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => setActiveTab('hero')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
             activeTab === 'hero'
@@ -428,6 +444,15 @@ export default function ContentManagerClient({
           About Us Statistics
         </button>
       </div>
+
+      {/* DEDICATED ABOUT US PAGE EDITOR */}
+      {activeTab === 'about_page' && (
+        <AboutPageEditor
+          initialContents={initialContents}
+          onGlobalSuccess={showSuccess}
+          onGlobalError={showError}
+        />
+      )}
 
       {/* TAB 1: HERO SECTION */}
       {activeTab === 'hero' && (

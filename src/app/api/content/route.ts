@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 import { getAdminSession } from '@/lib/auth';
 import { normalizeWebsiteContent, parseContentValue } from '@/lib/content';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 export async function GET() {
   try {
@@ -51,9 +52,29 @@ export async function POST(request: Request) {
           ? body.mission
           : existingContentParsed?.mission || '';
 
+      const visionEyebrow = body.visionEyebrow ?? existingMeta?.visionEyebrow ?? 'Guiding Principle';
+      const visionTitle = body.visionTitle ?? existingMeta?.visionTitle ?? 'Our Vision';
+      const missionEyebrow = body.missionEyebrow ?? existingMeta?.missionEyebrow ?? 'Core Commitment';
+      const missionTitle = body.missionTitle ?? existingMeta?.missionTitle ?? 'Our Mission';
+
       finalContent = JSON.stringify({
-        vision: typeof vision === 'string' ? vision.trim() : vision,
-        mission: typeof mission === 'string' ? mission.trim() : mission,
+        vision: typeof vision === 'string' ? sanitizeHtml(vision.trim()) : vision,
+        mission: typeof mission === 'string' ? sanitizeHtml(mission.trim()) : mission,
+      });
+
+      finalMetadata = JSON.stringify({
+        ...existingMeta,
+        visionEyebrow,
+        visionTitle,
+        missionEyebrow,
+        missionTitle,
+      });
+    } else if (key === 'about_hero') {
+      const lead = body.lead ?? body.content ?? existingMeta?.lead ?? '';
+      finalContent = typeof lead === 'string' ? sanitizeHtml(lead.trim()) : lead;
+      finalMetadata = JSON.stringify({
+        ...existingMeta,
+        lead: finalContent,
       });
     } else if (key === 'contact_info') {
       const company =
@@ -128,6 +149,8 @@ export async function POST(request: Request) {
       });
     } else if (typeof finalContent === 'object' && finalContent !== null) {
       finalContent = JSON.stringify(finalContent);
+    } else if (typeof finalContent === 'string') {
+      finalContent = sanitizeHtml(finalContent);
     }
 
     const payload = {
@@ -150,19 +173,6 @@ export async function POST(request: Request) {
         ...payload,
       },
     });
-
-    // If saving about_overview, also sync about_company key (and vice-versa) for complete compatibility
-    if (key === 'about_overview' || key === 'about_company') {
-      const mirrorKey = key === 'about_overview' ? 'about_company' : 'about_overview';
-      await prisma.siteContent.upsert({
-        where: { key: mirrorKey },
-        update: payload,
-        create: {
-          key: mirrorKey,
-          ...payload,
-        },
-      }).catch((e) => console.warn('Mirror content sync warning:', e));
-    }
 
     // Invalidate stale caches immediately across public and admin pages
     try {

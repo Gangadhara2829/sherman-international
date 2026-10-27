@@ -49,7 +49,7 @@ export default function ProductsMegaMenu({ categories, onClose }: ProductsMegaMe
           {/* COLUMN 1: Categories List (LEFT - 3 cols) */}
           <div className="col-span-3 border-r border-slate-200 pr-3 space-y-1">
             <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 px-3 pb-2 border-b border-slate-100 flex items-center justify-between">
-              <span>Categories ({categories.length})</span>
+              <span>CATEGORIES</span>
             </div>
 
             <div className="space-y-0.5 max-h-[300px] overflow-y-auto pr-1 pt-1">

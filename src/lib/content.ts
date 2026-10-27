@@ -383,3 +383,159 @@ export function normalizeWebsiteContent(rawContents: any[]): NormalizedWebsiteCo
     aboutStats: normalizeAboutStats(statsRecord),
   };
 }
+
+export interface CompleteAboutSectionItem {
+  heading: string;
+  subheading?: string;
+  content: string;
+}
+
+export interface CompleteAboutPageData {
+  hero: {
+    title: string;
+    subtitle: string;
+    lead: string;
+  };
+  overview: CompleteAboutSectionItem;
+  expertise: CompleteAboutSectionItem;
+  approach: CompleteAboutSectionItem;
+  closing: {
+    statement: string;
+  };
+  stats: NormalizedAboutStats;
+  visionMission: {
+    visionEyebrow: string;
+    visionTitle: string;
+    vision: string;
+    missionEyebrow: string;
+    missionTitle: string;
+    mission: string;
+  };
+}
+
+export const DEFAULT_COMPLETE_ABOUT_PAGE: CompleteAboutPageData = {
+  hero: {
+    title: 'About Sherman',
+    subtitle: 'Trusted Engineering Solutions Provider',
+    lead:
+      'Industrial technology and solutions company working with leading global technology providers to bring advanced products, engineering expertise, and application-driven solutions to customers across the industrial sector.',
+  },
+  overview: {
+    heading: 'Trusted Engineering Solutions Provider',
+    content: `<p>Sherman is an industrial technology and solutions company, working with leading global technology providers to bring advanced products, engineering expertise, and application-driven solutions to customers across the industrial sector.</p><p>Our portfolio spans flow measurement, process control, analytical instrumentation, combustion technology, automation, and other critical industrial applications. Through our strong relationships with internationally recognized technology companies, we provide access to proven technologies and high-quality products, backed by the technical expertise required to apply them effectively.</p><p>At Sherman, we believe that delivering the right solution goes beyond supplying equipment. Our team brings together professionals with strong technical and industry experience, enabling us to understand our customers’ applications, processes, and project requirements. We provide technical and pre-sales support to help identify solutions that are technically appropriate, operationally reliable, and commercially sound.</p><p>Our involvement continues beyond the point of supply. Through comprehensive after-sales support and service, we work closely with our customers to ensure reliable operation, long-term performance, and maximum value from their investments.</p>`,
+  },
+  expertise: {
+    heading: 'Project & Engineering Expertise',
+    content: `<p>Sherman also brings significant expertise in project execution and engineering support, particularly in collaboration with EPC contractors and industrial project organizations.</p><p>Our experienced teams have supported projects through various EPC portals and execution platforms, managing and coordinating the required technical drawings, documentation, submissions, and project deliverables. This experience allows us to effectively bridge technology, engineering requirements, and project execution.</p>`,
+  },
+  approach: {
+    heading: 'Our Approach',
+    content: `<p>Sherman brings together expertise from multiple industrial disciplines to develop technically robust, application-focused, and commercially viable solutions.</p><p>We take the time to understand the complete requirement—whether it is a process challenge, a specific application, a project specification, or a broader system requirement—and then bring together the appropriate technologies, products, and expertise to address it.</p><p>Our strength lies in combining global technology, local expertise, engineering understanding, and project experience to create meaningful value for our customers.</p><p>With established relationships across the global industrial technology ecosystem and a strong focus on technical excellence, project execution, and customer support, Sherman is committed to being a dependable technology and solutions company for the industries we serve.</p>`,
+  },
+  closing: {
+    statement: 'Sherman — Technology. Expertise. Solutions.',
+  },
+  stats: DEFAULT_ABOUT_STATS,
+  visionMission: {
+    visionEyebrow: 'Guiding Principle',
+    visionTitle: 'Our Vision',
+    vision: DEFAULT_VISION_MISSION.vision,
+    missionEyebrow: 'Core Commitment',
+    missionTitle: 'Our Mission',
+    mission: DEFAULT_VISION_MISSION.mission,
+  },
+};
+
+/**
+ * Normalizes all About Us page sections from DB records.
+ * Falls back gracefully to authentic defaults without ever showing empty fields.
+ */
+export function normalizeCompleteAboutPage(rawContents: any[]): CompleteAboutPageData {
+  const contents = Array.isArray(rawContents) ? rawContents : [];
+
+  const heroRecord =
+    contents.find((c) => c.key === 'about_hero') ||
+    contents.find((c) => c.key === 'about_company') ||
+    contents.find((c) => c.key === 'about_overview');
+
+  const overviewRecord = contents.find((c) => c.key === 'about_overview');
+  const expertiseRecord = contents.find((c) => c.key === 'about_expertise');
+  const approachRecord = contents.find((c) => c.key === 'about_approach');
+  const closingRecord = contents.find((c) => c.key === 'about_closing');
+  const statsRecord = contents.find((c) => c.key === 'about_stats');
+  const visionRecord = contents.find((c) => c.key === 'vision_mission');
+
+  // Hero Section
+  const parsedHeroMeta = parseContentValue(heroRecord?.metadata) || {};
+  const heroTitle = heroRecord?.title?.trim() || DEFAULT_COMPLETE_ABOUT_PAGE.hero.title;
+  const heroSubtitle = heroRecord?.subtitle?.trim() || DEFAULT_COMPLETE_ABOUT_PAGE.hero.subtitle;
+  const heroLead =
+    parsedHeroMeta.lead ||
+    (typeof heroRecord?.content === 'string' && heroRecord.content.length < 500 && !heroRecord.content.includes('<p>')
+      ? heroRecord.content.trim()
+      : DEFAULT_COMPLETE_ABOUT_PAGE.hero.lead);
+
+  // Overview Section
+  const overviewHeading =
+    overviewRecord?.title?.trim() || DEFAULT_COMPLETE_ABOUT_PAGE.overview.heading;
+  const overviewContent =
+    overviewRecord?.content?.trim() || DEFAULT_COMPLETE_ABOUT_PAGE.overview.content;
+
+  // Expertise Section
+  const expertiseHeading =
+    expertiseRecord?.title?.trim() || DEFAULT_COMPLETE_ABOUT_PAGE.expertise.heading;
+  const expertiseContent =
+    expertiseRecord?.content?.trim() || DEFAULT_COMPLETE_ABOUT_PAGE.expertise.content;
+
+  // Approach Section
+  const approachHeading =
+    approachRecord?.title?.trim() || DEFAULT_COMPLETE_ABOUT_PAGE.approach.heading;
+  const approachContent =
+    approachRecord?.content?.trim() || DEFAULT_COMPLETE_ABOUT_PAGE.approach.content;
+
+  // Closing Brand Statement
+  const closingStatement =
+    closingRecord?.title?.trim() ||
+    closingRecord?.content?.trim() ||
+    DEFAULT_COMPLETE_ABOUT_PAGE.closing.statement;
+
+  // Statistics
+  const stats = normalizeAboutStats(statsRecord);
+
+  // Vision & Mission
+  const baseVm = normalizeVisionMission(visionRecord);
+  const parsedVmMeta = parseContentValue(visionRecord?.metadata) || {};
+
+  return {
+    hero: {
+      title: heroTitle,
+      subtitle: heroSubtitle,
+      lead: heroLead,
+    },
+    overview: {
+      heading: overviewHeading,
+      content: overviewContent,
+    },
+    expertise: {
+      heading: expertiseHeading,
+      content: expertiseContent,
+    },
+    approach: {
+      heading: approachHeading,
+      content: approachContent,
+    },
+    closing: {
+      statement: closingStatement,
+    },
+    stats,
+    visionMission: {
+      visionEyebrow: parsedVmMeta.visionEyebrow || 'Guiding Principle',
+      visionTitle: parsedVmMeta.visionTitle || 'Our Vision',
+      vision: baseVm.vision,
+      missionEyebrow: parsedVmMeta.missionEyebrow || 'Core Commitment',
+      missionTitle: parsedVmMeta.missionTitle || 'Our Mission',
+      mission: baseVm.mission,
+    },
+  };
+}
+
