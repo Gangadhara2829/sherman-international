@@ -161,14 +161,35 @@ export async function getAdminSession(): Promise<AdminSession | null> {
   if (!payload) return null;
 
   try {
-    const user = await prisma.adminUser.findUnique({
-      where: { id: payload.id },
-      select: { id: true, email: true, name: true, role: true, sessionVersion: true },
-    });
+    let user: any = null;
+    try {
+      const rows = await prisma.$queryRaw<any[]>`
+        SELECT "id", "email", "name", "role", "sessionVersion"
+        FROM "AdminUser"
+        WHERE "id" = ${payload.id}
+        LIMIT 1
+      `;
+      if (rows && rows.length > 0) {
+        user = rows[0];
+      }
+    } catch {
+      // Fallback if raw query unavailable
+    }
+
+    if (!user) {
+      user = await prisma.adminUser.findUnique({
+        where: { id: payload.id },
+        select: { id: true, email: true, name: true, role: true },
+      });
+    }
 
     if (user && user.email.toLowerCase() === payload.email.toLowerCase()) {
       // Invalidate if session version in cookie doesn't match current user version in DB
-      const currentVersion = (user as any).sessionVersion ?? 1;
+      const currentVersion =
+        user.sessionVersion !== undefined && user.sessionVersion !== null
+          ? Number(user.sessionVersion)
+          : 1;
+
       if (payload.sessionVersion !== undefined && payload.sessionVersion !== currentVersion) {
         return null;
       }

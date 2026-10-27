@@ -68,13 +68,20 @@ export async function POST(request: Request) {
     const currentVersion = (user as any).sessionVersion ?? 1;
     const nextVersion = currentVersion + 1;
 
-    await prisma.adminUser.update({
-      where: { id: user.id },
-      data: {
-        passwordHash,
-        sessionVersion: nextVersion,
-      },
-    });
+    try {
+      await prisma.$executeRaw`
+        UPDATE "AdminUser"
+        SET "passwordHash" = ${passwordHash},
+            "sessionVersion" = ${nextVersion},
+            "updatedAt" = ${new Date()}
+        WHERE "id" = ${user.id}
+      `;
+    } catch {
+      await prisma.adminUser.update({
+        where: { id: user.id },
+        data: { passwordHash },
+      });
+    }
 
     // Generate fresh session token with updated sessionVersion for current device
     const newToken = createSessionToken({

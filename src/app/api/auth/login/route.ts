@@ -49,11 +49,28 @@ export async function POST(request: Request) {
 
     let user: any = null;
     try {
-      user = await prisma.adminUser.findUnique({
-        where: { email: cleanEmail },
-      });
-    } catch (dbErr) {
+      const rows = await prisma.$queryRaw<any[]>`
+        SELECT "id", "email", "name", "role", "passwordHash", "sessionVersion"
+        FROM "AdminUser"
+        WHERE LOWER("email") = ${cleanEmail}
+        LIMIT 1
+      `;
+      if (rows && rows.length > 0) {
+        user = rows[0];
+      } else {
+        user = await prisma.adminUser.findUnique({
+          where: { email: cleanEmail },
+        });
+      }
+    } catch (dbErr: any) {
       console.warn('Prisma AdminUser query warning:', dbErr);
+      try {
+        user = await prisma.adminUser.findUnique({
+          where: { email: cleanEmail },
+        });
+      } catch (fallbackErr) {
+        console.error('Fallback query error:', fallbackErr);
+      }
     }
 
     let isValid = false;
