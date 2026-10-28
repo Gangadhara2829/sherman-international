@@ -105,13 +105,17 @@ try {
   console.error('Prisma generate warning:', e.message);
 }
 
-// If using persistent PostgreSQL, push schema automatically
-if (isPostgres && activePostgresUrl) {
-  console.log('Synchronizing schema with persistent PostgreSQL database...');
+// Database schema synchronization
+// SAFEGUARD: In production builds, do NOT execute database-mutating DDL commands (prisma db push)
+// unless explicitly requested via process.env.PRISMA_ALLOW_DB_PUSH === 'true'.
+if (isPostgres && activePostgresUrl && process.env.PRISMA_ALLOW_DB_PUSH === 'true') {
+  console.log('Synchronizing schema with persistent PostgreSQL database (PRISMA_ALLOW_DB_PUSH=true)...');
   try {
     execSync('npx prisma db push --skip-generate', { stdio: 'inherit' });
     console.log('✓ Database schema synchronized successfully.');
   } catch (e) {
     console.warn('Warning during prisma db push:', e.message);
   }
+} else if (isPostgres) {
+  console.log('✓ Safe Production Mode: Database schema mutation skipped during build. Prisma Client ready.');
 }
